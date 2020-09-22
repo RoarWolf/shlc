@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.WithdrawDao">
+
+	<select id="selectwitmoney" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT SUM(money) AS depomoney FROM hd_withdraw WHERE user_id  = #{userId} AND `status` != 2 ;
+	</select>
+	<select id="selectmoneysum" parameterType="com.hedong.hedongwx.entity.Withdraw" resultType="java.util.Map">
+		SELECT SUM(money) AS extractmoney,SUM(servicecharge) AS sumservicecharge FROM hd_withdraw WHERE `status` != 2 
+		<if test=" userId!=null"> and user_id = #{userId}</if>
+		<if test=" createTime!=null"> and create_time = #{createTime}</if>
+		<if test=" accountTime!=null"> and account_time = #{accountTime}</if>
+		
+	</select>
+	
+	<select id="pendingmoney" parameterType="com.hedong.hedongwx.entity.Withdraw" resultType="java.util.Map">
+		SELECT SUM(money) AS extractmoney,SUM(servicecharge) AS sumservicecharge FROM hd_withdraw 
+		<where>
+			<if test=" status != null and status != ''"> and `status` in (${status})</if>
+			<if test=" userId != null and userId != ''"> and user_id = #{userId}</if>
+			<if test=" createTime != null and createTime != ''"> and create_time = #{createTime}</if>
+			<if test=" accountTime != null and accountTime != ''"> and account_time = #{accountTime}</if>
+		
+		</where>
+	
+	</select>
+
+	<insert id="addWithdraw" parameterType="com.hedong.hedongwx.entity.Withdraw">
+		insert into hd_withdraw
+		(withdrawnum, user_id, bankcardnum,bankname,
+		status, money,
+		servicecharge,
+		user_money,
+		create_time, account_time
+		)
+		values
+		(#{withdrawnum,jdbcType=INTEGER},#{userId,jdbcType=INTEGER},
+		#{bankcardnum,jdbcType=VARCHAR},#{bankname,jdbcType=VARCHAR},
+		#{status,jdbcType=INTEGER},
+		#{money,jdbcType=DOUBLE},
+		#{servicecharge,jdbcType=DOUBLE},
+		#{userMoney,jdbcType=DOUBLE}, #{createTime},
+		DATE_ADD(#{createTime},INTERVAL 1 DAY))
+	</insert>
+
+	<update id="updateWithdraw">
+		update hd_withdraw set
+		status = #{status,jdbcType=INTEGER},account_time = #{accountTime}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="getWithdrawListByUserId" resultType="com.hedong.hedongwx.entity.Withdraw">
+		select * from
+		hd_withdraw where user_id = #{userId,jdbcType=INTEGER} order by
+		create_time desc
+	</select>
+
+	<select id="getWithdrawList" resultType="com.hedong.hedongwx.entity.Withdraw">
+		select * from hd_withdraw
+	</select>
+	
+	<select id="getWithdrawListByBankcardnum" resultType="com.hedong.hedongwx.entity.Withdraw">
+		select * from hd_withdraw where bankcardnum = #{bankcardnum}
+	</select>
+	
+	<select id="getAllWithdrawAndBankcard" resultType="com.hedong.hedongwx.entity.Withdraw">
+		SELECT distinct w.id,
+		u.username,u.phone_num,u.realname,
+		w.bankcardnum,w.bankname,w.create_time,w.money,w.servicecharge,w.`status`,w.withdrawnum,ub.realname AS ubrealname,
+		w.user_money,w.user_id,w.account_time
+		FROM hd_withdraw w LEFT JOIN hd_user u ON w.user_id = u.id LEFT JOIN hd_user_bankcard ub ON ub.bankcardnum=w.bankcardnum AND w.user_id = ub.user_id
+		<where> 
+		 <!--  <if test=" id>0 and id!=null"> and u.id = #{id} </if> -->
+	      <if test=" phoneNum!=null and phoneNum!=''"> and u.phone_num LIKE '%${phoneNum}%' </if>
+	      <if test=" realname!=null and realname!=''"> and ub.realname LIKE '%${realname}%' </if>
+	      <if test=" status!=null"> and w.status = #{status}</if>
+	      <if test=" withdrawnum!=null and withdrawnum!=''"> and w.withdrawnum LIKE '%${withdrawnum}%' </if>
+	      <if test=" bankcardnum!=null and bankcardnum!=''"> and w.bankcardnum LIKE '%${bankcardnum}%' </if>
+	      <if test=" bankname!=null and bankname!=''"> and w.bankname LIKE '%${bankname}%' </if>
+		  <if test="begintime!=null and begintime!=''"> and w.create_time &gt;= #{begintime} </if>
+		  <if test="endtime!=null and endtime!=''"> and w.create_time &lt;= #{endtime} </if>
+	    </where>
+	   		 ORDER BY w.create_time DESC
+	    <if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	
+	
+	<!-- -->
+	<select id="selectExtractInfo" resultType="com.hedong.hedongwx.entity.Withdraw">
+		select * from hd_withdraw where id = #{id,jdbcType=INTEGER}
+		<!-- SELECT w.*,b.realname,b.bankname as bsbankname FROM hd_withdraw w 
+			LEFT JOIN hd_user_bankcard b ON w.bankcardnum = b.bankcardnum and w.user_id 
+			= b.user_id where w.id = #{id,jdbcType=INTEGER} -->
+	</select>
+	<select id="getEndRecordByUserId" resultType="com.hedong.hedongwx.entity.Withdraw">
+		select * from hd_withdraw where user_id = #{userId,jdbcType=INTEGER} ORDER BY id DESC LIMIT 1
+	</select>
+	
+	<select id="selectWithdrawByOrdernum" resultType="com.hedong.hedongwx.entity.Withdraw">
+		select * from hd_withdraw where withdrawnum = #{ordernum}
+	</select>
+	
+	<select id="selectAllMoneyByUidAndTime" resultType="java.lang.Double">
+		select sum(money) from hd_withdraw
+		where status = 3 
+		<if test=" uid != null and uid != ''"> AND user_id = #{uid} </if>
+		<if test="begintime != null and begintime != ''"> AND create_time &gt;= #{begintime} </if>
+		<if test="endtime != null and endtime != ''"> AND create_time &lt;= #{endtime} </if>
+	</select> 
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<!-- 查询提现记录 -->
+	<select id="selectWithdrawRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT w.*,u.username,u.phone_num,u.realname,ub.realname AS ubrealname,ub.type,ub.company,ub.rate,ub.id AS bankid 
+		FROM hd_withdraw w LEFT JOIN hd_user u ON w.user_id = u.id LEFT JOIN hd_user_bankcard ub ON ub.bankcardnum=w.bankcardnum AND w.user_id = ub.user_id
+		WHERE 1 = 1 
+	    <if test=" uid!=null and uid!=''"> AND w.user_id = #{uid} </if>
+	    <if test=" order!=null and  order!=''"> AND w.withdrawnum LIKE '%${order}%' </if>
+		<if test=" username!=null and  username!=''"> AND u.realname LIKE '%${username}%' </if>
+		<if test=" phone!=null and phone!=''"> AND u.phone_num LIKE '%${phone}%' </if>
+		<if test=" number!=null and  number!=''"> AND w.bankcardnum LIKE '%${number}%' </if>
+		<if test=" paramete!=null and paramete!=''"> AND w.bankname LIKE '%${paramete}%' </if>
+		<if test=" status!=null and  status!=''"> AND w.status = #{status} </if>
+		
+		<if test=" type!=null and type!=''"> AND ub.type = #{type} </if>
+		<if test=" remark!=null and remark!=''"> AND ub.company LIKE '%${remark}%' </if>
+		<if test=" state!=null and state!=''"> AND ub.rate = #{state} </if>
+		
+	   	<if test="startTime!=null and startTime!=''"> AND w.create_time &gt;= #{startTime} </if>
+		<if test="endTime!=null and endTime!=''"> AND w.create_time &lt;= #{endTime} </if>
+		ORDER BY w.create_time DESC 
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- 根据银行卡号和订单号查询待确认的提现账单 -->
+	<select id="selectWithdrawByBankId" resultType="java.util.Map">
+		SELECT 
+			w.id,w.withdrawnum,
+			w.user_id,w.bankname,
+			w.bankcardnum,
+			w.money,
+			w.`status`,
+			w.servicecharge,
+			u.realname,
+			u.openid 
+		FROM hd_withdraw w
+		LEFT JOIN hd_user u
+		ON w.user_id = u.id
+		WHERE w.bankcardnum=#{bankcardNum}
+		AND w.withdrawnum=#{withdrawNum}
+		AND w.`status`=0
+	</select>
+</mapper>

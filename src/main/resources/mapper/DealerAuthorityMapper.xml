@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.DealerAuthorityDao">
+	
+	<sql id="Authority_Column">
+		id, merid, withmess, equipmess, incomemess, ordermess, incoinrefund, newsmess, inform, informess, sendmess, showincoins, autopay, apportion, autowithdraw
+	</sql>
+	
+	<select id="selectAuthority" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.DealerAuthority">
+		SELECT <include refid="Authority_Column" /> FROM hd_dealerauthority 
+		<where>
+			<if test="id != null "> AND id = #{id,jdbcType=INTEGER} </if>
+			<if test="merid != null "> AND merid = #{merid,jdbcType=INTEGER} </if>
+		</where>
+	</select>
+	
+	<select id="selectIncoinRefund" resultType="java.lang.Integer">
+		SELECT incoinrefund FROM hd_dealerauthority 
+		<where>
+			merid = #{merid,jdbcType=INTEGER}
+		</where>
+	</select>
+	
+ 	<select id="selectEntiyAuthority" parameterType="com.hedong.hedongwx.entity.DealerAuthority" resultType="com.hedong.hedongwx.entity.AdvanceMoney">
+		SELECT <include refid="Authority_Column" /> FROM hd_dealerauthority 
+		<where>
+			<if test="id != null "> AND id = #{id,jdbcType=INTEGER} </if>
+			<if test="merid != null "> AND merid = #{merid,jdbcType=INTEGER} </if>
+			<if test="withmess != null " > AND withmess = #{withmess,jdbcType=INTEGER}, </if>
+			<if test="equipmess != null " > AND equipmess = #{equipmess,jdbcType=INTEGER}, </if>
+			<if test="incomemess != null " > AND incomemess = #{incomemess,jdbcType=INTEGER}, </if>
+			<if test="ordermess != null " > AND ordermess = #{ordermess,jdbcType=INTEGER}, </if>
+			<if test="newsmess != null " > AND newsmess = #{newsmess,jdbcType=INTEGER}, </if>
+			<if test="inform != null " > AND inform = #{inform,jdbcType=INTEGER}, </if>
+			<if test="informess != null " > AND informess = #{informess,jdbcType=INTEGER}, </if>
+			<if test="sendmess != null " > AND sendmess = #{sendmess,jdbcType=INTEGER}, </if>
+		</where>
+	</select>
+	<!-- 
+	<update id="updateAuthority" parameterType="com.hedong.hedongwx.entity.DealerAuthority">
+		update hd_dealerauthority 
+		<set>
+			<if test="merid != null" > merid = #{merid,jdbcType=INTEGER}, </if>
+			<if test="withmess != null" > withmess = #{withmess,jdbcType=INTEGER}, </if>
+			<if test="equipmess != null" > equipmess = #{equipmess,jdbcType=INTEGER}, </if>
+			<if test="incomemess != null" > incomemess = #{incomemess,jdbcType=INTEGER}, </if>
+			<if test="ordermess != null" > ordermess = #{ordermess,jdbcType=INTEGER}, </if>
+			<if test="incoinrefund != null" > incoinrefund = #{incoinrefund,jdbcType=INTEGER}, </if>
+			<if test="newsmess != null" > newsmess = #{newsmess,jdbcType=INTEGER}, </if>
+			<if test="inform != null" > inform = #{inform,jdbcType=INTEGER}, </if>
+			<if test="informess != null" > informess = #{informess,jdbcType=INTEGER}, </if>
+			<if test="sendmess != null" > sendmess = #{sendmess,jdbcType=INTEGER}, </if>
+			<if test="showincoins != null" > showincoins = #{showincoins,jdbcType=INTEGER}, </if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	 -->
+	<update id="updateMeridAuthority" parameterType="com.hedong.hedongwx.entity.DealerAuthority">
+		update hd_dealerauthority 
+		<set>
+			<if test="withmess != null" > withmess = #{withmess,jdbcType=INTEGER}, </if>
+			<if test="equipmess != null" > equipmess = #{equipmess,jdbcType=INTEGER}, </if>
+			<if test="incomemess != null" > incomemess = #{incomemess,jdbcType=INTEGER}, </if>
+			<if test="ordermess != null" > ordermess = #{ordermess,jdbcType=INTEGER}, </if>
+			<if test="incoinrefund != null" > incoinrefund = #{incoinrefund,jdbcType=INTEGER}, </if>
+			<if test="newsmess != null" > newsmess = #{newsmess,jdbcType=INTEGER}, </if>
+			<if test="inform != null" > inform = #{inform,jdbcType=INTEGER}, </if>
+			<if test="informess != null" > informess = #{informess,jdbcType=INTEGER}, </if>
+			<if test="sendmess != null" > sendmess = #{sendmess,jdbcType=INTEGER}, </if>
+			<if test="showincoins != null" > showincoins = #{showincoins,jdbcType=INTEGER}, </if>
+			<if test="autopay != null" > autopay = #{autopay,jdbcType=INTEGER}, </if>
+			<if test="apportion != null" > apportion = #{apportion,jdbcType=INTEGER}, </if>
+			<if test="autoWithdraw != null" > autowithdraw = #{autoWithdraw,jdbcType=INTEGER}, </if>
+		</set>
+		where merid = #{merid,jdbcType=INTEGER}
+	</update>
+	
+	<insert id="insertAuthority" parameterType="com.hedong.hedongwx.entity.DealerAuthority">
+		insert into hd_dealerauthority 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null" > id, </if>
+			<if test="merid != null" > merid, </if>
+			<if test="withmess != null" > withmess, </if>
+			<if test="equipmess != null" > equipmess, </if>
+			<if test="incomemess != null" > incomemess, </if>
+			<if test="ordermess != null" > ordermess, </if>
+			<if test="incoinrefund != null" > incoinrefund, </if>
+			<if test="newsmess != null" > newsmess, </if>
+			<if test="inform != null" > inform, </if>
+			<if test="informess != null" > informess, </if>
+			<if test="sendmess != null" > sendmess, </if>
+			<if test="showincoins != null" > showincoins, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id != null" > #{id,jdbcType=INTEGER}, </if>
+			<if test="merid != null" > #{merid,jdbcType=INTEGER}, </if>
+			<if test="withmess != null" > #{withmess,jdbcType=INTEGER}, </if>
+			<if test="equipmess != null" > #{equipmess,jdbcType=INTEGER}, </if>
+			<if test="incomemess != null" > #{incomemess,jdbcType=INTEGER}, </if>
+			<if test="ordermess != null" > #{ordermess,jdbcType=INTEGER}, </if>
+			<if test="incoinrefund != null" > #{incoinrefund,jdbcType=INTEGER}, </if>
+			<if test="newsmess != null" > #{newsmess,jdbcType=INTEGER}, </if>
+			<if test="inform != null" > #{inform,jdbcType=INTEGER}, </if>
+			<if test="informess != null" > #{informess,jdbcType=INTEGER}, </if>
+			<if test="sendmess != null" > #{sendmess,jdbcType=INTEGER}, </if>
+			<if test="showincoins != null" > #{showincoins,jdbcType=INTEGER}, </if>
+		</trim>
+	</insert>
+	
+	<delete id="deleteMeridAuthority" parameterType="java.lang.Integer">
+		DELECT FROM hd_dealerauthority WHERE merid =  = #{merid,jdbcType=INTEGER} 
+	</delete>
+	
+	<delete id="deleteAuthority" parameterType="java.lang.Integer">
+		DELECT FROM hd_dealerauthority WHERE id =  = #{id,jdbcType=INTEGER} 
+	</delete>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>

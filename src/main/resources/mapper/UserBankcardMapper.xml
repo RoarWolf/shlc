@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.UserBankcardDao">
+
+	<insert id="addUserBankcard" parameterType="com.hedong.hedongwx.entity.UserBankcard" >
+	  insert into hd_user_bankcard
+	  <trim prefix="(" suffix=")" suffixOverrides="," >
+	    <if test="id != null" >
+	      id,
+	    </if>
+	    <if test="realname != null" >
+	      realname,
+	    </if>
+	    <if test="bankcardnum != null" >
+	      bankcardnum,
+	    </if>
+	    <if test="bankname != null" >
+	      bankname,
+	    </if>
+	    <if test="userId != null" >
+	      user_id,
+	    </if>
+	    <if test="type != null" >
+	      type,
+	    </if>
+	    <if test="company != null" >
+	      company,
+	    </if>
+	    <if test="rate != null" >
+	      rate,
+	    </if>
+	  </trim>
+	  <trim prefix="values (" suffix=")" suffixOverrides="," >
+	    <if test="id != null" >
+	      #{id,jdbcType=INTEGER},
+	    </if>
+	    <if test="realname != null" >
+	      #{realname,jdbcType=VARCHAR},
+	    </if>
+	    <if test="bankcardnum != null" >
+	      #{bankcardnum,jdbcType=VARCHAR},
+	    </if>
+	    <if test="bankname != null" >
+	      #{bankname,jdbcType=VARCHAR},
+	    </if>
+	    <if test="userId != null" >
+	      #{userId,jdbcType=INTEGER},
+	    </if>
+	    <if test="type != null" >
+	      #{type,jdbcType=INTEGER},
+	    </if>
+	    <if test="company != null" >
+	      #{company,jdbcType=VARCHAR},
+	    </if>
+	    <if test="rate != null" >
+	      #{rate,jdbcType=INTEGER},
+	    </if>
+	  </trim>
+	</insert>
+
+	<!-- <insert id="addUserBankcard" parameterType="com.hedong.hedongwx.entity.UserBankcard">
+		insert into hd_user_bankcard (realname, bankcardnum, bankname, user_id
+		)
+		values (#{realname,jdbcType=VARCHAR}, #{bankcardnum,jdbcType=VARCHAR}, #{bankname,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}
+		)
+	</insert> -->
+
+	<update id="updateUserBankcard" parameterType="com.hedong.hedongwx.entity.UserBankcard">
+		update hd_user_bankcard
+		<set>
+			<if test="realname != null">
+				realname = #{realname,jdbcType=VARCHAR},
+			</if>
+			<if test="bankcardnum != null">
+				bankcardnum = #{bankcardnum,jdbcType=VARCHAR},
+			</if>
+			<if test="bankname != null">
+				bankname = #{bankname,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="company != null">
+				company = #{company,jdbcType=VARCHAR},
+			</if>
+			<if test="rate != null">
+				rate = #{rate,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="selectUserBankcardByUserid" resultType="com.hedong.hedongwx.entity.UserBankcard">
+		select * from hd_user_bankcard where user_id = #{userId,jdbcType=INTEGER}
+		<if test="type != null">
+			and type = #{type}
+		</if>
+	</select>
+	
+	<select id="selectUserBankcardByid" resultType="com.hedong.hedongwx.entity.UserBankcard">
+		select * from hd_user_bankcard where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<delete id="deleteUserBankcardByid">
+		delete from hd_user_bankcard where id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<!-- 用户与银行卡关联查询 -->
+	<select id="selectUserBankinfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  u.id,u.username,b.realname,u.phone_num,u.rank,b.bankname,b.bankcardnum,b.type,b.company,b.rate 
+		FROM hd_user u LEFT JOIN hd_user_bankcard b ON u.id = b.user_id 
+		<where> 
+		  <if test=" uid!=null and uid!=''"> and u.id = #{uid} </if>
+	      <if test=" realname!=null and realname!=''"> and u.realname LIKE '%${realname}%' </if>
+	      <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+	      <if test=" rank!=null"> and u.rank = #{rank}</if>
+	      <if test=" remark!=null and remark!=''"> and b.bankname LIKE '%${remark}%'</if>
+	      <if test=" number!=null and number!=''"> and b.bankcardnum LIKE '%${number}%'</if>
+	    </where>
+	   		 ORDER BY u.create_time 
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+
+</mapper>

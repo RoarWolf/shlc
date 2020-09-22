@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hedong.hedongwx.dao.TemplateSonDao">
+	
+	<sql id="TemplateSon_Column_List">
+		id,tempparid,name,status,type,money,charge_time,charge_quantity,create_time,remark,common1,common2,common3
+	</sql>
+	
+	<select id="getSonTemplateList" resultType="com.hedong.hedongwx.entity.TemplateSon">
+	    select * from hd_templateson;
+		<!-- select * from hd_templateparent where id int (1,2,3) uniton select  -->
+	</select>
+	
+	<select id="subtemplatefind" resultType="com.hedong.hedongwx.entity.TemplateSon">
+	    select * from hd_templateson where tempparid = #{temid} AND name = #{name};
+	</select>
+	
+	<!--  -->
+	<select id="subtempdate" resultType="com.hedong.hedongwx.entity.TemplateSon">
+	    SELECT <include refid="TemplateSon_Column_List" /> from hd_templateson 
+	    <where>
+	      <if test=" id!= null"> AND id = #{id} </if>
+	      <if test="tempparid != null"> AND tempparid = #{tempparid} </if>
+	      <if test="name != null"> AND name = #{name} </if>
+	      <if test="status != null"> AND status = #{status} </if>
+	      <if test="type != null"> AND type = #{type} </if>
+	      <if test="money != null"> AND money = #{money} </if>
+	      <if test="chargeTime != null"> AND charge_time = #{chargeTime} </if>
+	      <if test="chargeQuantity != null"> AND charge_quantity = #{chargeQuantity} </if>
+	      <if test="createTime != null"> AND create_time = #{createTime} </if>
+	      <if test="remark != null"> AND remark = #{remark} </if>
+	      <if test="common1 != null"> AND common1 = #{common1} </if>
+	      <if test="common2 != null"> AND common2 = #{common2} </if>
+	      <if test="common3 != null"> AND common3 = #{common3} </if>
+	    </where>
+	</select>
+	
+	<select id="getSonTemplateLists"  parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.TemplateSon">
+	    select <include refid="TemplateSon_Column_List" /> from hd_templateson where tempparid = #{id};
+	</select>
+	
+	<select id="getInfoTemplateOne"  parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.TemplateSon">
+	    select * from hd_templateson  where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getEquSonTem"  parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.TemplateSon">
+	    SELECT * FROM hd_templateson  WHERE tempparid = (
+		SELECT tempid FROM hd_equipment WHERE code= #{code,jdbcType=VARCHAR}) 
+	</select>
+			
+	<insert id="insertSonTemplate" parameterType="com.hedong.hedongwx.entity.TemplateSon">
+		insert into hd_templateson
+		(tempparid,name,status,type,money,charge_time,charge_quantity,create_time,remark,common1,common2,common3)
+		values
+		(#{tempparid},#{name},#{status},#{type},#{money}, #{chargeTime},#{chargeQuantity}, now(),#{remark}, #{common1}, #{common2}, #{common3})
+		<!-- (#{tempparid,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},#{money,jdbcType=DOUBLE}, #{chargeTime,jdbcType=INTEGER},#{chargeQuantity,jdbcType=INTEGER}, now(),#{remark,jdbcType=VARCHAR}, #{common1,jdbcType=VARCHAR}, #{common2,jdbcType=VARCHAR}, #{common3,jdbcType=VARCHAR}) -->
+	</insert>
+	
+	<insert id="insertTemplateSon" parameterType="com.hedong.hedongwx.entity.TemplateSon" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO hd_templateson
+	  <trim prefix="(" suffix=")" suffixOverrides="," >
+		<if test="id != null" > id,</if>
+		<if test="tempparid != null" > tempparid,</if>
+		<if test="name != null" > name,</if>
+		<if test="status != null" >status,</if>
+		<if test="type != null" > type,</if>
+		<if test="money != null" >money,</if>
+		<if test="chargeTime != null" > charge_time,</if>
+		<if test="chargeQuantity != null" > charge_quantity,</if>
+		<if test="createTime != null" > create_time,</if>
+		<if test="remark != null" > remark,</if>
+		<if test="common1 != null" > common1,</if>
+		<if test="common2 != null" > common2,</if>
+		<if test="common3 != null" > common3,</if>
+	  </trim>
+	  <trim prefix="values (" suffix=")" suffixOverrides="," >
+		<if test="id != null" > #{id,jdbcType=INTEGER},</if>
+		<if test="tempparid != null" > #{tempparid,jdbcType=INTEGER},</if>
+		<if test="name != null" > #{name,jdbcType=VARCHAR},</if>
+		<if test="status != null" > #{status,jdbcType=INTEGER},</if>
+		<if test="type != null" > #{type,jdbcType=INTEGER},</if>
+		<if test="money != null" > #{money,jdbcType=DOUBLE},</if>
+		<if test="chargeTime != null" > #{chargeTime,jdbcType=INTEGER},</if>
+		<if test="chargeQuantity != null" > #{chargeQuantity,jdbcType=INTEGER},</if>
+		<if test="createTime != null" > now(),</if>
+		<if test="remark != null" > #{remark,jdbcType=DOUBLE},</if>
+		<if test="common1 != null" > #{common1,jdbcType=VARCHAR},</if>
+		<if test="common2 != null" > #{common2,jdbcType=VARCHAR},</if>
+		<if test="common3 != null" > #{common3,jdbcType=VARCHAR},</if>
+	  </trim>
+	</insert>
+	
+	<update id="updateSonTemplate" parameterType="com.hedong.hedongwx.entity.TemplateSon">
+	    update hd_templateson
+	     <trim prefix="set" suffixOverrides=",">
+		  <if test="tempparid!=null">tempparid=#{tempparid,jdbcType=INTEGER},</if>
+		  <if test="name!=null and name!=''">name=#{name,jdbcType=VARCHAR},</if>
+		  <if test="status!=null">status=#{status,jdbcType=INTEGER},</if>
+		  <if test="type!=null">type=#{type,jdbcType=INTEGER},</if>
+		  <if test="money!=null">money=#{money,jdbcType=DOUBLE},</if>
+		  <if test="chargeTime!=null">charge_time=#{chargeTime,jdbcType=INTEGER},</if>
+		  <if test="chargeQuantity!=null">charge_quantity=#{chargeQuantity,jdbcType=INTEGER},</if>
+		  <if test="createTime!=null">create_time=#{createTime,jdbcType=VARCHAR},</if>
+		  <if test="remark!=null">remark=#{remark,jdbcType=DOUBLE},</if>
+		  <if test="common1!=null and remark!=''">common1=#{common1,jdbcType=VARCHAR},</if>
+		  <if test="common2!=null and remark!=''">common2=#{common2,jdbcType=VARCHAR},</if>
+		  <if test="common3!=null and remark!=''">common3=#{common3,jdbcType=VARCHAR},</if>
+		 </trim>
+		 WHERE id=#{id}
+	</update>
+	
+	<delete id="deleteSonTempmanage"  parameterType="java.lang.Integer">
+      delete from hd_templateson where id = #{id}
+	</delete>
+	<delete id="delSonTempmanage"  parameterType="java.lang.Integer">
+      delete from hd_templateson where tempparid = #{id}
+	</delete>
+	
+</mapper>

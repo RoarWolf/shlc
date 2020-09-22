@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hedong.hedongwx.dao.ServerSendMessageMapper">
+
+	<!-- in line with id query server towards equipment send message -->
+	<select id="getServerSendMessageById" resultType="com.hedong.hedongwx.entity.ServerSendMessage">
+		select * from hd_server_sendinfo where id = #{id}
+	</select>
+	
+	<select id="getServerSendMessageList" resultType="com.hedong.hedongwx.entity.ServerSendMessage">
+		select * from hd_server_sendinfo
+	</select>
+	
+	<!-- add server towards eqipment send message -->
+	<insert id="addServerSendMessage" parameterType="com.hedong.hedongwx.entity.ServerSendMessage">
+		insert into hd_server_sendinfo (message) values(#{message})
+	</insert>
+	
+	<!-- in line with id delete sent message -->
+	<delete id="deleteServerSendMessageById">
+		delete from hd_server_sendinfo where id = #{id}
+	</delete>
+	
+	<!-- delete all sent message -->
+	<delete id="deleteServerSendMessage">
+		delete from hd_server_sendinfo
+	</delete>
+</mapper>

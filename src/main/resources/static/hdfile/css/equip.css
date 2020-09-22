@@ -1,0 +1,307 @@
+@font-face {font-family: "iconfont";
+  src: url('//at.alicdn.com/t/font_1207732_hiy2rb563s4.eot?t=1558603836730'); /* IE9 */
+  src: url('//at.alicdn.com/t/font_1207732_hiy2rb563s4.eot?t=1558603836730#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAPcAAsAAAAACEAAAAOOAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDBgqEHINKATYCJAMMCwgABCAFhG0HQRsbB1GUDUqc7Ick6RPNlY0Yi+4aIABGcADAwQEAAECIh//2+/0+M3MvKg2SaFRdnWSSSHRC0gQlW8iUJP+H4iW8ITv91Pqtsi8pphgVOEFaAUwdrcU5B2xUhNlJXhEqtMO078dZdvCJe6dN8fmAcppj6qcuwDigwMaaFFmBdBEmoC2HM6/Co2s/gVbDDCF2d5e75inIsEBcK5loXsqg1JSHZqEumVvEs0pzekwbNE/+++O/WXgkVUbG7l1tc23xC35N5cxGplOXRDieDeIiMmZACnFe6jhkhokZ/Fp1hVWfXytCGivc+McXGLKa/uGRBFEjpe1gAicTv1RtQaycAtFZC29ucI0OvOBTMfYjNc2q6OiVCuh6MVEShmWwYplNnSXdLVnNXcUdjbFI2Li+uCdTMQwAfF1Jf5ZS7NGRWHEkOD4EyQntyTO6tW29k3C/A7pOvEenZqW9I6QYOMTMOJZ9wTS87BBZ29jU1NkNzx/bISdWRg6hig90q7zLJU51nqylM6nPWXwQKkeOSw6dxgxgj0ojJzIcl817+f/dQHzcXsl+HB5zUHIYc/ILDSERKyrX1ZvUF3rb2tzc4h9No1BjQf86MvQAxKFjlT09M5U/3ePYeY1iyDTTQ/dmACJZ/bV9OV6Xk3Tq9ilClTkEQcIZ1gvGe61aLiKaVDe83uRbE/DgATziTaIFKRSqwACkl+iv6gcoXzSIcTCceBBaMeGioEDvIKTMkTiGt4VhksLG9s/LSQY12BQllDuGGE127SHB9NaWiko4fE6jyBEEdElD4z8PZATk93T0dz9j4fZlOJJ2fPXaCvgpUbTqBxr/BWqfbJYQhf9S2LKuGGJizEUT2AIrnZ3z3hQPeJLSH6yEXlf9XQOg2BaaJSEgaTKErNkIudBnUGkzi1qzDbSa5rO4TR8OU5QWTMlDCN2GkXT6QNZtk1zol6gMukWtO0y02g/5NduMhQo8CBPGHNI/qKypBTNzEJRfUQ5lQkmxz3gi9SoMU2PTbHqPNdIYE/qPnDELENRUsEOHYVk20FLzxoxHL+Z2PjYhlD1plDWVFthBUIKhHMD4A2SZRk24zVmQe/0VkgalBNUQ6txPiPRU+8CMMdMW5L2ibkW4lke4PqQZHiYAAtKoAG9kQyVNNACrvNcbyrARUo9Ya84ENyK0VYzmV1XPtwVakfE5UuQoum+UUGEjhJ0/cKlqtDJ6TQMAAA==') format('woff2'),
+  url('//at.alicdn.com/t/font_1207732_hiy2rb563s4.woff?t=1558603836730') format('woff'),
+  url('//at.alicdn.com/t/font_1207732_hiy2rb563s4.ttf?t=1558603836730') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  url('//at.alicdn.com/t/font_1207732_hiy2rb563s4.svg?t=1558603836730#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wifi-off-outline:before {
+  content: "\e6b6";
+}
+
+.icon-wifi:before {
+  content: "\e620";
+}
+
+
+.dm {
+	color: #666;
+	font-size: 12px;
+	padding: 10px;
+	/*background-color: #f8f8f8;*/
+}
+.ceil {
+	position: relative;
+	left: -10px;
+	width: 100vw;
+	height: 15px;
+	background-color: #EFEFF4;
+}
+.dm .top{
+	border: 1px solid #ccc;
+	background-color: #f5f7fa;
+	border-radius: 6px;
+	box-shadow: 4px 4px 8px #888888;
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+/*.dm header {
+	border-radius: 6px 6px 0 0;
+	overflow: hidden;
+}*/
+.dm header ul {
+	border-bottom: 1px solid #ccc;
+}
+.dm header li{
+	float: left;
+	width: 33.33%;
+	text-align: center;
+	height: 35px;
+	line-height: 35px;
+	font-size: 13px;
+	/*background-color: #f5f7fa;*/
+	border-bottom: 1px solid transparent;
+}
+.dm header li.active {
+	border-bottom: 2px solid #22B14C;
+	color: #22B14C;
+}
+.dm .search {
+	padding:20px 0 10px 0;
+	/*background-color: #f5f7fa;*/
+	/*border-radius: 0 0 6px 6px;
+	overflow: hidden;
+*/
+}
+.dm .search ol{
+	height: 34px;
+	line-height: 34px;
+}
+.dm .search .deviceName {
+	float: left;
+	width: 25%;
+	/*background-color: rgba(225,225,225,.3);*/
+}
+.dm .search .deviceName .mui-icon {
+	font-size: 17px;
+}
+.dm .search .searchInp {
+	float: right;
+	width: 74%;
+}
+.dm .search .searchInp input {
+	width: 70%;
+	margin-right: 5%;
+	margin-bottom: 0;
+	background-color: transparent;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+}
+.dm .search .searchInp input::-webkit-input-placeholder{
+	font-size: 12px;
+	color: #999;
+}    /* 濞达綀娉曢弫顦漞bkit闁告劕鎳忛悧鎶芥儍閸曨剛銈婚悷娆忕墕濞咃拷 */
+.dm .search .searchInp input:-moz-placeholder{
+	font-size: 12px;
+	color: #999;
+	}                  /* Firefox闁绘鐗婂﹢锟�4-18 */
+.dm .search .searchInp input::-moz-placeholder{
+	font-size: 12px;
+	color: #999;
+	}                  /* Firefox闁绘鐗婂﹢锟�19+ */
+.dm .search .searchInp input:-ms-input-placeholder{
+	font-size: 12px;
+	color: #999;
+	}           /* IE婵炴潙绻楅～宥夊闯閿燂拷 */
+.dm .search .searchInp button {
+	font-size: 12px;
+	margin-top: 1px;
+}
+.dm main {
+	position: absolute;
+	top: 150px;
+	bottom: 0;
+	/*left: 10px;
+	right: 10px;*/
+	left: 0;
+	right: 0;
+	overflow: hidden;
+}
+.dm main .content {
+	width: 300%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+}
+.dm main .content ul {
+	width: 33.33333333333%;
+	height: 100%;
+	float: left;
+	overflow-y: auto;
+}
+.divLi {
+	overflow: hidden;
+}
+.dm main li {
+	padding: 3%;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	overflow: hidden;
+	background-color: #f8f8f8;
+	box-shadow: 4px 4px 7px #888888;
+	margin-bottom: 15px;
+	margin-right: 10px;
+	margin-left: 10px;
+
+}
+.dm main li>p {
+	line-height: 30px;
+	min-width: 50%;
+    float: left;
+}
+.dm main li>p.d-name{
+	min-width: 100%;
+    float: left;
+    position: relative;
+    padding-right: 44px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+} 
+.dm main li>p .span_right_fr5 {
+	margin-right: 10px;
+    display: inline-block;
+    padding: 0 7px;
+    border-radius: 30px;
+    background: #22B14C;
+    color: #fff;
+    line-height: 1.5em;
+    font-size: 12px;
+}
+.dm main li>p .span_right_use5 {
+	margin-right: 10px;
+    display: inline-block;
+    padding: 0 5px;
+    border-radius: 30px;
+    background: #F47378;
+    color: #fff;
+    line-height: 1.5em;
+    font-size: 12px;
+}
+.dm main li>p .span_right_fi5 {
+	margin-right: 10px;
+    display: inline-block;
+    padding: 0 5px;
+    border-radius: 30px;
+    background: #A6A6A6;
+    color: #fff;
+    line-height: 1.5em;
+    font-size: 12px;
+}
+.dm main li>p .span_right5:nth-child(3){
+	margin-right: 0;
+}
+.bottomBut {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+}
+.bottomBut a {
+	display: block;
+	width: 15%;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 5px;
+	background: #4cd964;
+	border: 1px solid #4cd964;
+	color: #fff;
+	margin-right: 5px;
+	text-decoration: none;
+	font-size: 13px;
+}
+.bottomBut a:active {
+	background: #2AC845;
+}
+.bottomBut a.wifi {
+	background: #F3686D;
+	border: 1px solid #F3686D;
+}
+.bottomBut a.wifi:active {
+	background: #DA5D62;
+}
+.bottomBut .statisticBut, .bottomBut .manageBut, .bottomBut .remoteBut{
+	display: block;
+}
+.dm main li.active .bottomBut .statisticBut, .dm main li.active .bottomBut .manageBut,
+.dm main li.active .bottomBut .remoteBut{
+	display: none;
+ }
+ .dm main li.active .bottomBut a.disabled {
+ 	cursor: not-allowed !important;
+    pointer-events: none !important;
+    opacity: 0.65 !important;
+ }
+ .dm main li.active {
+ 	border: 1px solid #94D8F6;
+ 	box-shadow: 4px 4px 7px #94D8F6;
+ }
+ .disable {
+  	background: #ccc !important;
+  	border: 1px solid #ccc !important;
+  	display : none !important;
+ }
+ .bgGreen {
+ 	background: #4cd964 !important;
+    border: 1px solid #4cd964 !important;
+ }
+@media screen and (max-width: 320px) {
+    .dm .search .deviceName {
+    	width: 70px;
+    }
+    .dm .search .searchInp {
+    	width: calc(100% - 70px);
+    }
+    .dm .search .searchInp input {
+    	width: 64%;
+    }
+    .dm .search .searchInp button {
+    	padding: 6px 7px;
+    }
+}
+.editName {
+    padding: 1px 9px;
+    font-size: 12px;
+    border-radius: 3px;
+    font-weight: 400;
+    line-height: 1.45;
+    border: 1px solid #4cd964;
+    border-radius: 3px;
+    color: #4cd964;
+    font-style: normal;
+    margin-top: 5px;
+    position: absolute;
+    right: 0;
+}
+.a-name {
+	padding: 3px 12px;
+    font-size: 12px;
+    margin-top: 2.5px;
+    color: #8f8f94;
+}
+.editName,.editAreaName {
+    padding: 1px 9px;
+    font-size: 12px;
+    border-radius: 3px;
+    font-weight: 400;
+    line-height: 1.45;
+    border: 1px solid #4cd964;
+    border-radius: 3px;
+    color: #4cd964;
+    font-style: normal;
+    margin-top: 5px;
+    position: absolute;
+    right: 0;
+}

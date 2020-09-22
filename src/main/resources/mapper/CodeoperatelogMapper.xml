@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.CodeoperatelogDao">
+
+	<sql id="Codeoperatelog_List">
+		id,code,sort,type,merid,opeid,pushmes,operate_time,remark
+	</sql>
+	
+	<!-- 实体类插入数据 -->
+	<insert id="insertCodeoperatelog" parameterType="com.hedong.hedongwx.entity.Codeoperatelog">
+		insert into hd_codeoperatelog
+		(code,sort,type,merid,opeid,pushmes,operate_time,remark)
+		values
+		(#{code,jdbcType=VARCHAR},#{sort,jdbcType=INTEGER},#{type,jdbcType=INTEGER},
+		#{merid,jdbcType=INTEGER},#{opeid,jdbcType=INTEGER},#{pushmes,jdbcType=VARCHAR},
+		#{operateTime,jdbcType=TIMESTAMP},#{remark,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<!-- 根据条件查询信息 -->
+	<select id="selectoperatelog" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT c.*,u.username AS nickname,u.realname AS dealer,u.phone_num AS dealerphone,hu.username AS opernick,
+			   hu.realname AS opername,hu.phone_num AS operphone
+		FROM hd_codeoperatelog c LEFT JOIN hd_user u ON c.merid = u.id LEFT JOIN hd_user hu ON c.opeid = hu.id
+		<where>
+			<if test=" uid!=null and uid!=''"> AND c.merid = #{uid} </if>
+			<if test=" code!=null and code!=''"> AND c.code = #{code} </if>
+			<if test=" dealer!=null and  dealer!=''"> AND u.username LIKE '%${dealer}%' </if>
+			<if test=" realname!=null and  realname!=''"> AND u.realname LIKE '%${realname}%' </if>
+			<if test=" phone!=null and  phone!=''"> AND u.phone_num LIKE '%${phone}%' </if>
+			<if test=" nickname!=null and  nickname!=''"> AND hu.username LIKE '%${nickname}%' </if>
+			<if test=" username!=null and  username!=''"> AND hu.realname LIKE '%${username}%' </if>
+			<if test=" sort!=null and sort!=''"> AND c.sort = #{sort} </if>
+			<if test=" type!=null and type!=''"> AND c.type = #{type} </if>
+			<if test=" startTime!=null and startTime!=''"> AND c.operate_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND c.operate_time &lt;= #{endTime} </if>
+		</where>
+			 ORDER BY c.operate_time DESC 
+			<if test="startnumber!=null"> LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+
+</mapper>

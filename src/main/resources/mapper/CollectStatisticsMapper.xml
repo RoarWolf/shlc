@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.CollectStatisticsDao">
+	<!-- ================================================================================================ -->
+	
+	<!-- origin 根据表（商户收益明细表）查询不同商户数量 -->
+	<select id="inquireCollectDevice" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT DISTINCT(code) AS code FROM hd_codestatistics  WHERE type = 1
+		<if test="dealer!=null and dealer!=''"> AND merid = #{dealer} </if>
+		<if test="startTime!=null and startTime!=''"> AND count_time &gt;= #{startTime} </if>
+		<if test="endTime!=null and endTime!=''"> AND count_time &lt;= #{endTime} </if> 
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询不同商户数量 -->
+	<select id="inquireCollectMerid" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT DISTINCT(merid) FROM hd_codestatistics  WHERE type = 2 
+		<if test="startTime!=null and startTime!=''"> AND count_time &gt;= #{startTime} </if>
+		<if test="endTime!=null and endTime!=''"> AND count_time &lt;= #{endTime} </if> 
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询不同商户数量 -->
+	<select id="inquireMeridInfo" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT DISTINCT(merid) FROM hd_mer_detail
+		<where>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询商户收益信息 -->
+	<select id="dealerIncomeCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merid,
+			SUM(CASE WHEN paytype = 2 AND `status` = 1 THEN 1 ELSE 0 END) AS wechatnum,		
+			SUM(CASE WHEN paytype = 2 AND `status` = 2 THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN paytype = 3 AND `status` = 1 THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN paytype = 3 AND `status` = 2 THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN paytype = 4 AND `status` = 1 THEN 1 ELSE 0 END) AS unionpaynum,
+			SUM(CASE WHEN paytype = 4 AND `status` = 2 THEN 1 ELSE 0 END) AS refunionpaynum,
+		
+			SUM(CASE WHEN paytype = 2 AND `status` = 1 THEN money ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype = 3 AND `status` = 1 THEN money ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN paytype = 3 AND `status` = 2 THEN money ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN paytype = 4 AND `status` = 1 THEN money ELSE 0 END) AS unionpaymoney,
+			SUM(CASE WHEN paytype = 4 AND `status` = 2 THEN money ELSE 0 END) AS refunionpaymoney,
+		
+			SUM(CASE WHEN paysource = 8 AND paytype = 1 AND `status` = 2 THEN money ELSE 0 END) AS incomepaymentmoney,
+			SUM(CASE WHEN paysource = 8 AND paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS wechatpaymentmoney
+		FROM  hd_mer_detail
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND merid = #{dealer} </if>
+			<if test="source!=null and source!=''"> AND paysource = #{source} </if>
+			<if test="type!=null and type!=''"> AND paytype = #{type} </if>
+			<if test="status!=null and status!=''"> AND status = #{status} </if>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+		GROUP BY merid
+	</select>
+	
+	<!-- origin 根据表（脉冲记录表）查询脉冲设备上传投币信息 -->
+	<select id="incoinsIncomeCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merchantid AS merid, COUNT(1) AS incoins, SUM(money) AS incoinsmoney 
+		FROM hd_incoins 
+		WHERE handletype = 3 AND `status` = 1
+		<if test=" dealer!=null and dealer!=''"> and merchantid = #{dealer}</if>
+		<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+		<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt;= #{endTime}</if>
+		GROUP BY merchantid
+	</select>
+	
+	<!-- origin 根据表（充电记录表）查询充电设备上传的窗口投币、离线刷卡消费、在线刷卡消费的信息 -->
+	<select id="chargeIncomeCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merchantid AS merid,
+			   SUM(CASE WHEN paytype = 5 THEN expenditure ELSE 0 END) AS windowpulsemoney,
+			   SUM(CASE WHEN paytype = 6 THEN expenditure ELSE 0 END) AS offcardmoney,
+			   SUM(CASE WHEN paytype = 7 THEN expenditure ELSE 0 END) AS oncardmoney
+		FROM hd_chargerecord
+		<where>
+			<if test=" dealer != null and dealer != ''"> and merchantid = #{dealer}</if>
+			<if test=" code!=null and code!=''"> AND equipmentnum = #{code} </if>
+			<if test=" startTime != null and startTime != ''"> and begintime &gt;= #{startTime}</if>
+			<if test=" endTime != null and endTime != ''"> and begintime &lt;= #{endTime}</if>
+		</where>
+		GROUP BY merchantid
+	</select>
+	
+	<!-- origin 根据表（充电记录表）查询充电设备上传的消耗的电量、时间信息 -->
+	<select id="chargeConsumeCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merchantid AS merid,
+  			   SUM(consume_quantity) AS consumequantity, 
+  			   SUM(consume_time) AS consumetime
+		FROM hd_chargerecord
+		<where>
+			<if test=" dealer != null and dealer != ''"> and merchantid = #{dealer}</if>
+			<if test=" code!=null and code!=''"> AND equipmentnum = #{code} </if>
+			<if test=" startTime != null and startTime != ''"> and begintime &gt;= #{startTime}</if>
+			<if test=" endTime != null and endTime != ''"> and begintime &lt;= #{endTime}</if>
+		</where>
+		GROUP BY merchantid
+	</select>
+	
+	<!-- origin 根据表（充电记录表）查询充电设备上传的窗口投币、离线刷卡消费、在线刷卡消费的信息 -->
+	<select id="chargeInfoCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merchantid AS merid,
+  			   SUM(consume_quantity) as consumequantity, 
+  			   SUM(consume_time) AS consumetime,
+			   SUM(CASE WHEN paytype = 5 THEN expenditure ELSE 0 END) AS windowpulsemoney,
+			   SUM(CASE WHEN paytype = 6 THEN expenditure ELSE 0 END) AS offcardmoney,
+			   SUM(CASE WHEN paytype = 7 THEN expenditure ELSE 0 END) AS oncardmoney
+		FROM hd_chargerecord
+		<where>
+			<if test=" dealer != null and dealer != ''"> AND merchantid = #{dealer}</if>
+			<if test=" code!=null and code!=''"> AND equipmentnum = #{code} </if>
+			<if test=" startTime != null and startTime != ''"> AND begintime &gt;= #{startTime}</if>
+			<if test=" endTime != null and endTime != ''"> AND begintime &lt;= #{endTime}</if>
+		</where>
+		GROUP BY merchantid
+	</select>
+	
+	<!-- origin 根据表（交易记录表）查询设备收益信息 -->
+	<select id="timingCollectMoney" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  
+			SUM(CASE WHEN `status` = 1 AND paytype = 2 THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 3 THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 4 THEN 1 ELSE 0 END) AS wecappletnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 5 THEN 1 ELSE 0 END) AS aliappletnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 12 THEN 1 ELSE 0 END) AS unionpaynum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 2 THEN money ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 3 THEN money ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 4 THEN money ELSE 0 END) AS wecappletmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 5 THEN money ELSE 0 END) AS aliappletmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 12 THEN money ELSE 0 END) AS unionpaymoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 2 THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 3 THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 4 THEN 1 ELSE 0 END) AS refwecappletnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 5 THEN 1 ELSE 0 END) AS refaliappletnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 12 THEN 1 ELSE 0 END) AS refunionpaynum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 2 THEN money ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 3 THEN money ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 4 THEN money ELSE 0 END) AS refwecappletmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 5 THEN money ELSE 0 END) AS refaliappletmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 12 THEN money ELSE 0 END) AS refunionpaymoney
+		FROM  hd_traderecord
+		<where>
+			<if test=" dealer!=null and  dealer!=''"> AND merid = #{dealer} </if>
+			<if test=" code!=null and  code!=''"> AND code = #{code} </if>
+			<if test=" startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+		GROUP BY merid
+	</select>
+	
+	<!-- ***查询结束**************************************************************************************** -->
+	
+	<!-- ***插入开始***************************************************************************************** -->
+	<!-- origin 插入单条汇总信息 -->
+	<insert id="insertCodestatis" parameterType="com.hedong.hedongwx.entity.Codestatistics">
+		INSERT IGNORE INTO hd_codestatistics (code, merid, areaid, type, ordertotal, wechatorder,alipayorder, wechatretord, 
+		alipayretord, moneytotal, wechatmoney, alipaymoney, wechatretmoney, alipayretmoney, incoinsorder, incoinsmoney, 
+		count_time, consumetime, consumequantity, paymentmoney,windowpulsemoney,offcardmoney,oncardmoney)
+		values
+		(#{code,jdbcType=VARCHAR},#{merid,jdbcType=INTEGER},#{areaid,jdbcType=INTEGER},#{type,jdbcType=INTEGER},#{ordertotal,jdbcType=INTEGER},
+		#{wechatorder,jdbcType=INTEGER},#{alipayorder,jdbcType=INTEGER},#{wechatretord,jdbcType=INTEGER},#{alipayretord,jdbcType=INTEGER},
+		#{moneytotal,jdbcType=DOUBLE},#{wechatmoney,jdbcType=DOUBLE},#{alipaymoney,jdbcType=DOUBLE},#{wechatretmoney,jdbcType=DOUBLE},
+		#{alipayretmoney,jdbcType=DOUBLE},#{incoinsorder,jdbcType=INTEGER},#{incoinsmoney,jdbcType=DOUBLE},#{countTime,jdbcType=DATE},
+		#{consumetime,jdbcType=INTEGER},#{consumequantity,jdbcType=INTEGER},#{paymentmoney,jdbcType=DOUBLE},#{windowpulsemoney,jdbcType=DOUBLE},
+		#{offcardmoney,jdbcType=DOUBLE},#{oncardmoney,jdbcType=DOUBLE})
+	</insert>
+	
+	<!-- origin 插入单条汇总信息 -->
+	<insert id="insertionCollectMap" parameterType="java.util.Map">  
+         INSERT IGNORE INTO hd_codestatistics   
+         <foreach collection="params.keys" item="key" open="(" close=")" separator="," >  
+            ${key}  
+         </foreach>  
+         VALUES   
+         <foreach collection="params.keys"  item="key" open="(" close=")" separator=",">  
+            #{params[${key}]}  
+         </foreach>  
+    </insert> 
+    
+	<!-- origin 多条插入单条汇总信息 -->
+	<insert id="insertionCollectData"  parameterType="java.util.ArrayList">
+	    INSERT IGNORE INTO hd_codestatistics 
+	    	(`code`, merid, areaid, type, ordertotal, wechatorder, alipayorder, wechatretord, alipayretord, moneytotal,
+	    	wechatmoney, alipaymoney, wechatretmoney, alipayretmoney, incoinsorder, incoinsmoney, consumetime, 
+	    	consumequantity, count_time, paymentmoney, windowpulsemoney, offcardmoney, oncardmoney ) 
+	    VALUES 
+	    <foreach collection="list" item="item" separator="," close=";">
+	        (#{item.code}, #{item.merid}, #{item.areaid}, #{item.type}, #{item.ordertotal}, #{item.wechatorder}, 
+	        #{item.alipayorder}, #{item.wechatretord}, #{item.alipayretord}, #{item.moneytotal}, #{item.wechatmoney},
+	        #{item.alipaymoney}, #{item.wechatretmoney}, #{item.alipayretmoney}, #{item.incoinsorder}, #{item.incoinsmoney}, 
+	        #{item.consumetime}, #{item.consumequantity}, #{item.countTime}, #{item.paymentmoney}, #{item.windowpulsemoney}, 
+	        #{item.offcardmoney}, #{item.oncardmoney})
+	    </foreach>
+	</insert>
+	
+	<!-- origin 多条插入单条汇总信息 -->
+	<insert id="insertionCollectInfo"  parameterType="java.util.ArrayList">
+	    INSERT IGNORE INTO hd_codestatistics 
+	    	(`code`, merid, areaid, type, ordertotal, wechatorder, alipayorder, wechatretord, alipayretord, moneytotal,
+	    	wechatmoney, alipaymoney, wechatretmoney, alipayretmoney, incoinsorder, incoinsmoney, consumetime, 
+	    	consumequantity, count_time, paymentmoney, windowpulsemoney, offcardmoney, oncardmoney ) 
+	    VALUES 
+	    <foreach collection="list" item="item" separator="," close=";">
+	        (#{item.code}, #{item.merid}, #{item.areaid}, #{item.type}, #{item.ordertotal}, #{item.wechatorder}, 
+	        #{item.alipayorder}, #{item.wechatretord}, #{item.alipayretord}, #{item.moneytotal}, #{item.wechatmoney},
+	        #{item.alipaymoney}, #{item.wechatretmoney}, #{item.alipayretmoney}, #{item.incoinsorder}, #{item.incoinsmoney}, 
+	        #{item.consumetime}, #{item.consumequantity}, #{item.countTime}, #{item.paymentmoney}, #{item.windowpulsemoney}, 
+	        #{item.offcardmoney}, #{item.oncardmoney})
+	    </foreach>
+	</insert>
+	
+	<!-- ***插入结束**************************************************************************************** -->
+	
+	<!-- ***更新开始***************************************************************************************** -->
+	<!-- origin 更新单条汇总信息 -->
+	<update id="updateCollectInfo" parameterType="com.hedong.hedongwx.entity.Codestatistics">
+		update hd_codestatistics 
+		<trim prefix="set" suffixOverrides=",">
+		<if test=" code != null"> code = #{code},</if>
+		<if test=" merid != null"> merid = #{merid},</if>
+		<if test=" areaid != null"> areaid = #{areaid},</if>
+		<if test=" type != null"> type = #{type},</if>
+		<if test=" ordertotal != null"> ordertotal = #{ordertotal},</if>
+		<if test=" wechatorder != null"> wechatorder = #{wechatorder},</if>
+		<if test=" alipayorder != null"> alipayorder = #{alipayorder},</if>
+		<if test=" wechatretord != null"> wechatretord = #{wechatretord},</if>
+		<if test=" alipayretord != null"> alipayretord = #{alipayretord},</if>
+		<if test=" moneytotal != null"> moneytotal = #{moneytotal},</if>
+		<if test=" wechatmoney != null"> wechatmoney = #{wechatmoney},</if>
+		<if test=" alipaymoney != null"> alipaymoney = #{alipaymoney},</if>
+		<if test=" wechatretmoney != null"> wechatretmoney = #{wechatretmoney},</if>
+		<if test=" alipayretmoney != null"> alipayretmoney = #{alipayretmoney},</if>
+		<if test=" incoinsorder != null"> incoinsorder = #{incoinsorder},</if>
+		<if test=" incoinsmoney != null"> incoinsmoney = #{incoinsmoney},</if>
+		<if test=" consumetime != null"> consumetime = #{consumetime},</if>
+		<if test=" consumequantity != null"> consumequantity = #{consumequantity},</if>
+	 	<if test=" countTime != null"> count_time = #{countTime},</if> 
+		</trim>
+		WHERE id = #{id}
+	</update>
+	
+	
+	
+	
+	<!-- ================================================================================================ -->
+	<sql id="Codestatistics_List">
+		id,merid,type,state,incomemoney,totalmoney,totalorder,wechatmoney,wechatorder,alipaymoney,alipayorder,
+		incoinsmoney,incoins,walletmoney,walletorder,wecappmoney,wecapporder,aliappmoney,aliapporder,reftotalmoney,
+		reftotalorder,refwechatmoney,refwechatorder,refalipaymoney,refalipayorder,refwalletmoney,refwalletorder,
+		refwecappmoney,refwecapporder,refaliappmoney,refaliapporder,onlinemoney,onlineorder,extractmoney,servicecharge,
+		extracttype,noextract,awaitextract,createtime,remark,comment,common
+	</sql>
+	
+	<sql id="key">
+		<trim suffixOverrides=",">
+			<if test="id !=null">id,</if>
+			<if test="merid !=null">merid,</if>
+			<if test="type !=null">type,</if>
+			<if test="state !=null">state,</if>
+			<if test="incomemoney !=null">incomemoney,</if>
+			<if test="totalmoney !=null">totalmoney,</if>
+			<if test="totalorder !=null">totalorder,</if>
+			<if test="wechatmoney !=null">wechatmoney,</if>
+			<if test="wechatorder !=null">wechatorder,</if>
+			<if test="alipaymoney !=null">alipaymoney,</if>
+			<if test="alipayorder !=null">alipayorder,</if>
+			<if test="incoinsmoney !=null">incoinsmoney,</if>
+			<if test="incoins !=null">incoins,</if>
+			<if test="walletmoney !=null">walletmoney,</if>
+			<if test="walletorder !=null">walletorder,</if>
+			<if test="wecappmoney !=null">wecappmoney,</if>
+			<if test="wecapporder !=null">wecapporder,</if>
+			<if test="aliappmoney !=null">aliappmoney,</if>
+			<if test="aliapporder !=null">aliapporder,</if>
+			<if test="reftotalmoney !=null">reftotalmoney,</if>
+			<if test="reftotalorder !=null">reftotalorder,</if>
+			<if test="refwechatmoney !=null">refwechatmoney,</if>
+			<if test="refwechatorder !=null">refwechatorder,</if>
+			<if test="refalipaymoney !=null">refalipaymoney,</if>
+			<if test="refalipayorder !=null">refalipayorder,</if>
+			<if test="refwalletmoney !=null">refwalletmoney,</if>
+			<if test="refwalletorder !=null">refwalletorder,</if>
+			<if test="refwecappmoney !=null">refwecappmoney,</if>
+			<if test="refwecapporder !=null">refwecapporder,</if>
+			<if test="refaliappmoney !=null">refaliappmoney,</if>
+			<if test="refaliapporder !=null">refaliapporder,</if>
+			<if test="onlinemoney !=null">onlinemoney,</if>
+			<if test="onlineorder !=null">onlineorder,</if>
+			<if test="extractmoney !=null">extractmoney,</if>
+			<if test="servicecharge !=null">servicecharge,</if>
+			<if test="extracttype !=null">extracttype,</if>
+			<if test="noextract !=null">noextract,</if>
+			<if test="awaitextract !=null">awaitextract,</if>
+			<if test="createtime !=null">createtime,</if>
+			<if test="remark !=null">remark,</if>
+			<if test="comment !=null">comment,</if>
+			<if test="common, !=null">common,</if>
+		</trim>
+	</sql>
+	
+	<sql id="value">
+		<trim suffixOverrides=",">
+			<if test="id !=null"> #{id}, </if>
+			<if test="merid !=null"> #{merid}, </if>
+			<if test="type !=null"> #{type}, </if>
+			<if test="state !=null"> #{state}, </if>
+			<if test="incomemoney !=null"> #{incomemoney}, </if>
+			<if test="totalmoney !=null"> #{totalmoney}, </if>
+			<if test="totalorder !=null"> #{totalorder}, </if>
+			<if test="wechatmoney !=null"> #{wechatmoney}, </if>
+			<if test="wechatorder !=null"> #{wechatorder}, </if>
+			<if test="alipaymoney !=null"> #{alipaymoney}, </if>
+			<if test="alipayorder !=null"> #{alipayorder}, </if>
+			<if test="incoinsmoney !=null"> #{incoinsmoney}, </if>
+			<if test="incoins !=null"> #{incoins}, </if>
+			<if test="walletmoney !=null"> #{walletmoney}, </if>
+			<if test="walletorder !=null"> #{walletorder}, </if>
+			<if test="wecappmoney !=null"> #{wecappmoney}, </if>
+			<if test="wecapporder !=null"> #{wecapporder}, </if>
+			<if test="aliappmoney !=null"> #{aliappmoney}, </if>
+			<if test="aliapporder !=null"> #{aliapporder}, </if>
+			<if test="reftotalmoney !=null"> #{reftotalmoney}, </if>
+			<if test="reftotalorder !=null"> #{reftotalorder}, </if>
+			<if test="refwechatmoney !=null"> #{refwechatmoney}, </if>
+			<if test="refwechatorder !=null"> #{refwechatorder}, </if>
+			<if test="refalipaymoney !=null"> #{refalipaymoney}, </if>
+			<if test="refalipayorder !=null"> #{refalipayorder}, </if>
+			<if test="refwalletmoney !=null"> #{refwalletmoney}, </if>
+			<if test="refwalletorder !=null"> #{refwalletorder}, </if>
+			<if test="refwecappmoney !=null"> #{refwecappmoney}, </if>
+			<if test="refwecapporder !=null"> #{refwecapporder}, </if>
+			<if test="refaliappmoney !=null"> #{refaliappmoney}, </if>
+			<if test="refaliapporder !=null"> #{refaliapporder}, </if>
+			<if test="onlinemoney !=null"> #{onlinemoney}, </if>
+			<if test="onlineorder !=null"> #{onlineorder}, </if>
+			<if test="extractmoney !=null"> #{extractmoney}, </if>
+			<if test="servicecharge !=null"> #{servicecharge}, </if>
+			<if test="extracttype !=null"> #{extracttype}, </if>
+			<if test="noextract !=null"> #{noextract}, </if>
+			<if test="awaitextract !=null"> #{awaitextract}, </if>
+			<if test="createtime !=null"> #{createtime}, </if>
+			<if test="remark !=null"> #{remark}, </if>
+			<if test="comment !=null"> #{comment}, </if>
+			<if test="common, !=null"> #{common}, </if>
+		</trim>
+	</sql>
+	
+	<!-- *** 请暂时不要在*号范围内添加   ORIGGIN thanks ***********************************************************   -->
+	<!-- origin 查询没有绑定设备合伙人信息 -->
+	<select id="inquireAllmeridInfo"  resultType="java.util.Map">
+		SELECT DISTINCT user_id AS merid FROM hd_user_equipment
+		UNION
+		SELECT DISTINCT(partid) AS merid FROM hd_arearelevance WHERE type = 2 AND partid NOT IN (
+			SELECT DISTINCT user_id FROM hd_user_equipment
+		)
+	</select>
+	
+	<!-- origin 查询绑定设备的商户与是合伙人的id信息 -->
+	<select id="inquireMeridData"  resultType="java.util.Map">
+		SELECT DISTINCT user_id AS merid FROM hd_user_equipment
+		UNION
+		SELECT DISTINCT(partid) AS merid FROM hd_arearelevance WHERE type = 2 AND percent >= 0.00 AND partid NOT IN (
+			SELECT DISTINCT user_id FROM hd_user_equipment
+		)
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询商户收益订单数量信息 -->
+	<select id="dealerIncomeOrder" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merid,
+			SUM(CASE WHEN paytype = 2 AND `status` = 1 THEN 1 ELSE 0 END) AS wechatnum,		
+			SUM(CASE WHEN paytype = 2 AND `status` = 2 THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN paytype = 3 AND `status` = 1 THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN paytype = 3 AND `status` = 2 THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN paytype = 4 AND `status` = 1 THEN 1 ELSE 0 END) AS unionpaynum,
+			SUM(CASE WHEN paytype = 4 AND `status` = 2 THEN 1 ELSE 0 END) AS refunionpaynum
+		FROM  hd_mer_detail
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND merid = #{dealer} </if>
+			<if test="source!=null and source!=''"> AND paysource IN (${source}) </if>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+		GROUP BY merid
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询商户除设备外的充值收益信息 -->
+	<select id="dealerTopupIncome" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merid,
+			SUM(CASE WHEN paytype = 2 AND `status` = 1 THEN money ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype = 3 AND `status` = 1 THEN money ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS wechatreturnmoney,
+			SUM(CASE WHEN paytype = 3 AND `status` = 2 THEN money ELSE 0 END) AS alipayreturnmoney,
+			SUM(CASE WHEN paytype = 4 AND `status` = 1 THEN money ELSE 0 END) AS unionpaymoney,
+			SUM(CASE WHEN paytype = 4 AND `status` = 2 THEN money ELSE 0 END) AS unionpayreturnmoney,
+			SUM(CASE WHEN paysource = 8 AND paytype = 1 AND `status` = 2 THEN money ELSE 0 END) AS incomepaymentmoney
+		FROM  hd_mer_detail
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND merid = #{dealer} </if>
+			<if test="source!=null and source!=''"> AND paysource IN (${source}) </if>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+		GROUP BY merid
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询商户设备的收益信息 -->
+	<select id="dealerDeviceIncome" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merid,
+			SUM(CASE WHEN paytype = 2 AND `status` = 1 THEN money ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype = 3 AND `status` = 1 THEN money ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN paytype = 3 AND `status` = 2 THEN money ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN paytype = 4 AND `status` = 1 THEN money ELSE 0 END) AS unionpaymoney,
+			SUM(CASE WHEN paytype = 4 AND `status` = 2 THEN money ELSE 0 END) AS refunionpaymoney
+		FROM  hd_mer_detail
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND merid = #{dealer} </if>
+			<if test="source!=null and source!=''"> AND paysource IN (${source}) </if>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+		GROUP BY merid
+	</select>
+	
+	<!-- origin 根据表（充电记录表）查询充电设备上传的窗口投币、离线刷卡消费、在线刷卡消费的电量与时间信息 -->
+	<select id="chargeConsumeData" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merchantid AS merid,
+  			   SUM(consume_quantity) as consumequantity, 
+  			   SUM(consume_time) AS consumetime,
+			   SUM(CASE WHEN paytype = 5 THEN expenditure ELSE 0 END) AS windowpulsemoney,
+			   SUM(CASE WHEN paytype = 6 THEN expenditure ELSE 0 END) AS offcardmoney,
+			   SUM(CASE WHEN paytype = 7 THEN expenditure ELSE 0 END) AS oncardmoney
+		FROM hd_chargerecord
+		<where>
+			<if test=" dealer != null and dealer != ''"> AND merchantid = #{dealer}</if>
+			<if test=" code!=null and code!=''"> AND equipmentnum = #{code} </if>
+			<if test=" startTime != null and startTime != ''"> AND begintime &gt;= #{startTime}</if>
+			<if test=" endTime != null and endTime != ''"> AND begintime &lt;= #{endTime}</if>
+		</where>
+		GROUP BY merchantid
+	</select>
+	
+	<!-- 根据条件汇总脉冲上传记录信息  -->
+	<select id="incoinsNumStatistics" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merchantid AS merid, COUNT(1) AS incoins, SUM(money) AS incoinsmoney 
+		FROM hd_incoins 
+		WHERE handletype = 3 AND `status` = 1
+		<if test=" dealer!=null and dealer!=''"> and merchantid = #{dealer}</if>
+		<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+		<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt;= #{endTime}</if>
+		GROUP BY merchantid
+	</select>
+	
+	<!-- 充值、设备收益分开计算商户汇总表字段信息  -->
+	<sql id="DealerIncome_Column_Param">
+		merid,type,totalordernum,incomemoney,returnmoney,deviceincome,topupincome,wechatordernum,
+		wechatincome,wechatreturnmoney,alipayordernum,alipayincome,alipayreturnmoney,unionpayordernum,
+		unionpayincome,unionpayreturnmoney,incoinsmoney,oncardmoney,offcardmoney,windowpulsemoney,
+		consumetotaltime,consumetotalquantity,createtime,detail,remark
+	</sql>
+	
+	<!-- 充值、设备收益分开计算商户汇总表插入数据信息   -->
+	<insert id="insertionDealerIncome" parameterType="java.util.List">  
+	    INSERT IGNORE INTO hd_collectdealerincome (<include refid="DealerIncome_Column_Param"/>)
+		VALUES 
+		<foreach collection="list" index="index" item="item" separator=",">
+        (#{item.merid}, #{item.type}, #{item.totalordernum}, #{item.incomemoney}, #{item.returnmoney},
+        #{item.deviceincome}, #{item.topupincome}, #{item.wechatordernum}, #{item.wechatincome}, #{item.wechatreturnmoney}, 
+        #{item.alipayordernum}, #{item.alipayincome}, #{item.alipayreturnmoney}, #{item.unionpayordernum}, #{item.unionpayincome}, 
+        #{item.unionpayreturnmoney}, #{item.incoinsmoney}, #{item.oncardmoney}, #{item.offcardmoney}, #{item.windowpulsemoney}, 
+        #{item.consumetotaltime}, #{item.consumetotalquantity}, #{item.createtime}, #{item.detail}, #{item.remark})
+    	</foreach>
+	</insert> 
+	<!-- *** 请暂时不要在*号范围内添加   thanks ***********************************************************   -->
+	
+	
+	
+	
+</mapper>

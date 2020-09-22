@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.AdvanceMoneyDao">
+	
+	<sql id="AdvanceMoney_Column_List">
+		id, merid, uid, money, update_time
+	</sql>
+	<insert id="insertAdvanceMoney" parameterType="com.hedong.hedongwx.entity.AdvanceMoney">
+		insert into hd_advancemoney (merid, uid, money, update_time)
+		values (#{merid}, #{uid}, #{money}, Now())
+	</insert>
+	<update id="updateAdvanceById">
+		UPDATE hd_advancemoney SET money = #{money}, update_time = Now() WHERE  uid = #{uid};
+	</update>
+	<select id="selectAdvanceById" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.AdvanceMoney">
+		SELECT <include refid="AdvanceMoney_Column_List" /> FROM hd_advancemoney 
+		<where>
+			<if test="soure==0"> AND merid = #{uid} </if>
+			<if test="soure==1"> AND uid = #{uid} </if>
+		</where>
+	</select>
+	<!--无用  -->
+	<select id="advanceMoneyByParam" parameterType="com.hedong.hedongwx.entity.Parameter" resultType="java.util.Map">
+		SELECT a.*,u.id as uid,u.username,u.realname,u.phone_num 
+		FROM hd_advancemoney a LEFT JOIN hd_user u ON a.uid = u.id 
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND a.merid = #{dealer} </if>
+			<if test="username!=null and username!=''"> AND u.username = #{username} </if>
+			<if test="startTime!=null and startTime!=''"> AND a.update_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND a.update_time &lt;= #{endTime} </if>
+		</where>
+		 ORDER BY a.update_time DESC
+		<if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	
+	<select id="advanceMoneySum" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT SUM(money) AS advance FROM hd_advancemoney <!-- WHERE merid = #{uid}; -->
+		<where>
+			<if test="soure==0"> AND merid = #{uid} </if>
+			<if test="soure==1"> AND uid = #{uid} </if>
+		</where>
+	</select>
+	
+	<select id="selectMoneyByUid" resultType="java.lang.Double">
+		select money from hd_advancemoney where uid = #{uid}
+	</select>
+	
+</mapper>
+
+

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.AllPortStatusDao">
+	
+	<select id="findPortStatusByEquipmentnumAndPort" resultType="com.hedong.hedongwx.entity.AllPortStatus">
+		select *,COUNT(DISTINCT equipmentnum,`port`) from hd_allportstatus where equipmentnum = #{equipmentnum} and port = #{port}
+	</select>
+	
+	<select id="findPortStatusListByEquipmentnum" resultType="com.hedong.hedongwx.entity.AllPortStatus">
+		select id,equipmentnum,port,port_status,time,power,elec,surp,update_time,port_v,port_a
+		 from hd_allportstatus where equipmentnum = #{equipmentnum} order by port limit #{neednum}
+	</select>
+	
+	<select id="findPortStatusValListByEquipmentnum" resultType="java.lang.Integer">
+		select port_status from hd_allportstatus where equipmentnum = #{equipmentnum} limit #{neednum}
+	</select>
+	
+	<update id="updateAllPortStatus" parameterType="com.hedong.hedongwx.entity.AllPortStatus">
+		update hd_allportstatus
+		<set>
+			<if test="portStatus != null">
+				port_status = #{portStatus},
+			</if>
+			<if test="time != null">
+				time = #{time},
+			</if>
+			<if test="power != null">
+				power = #{power},
+			</if>
+			<if test="elec != null">
+				elec = #{elec},
+			</if>
+				update_time = now()
+		</set>
+		where 1 = 1
+		<if test="equipmentnum != null">
+			and equipmentnum = #{equipmentnum}
+		</if>
+		<if test="port != null">
+			and port = #{port}
+		</if>
+	</update>
+	
+	<insert id="insertPortStatus" parameterType="com.hedong.hedongwx.entity.Area">
+		insert into hd_allportstatus (equipmentnum,port,port_status,time,power,elec,update_time)
+		values (#{equipmentnum},#{port},#{portStatus},#{time},#{power},#{elec},now())
+	</insert>
+	
+</mapper>

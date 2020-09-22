@@ -1,0 +1,61 @@
+body{ color:#333; font-size:13px !important;}
+input,select,textarea{color:#333;}
+.bg{ width:100%; height:100%; position:absolute; background:url(../images/bg.jpg) }
+.panel{background:#fff;}
+
+ul,li{ list-style-type:none;}
+/******* 顶部导航栏  *********************/
+.header{height:70px; overflow:hidden; background:url(../images/bg.jpg) no-repeat 0 -1000px; }
+.logo{ float:left; color:#FFF;}    
+.logo h1{margin-top: 15px;}
+.logo img{ float:left; margin-right:10px; margin-left: 25px;margin-top: -10px; height: 60px;}
+
+/********左菜单******/
+
+.leftnav{width:180px; height:100%; position:fixed; top:70px; left:0px;border: solid 1px #ccebf7;}
+.leftnav ul { border-top:1px solid #b5cfd9; padding:5px 0; opacity:1;}
+.leftnav ul li{ list-style-type:none; }
+.leftnav ul li a{ display:block;padding-left:30px;line-height:20px; }
+.leftnav ul li span{ margin-right:8px;}
+
+/*** 搜索***/
+#startTime,#endTime{ width: 160px;}
+.search li input,select{color: #333; width: 120px;line-height: 20px;border-radius: 5px; display: inline-block;text-align: center;}
+.search select{width: 100px; height: 28px;text-align: center;}
+.search .frame1{width: 80px;}
+.search .frame2{width: 100px;}
+.search .frame3{width: 120px;}
+.search .frame4{width: 140px;}
+.search .frame5{width: 160px;}
+.search .frame6{width: 180px;}
+.search .frame7{width: 200px;}
+.search .frame8{width: 220px;}
+.search .frame9{width: 240px;}
+/*** 内容 ***********/
+.admin{background:#fff;position:fixed;border-left:solid 1px #b5cfd9;right:0;bottom:0;top:110px;left:180px; padding:15px; padding-right:0px; padding-bottom:0px; overflow:auto; border-top:1px solid #b5cfd9; padding-right:15px;}
+
+/*** 内容上菜单 ************************/
+.bread{ margin-left:190px; margin-top:4px;}
+.bread li{ float:left;}
+/* .label label{ font-weight:normal; color:#333;} */
+
+/*** 内容中table表 ************************/
+.table th{ text-align:center;}
+.table td {text-align:center; vertical-align:middle;}
+.table>tbody>tr>td, .table>tbody>tr>th{border: 1px solid #c3b9b9;}
+.table>thead:first-child>tr:first-child>th {border: 2px solid #c3b9b9;}
+/****** 搜素  ********************/
+.search{ overflow:hidden;}
+.search li{float:left; margin-right:15px; line-height:35px;}
+
+
+form .form-group:last-child{padding-bottom:0;}
+.passcode{position:absolute;right:0;bottom:0;height:32px;margin:1px;border-left:solid 1px #ddd;text-align:center;line-height:32px;border-radius:0 4px 4px 0;}
+.field-icon-right .icon{ bottom:0px; top:auto}
+.loginbox { background:url(../images/tmbg.png); border:0px;}
+.form-group{ margin-bottom:12px;}
+.button{ padding:10px 15px;}
+.form-group .field .file{ background:#FFF; border:0px;}
+.form-group .field input[type=radio]{ vertical-align:middle; line-height:35px; margin-right:5px;}
+.form-group .radio { line-height:35px;}
+

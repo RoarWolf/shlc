@@ -1,0 +1,842 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.EquipmentDao">
+
+	<sql id="Equipment_Column_List">
+		code, ccid, imei, mainid, csq, ipaddr, bindtype, state, hardversion,
+		hardversionnum, softversionnum, main_type, main_hardver, main_softver, location, lon,
+		lat, create_time,regist_time, expiration_time, tempid, aid, several, remark,
+		device_type,live_time,device_id_ios,device_id_android,
+		total_online_earn,now_online_earn,total_coins_earn,
+		now_coins_earn
+	</sql>
+	
+	<select id="selfAreaEquipInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT e.*,a.address AS areaaddress,a.`name` AS areaname,u.username AS dealernick,u.realname AS dealername,u.phone_num AS dealerphne 
+		FROM hd_equipment e LEFT JOIN hd_area a ON e.aid = a.id LEFT JOIN hd_user_equipment ue ON e.`code` = ue.equipment_code LEFT JOIN hd_user u ON ue.user_id = u.id
+		<where>
+			<if test="sort != null"> AND e.aid = #{sort} </if>
+			<if test="code != null and code != ''"> AND e.code = #{code} </if>
+			<if test="paramete != null and paramete != ''"> AND e.hardversion = #{paramete} </if>
+			<if test="statement != null and statement != ''"> AND e.hardversion IN (${statement}) </if>
+			<if test="dealer != null and dealer != ''"> AND ue.user_id = #{dealer} </if>
+			<!-- <if test=" != null and  != ''"> AND  = #{}</if> -->
+		</where>
+			<if test="remark != null and remark != ''">ORDER BY ${remark}</if>
+	    <if test="startnumber!=null"> LIMIT #{startnumber},#{pages}; </if>
+	</select>
+	
+	<select id="selectEquipAreaInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT e.*,a.address AS areaaddress,a.`name` AS areaname,u.id AS dealid,u.username AS dealernick,u.realname AS dealername,u.phone_num AS dealerphne, u.servephone AS dealerservephone
+		FROM hd_equipment e LEFT JOIN hd_area a ON e.aid = a.id LEFT JOIN hd_user_equipment ue ON e.`code` = ue.equipment_code LEFT JOIN hd_user u ON ue.user_id = u.id
+		<where>
+			<if test="code != null and code != ''"> AND e.code = #{code}</if>
+			<!-- <if test=" != null"> AND  = #{}</if> -->
+		</where>
+	</select>
+
+	
+	
+	<!-- 查询用户绑定设备与用户作为合伙人的设备 -->
+	<select id="selectrelatedcode" resultType="java.util.Map">
+		 SELECT r.*,a.`name`,a.address FROM (
+			SELECT e.*,ue.user_id AS dealid from hd_equipment e LEFT JOIN hd_user_equipment ue ON e.`code` = ue.equipment_code  WHERE ue.user_id =  #{uid}
+			UNION
+			SELECT e.*, ue.user_id AS dealid from hd_equipment e LEFT JOIN hd_user_equipment ue ON e.`code` = ue.equipment_code LEFT JOIN hd_arearelevance ar ON e.aid = ar.aid
+			WHERE ar.partid =  #{uid} AND ar.type = 2
+		) r LEFT JOIN hd_area a on r.aid = a.id
+		<where>
+			<if test="state != null"> AND r.state = #{state}</if>
+			<if test="source==1"> AND r.code LIKE '%${parameter}%'</if>
+			<if test="source==2"> AND r.remark LIKE '%${parameter}%'</if>
+			<if test="source==3"> AND a.name LIKE '%${parameter}%'</if>
+		</where>
+		 ORDER BY a.`name` DESC,r.code ASC 
+		<if test="startnum != null and equnum != null"> limit #{startnum},#{equnum}</if>
+	</select>
+	
+	<select id="selectpartnercode" resultType="com.hedong.hedongwx.entity.Equipment">
+		<!-- SELECT * FROM hd_equipment e WHERE e.aid IN (SELECT a.id FROM hd_area a WHERE a.manid = #{manid}) -->
+		SELECT * from hd_equipment WHERE aid IN (SELECT aid FROM hd_arearelevance WHERE partid = #{manid} AND type = 2)
+	</select>
+	
+	<select id="selectEquDisRelAid">
+		SELECT * FROM hd_equipment e LEFT JOIN hd_user_equipment ue ON e.`code` = ue.equipment_code WHERE ue.user_id = #{uid} AND e.aid IS NULL;
+	</select>
+	<select id="selectEquCountByAid" resultType="java.lang.String">
+		select COUNT(*) from hd_equipment where aid = #{aid}
+	</select>
+	
+	<select id="selectdisequ" resultType="java.lang.String">
+		SELECT COUNT(distinct user_id) AS validdealer FROM hd_user_equipment 
+	</select>
+	
+	<select id="selectEquipmentParameter"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  e.*,u.username,u.phone_num,a.address,t.user_id AS uid 
+		FROM hd_equipment e LEFT JOIN hd_user_equipment t ON e.`code` = t.equipment_code LEFT JOIN  hd_user u ON t.user_id = u.id LEFT JOIN
+		hd_area a ON e.aid = a.id
+	    <where> 
+	      <if test=" code!=null and code!=''"> and e.`code` LIKE '%${code}%' </if>
+	      <if test=" statement!=null and statement!=''"> and e.ccid LIKE '%${statement}%' </if>
+	      <if test=" paramete!=null and paramete!=''"> and e.imei LIKE '%${paramete}%' </if>
+	      <if test=" status!=null and status!='' and status!=-1"> and e.state = #{status}</if>
+	      <if test=" type!=null and type!='' and type!=-1"> and e.bindtype = #{type}</if>
+	      <if test=" source!=null and source!=''"> and e.hardversion = #{source}</if>
+	      <if test=" state!=null and state!=''"> and e.softversionnum = #{state}</if>
+	      <if test=" sort!=null and sort!=''"> and e.aid = #{sort}</if>
+	      <if test=" dealer!=null and dealer!=''"> and t.user_id = #{dealer}</if>
+	      <if test=" nickname!=null and nickname!=''"> and u.username LIKE '%${nickname}%'</if>
+	      <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%'</if>
+	    </where>
+        <if test=" sort==0"> ORDER BY e.csq  ASC </if>
+        <if test=" sort==1"> ORDER BY e.csq DESC </if>
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	 
+	<select id="selectEquipment" resultType="com.hedong.hedongwx.entity.Equipment">
+		SELECT  e.*,u.username,u.phone_num,a.address
+		FROM hd_equipment e LEFT JOIN hd_user_equipment t ON e.`code` = t.equipment_code LEFT JOIN  hd_user u ON t.user_id = u.id LEFT JOIN
+		hd_area a ON e.aid = a.id
+	    <where> 
+	      <if test=" code!=null and  code!=''"> and e.`code` LIKE '%${code}%' </if>
+	      <if test=" ccid!=null and ccid!=''"> and e.ccid LIKE '%${ccid}%' </if>
+	      <if test=" imei!=null and imei!=''"> and e.imei LIKE '%${imei}%' </if>
+	      <if test=" state!=null"> and e.state = #{state}</if>
+	      <if test=" aid!=null and aid!=''"> and e.aid = #{aid}</if>
+	      <if test=" bindtype!=null"> and e.bindtype = #{bindtype}</if>
+	      <if test=" hardversion!=null and hardversion!=''"> and e.hardversion = #{hardversion}</if>
+	      <if test=" softversionnum!=null and softversionnum!=''"> and e.softversionnum = #{softversionnum}</if>
+	      <if test=" username!=null and username!=''"> and u.username LIKE '%${username}%'</if>
+	      <if test=" phoneNum!=null and phoneNum!=''"> and u.phone_num LIKE '%${phoneNum}%'</if>
+	    </where>
+        <if test=" csq==0"> ORDER BY e.csq  ASC </if>
+        <if test=" csq==1"> ORDER BY e.csq DESC </if>
+	    <if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	
+	<select id="getEquipmentList" resultType="com.hedong.hedongwx.entity.Equipment">
+		select
+		<include refid="Equipment_Column_List" />
+		from hd_equipment
+	</select>
+	<select id="getEquipmentById" resultType="com.hedong.hedongwx.entity.Equipment">
+		select
+		<include refid="Equipment_Column_List" />
+		from hd_equipment
+		where code = #{code,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getEquipmentAndAreaById" resultType="com.hedong.hedongwx.entity.Equipment">
+		SELECT e.*,a.`name`,a.address FROM
+		hd_equipment e
+		LEFT JOIN hd_area a on e.aid = a.id
+		where code = #{code,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findAll" resultType="com.hedong.hedongwx.entity.Equipment">
+		select
+		<include refid="Equipment_Column_List" />
+		from hd_equipment
+		limit #{startIndex},#{pageSize}
+	</select>
+	
+	<select id="selectEqulistByAid" resultType="com.hedong.hedongwx.entity.Equipment">
+		select
+		<include refid="Equipment_Column_List" />
+		from hd_equipment where aid = #{aid}
+	</select>
+	
+	<select id="selectUnbindEqulist" resultType="com.hedong.hedongwx.entity.Equipment">
+		SELECT
+		<include refid="Equipment_Column_List" />
+		from hd_equipment WHERE aid = 0 and `code` IN (select equipment_code from hd_user_equipment where user_id = #{uid})
+	</select>
+	
+	<select id="selectEquListByUidAndBindtype" resultType="com.hedong.hedongwx.entity.Equipment">
+		SELECT
+		e.*,a.name,a.address
+		from hd_equipment e LEFT JOIN hd_area a on e.aid = a.id WHERE `code` IN (select equipment_code from hd_user_equipment where user_id = #{uid})
+		<if test="state != null"> AND state = #{state}</if>
+		<if test="source==1"> AND e.code LIKE '%${parameter}%'</if>
+		<if test="source==2"> AND e.remark LIKE '%${parameter}%'</if>
+		<if test="source==3"> AND a.name LIKE '%${parameter}%'</if>
+		<if test="startnum != null and equnum != null"> limit #{startnum},#{equnum}</if>
+	</select>
+	
+	<select id="selectEquListByUidAndBindtypeNum" resultType="java.lang.Integer">
+		SELECT
+		count(e.code)
+		from hd_equipment e LEFT JOIN hd_area a on e.aid = a.id WHERE `code` IN (select equipment_code from hd_user_equipment where user_id = #{uid})
+		<if test="state != null">
+			and state = #{state}
+		</if>
+	</select>
+	
+	<delete id="deleteEquipmentById">
+		delete from hd_equipment where code = #{code,jdbcType=VARCHAR}
+	</delete>
+	<insert id="addEquipment" parameterType="com.hedong.hedongwx.entity.Equipment">
+		insert into hd_equipment
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="code != null">
+				code,
+			</if>
+			<if test="ccid != null">
+				ccid,
+			</if>
+			<if test="imei != null">
+				imei,
+			</if>
+			<if test="csq != null">
+				csq,
+			</if>
+			<if test="ipaddr != null">
+				ipaddr,
+			</if>
+			<if test="bindtype != null">
+				bindtype,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="hardversion != null">
+				hardversion,
+			</if>
+			<if test="hardversionnum != null">
+				hardversionnum,
+			</if>
+			<if test="softversionnum != null">
+				softversionnum,
+			</if>
+			<if test="several != null">
+				several,
+			</if>
+			<if test="aid != null">
+				aid,
+			</if>
+			<if test="tempid != null">
+				tempid,
+			</if>
+			<if test="location != null">
+				location,
+			</if>
+			<if test="lon != null">
+				lon,
+			</if>
+			<if test="lat != null">
+				lat,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="registTime != null">
+				regist_time,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="deviceType != null">
+				device_type,
+			</if>
+			<if test="deviceIdIos != null">
+				device_id_ios,
+			</if>
+			<if test="deviceIdAndroid != null">
+				device_id_android,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="ccid != null">
+				#{ccid,jdbcType=VARCHAR},
+			</if>
+			<if test="imei != null">
+				#{imei,jdbcType=VARCHAR},
+			</if>
+			<if test="csq != null">
+				#{csq,jdbcType=VARCHAR},
+			</if>
+			<if test="ipaddr != null">
+				#{ipaddr,jdbcType=VARCHAR},
+			</if>
+			<if test="bindtype != null">
+				#{bindtype,jdbcType=TINYINT},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=TINYINT},
+			</if>
+			<if test="hardversion != null">
+				#{hardversion,jdbcType=VARCHAR},
+			</if>
+			<if test="hardversionnum != null">
+				#{hardversionnum,jdbcType=VARCHAR},
+			</if>
+			<if test="softversionnum != null">
+				#{softversionnum,jdbcType=VARCHAR},
+			</if>
+			<if test="several != null">
+				#{several,jdbcType=INTEGER},
+			</if>
+			<if test="aid != null">
+				#{aid,jdbcType=INTEGER},
+			</if>
+			<if test="tempid != null">
+				#{tempid,jdbcType=INTEGER},
+			</if>
+			<if test="location != null">
+				#{location,jdbcType=VARCHAR},
+			</if>
+			<if test="lon != null">
+				#{lon,jdbcType=DECIMAL},
+			</if>
+			<if test="lat != null">
+				#{lat,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="registTime != null">
+				#{registTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceType != null">
+				#{deviceType,jdbcType=INTEGER},
+			</if>
+			<if test="deviceIdIos != null">
+				#{deviceIdIos,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceIdAndroid != null">
+				#{deviceIdAndroid,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<insert id="addBluetoothDevice" parameterType="com.hedong.hedongwx.entity.Equipment">
+		insert into hd_equipment (code, create_time, device_type, device_id)
+		values (#{code},now(),2,#{deviceId})
+	</insert>
+	<update id="updateTempidByEquipmentCode">
+		update hd_equipment
+		set tempid = #{tempid}
+		where code =
+		#{code,jdbcType=VARCHAR}
+	</update>
+	<update id="updataBindtypeByEquipmentCode">
+		update hd_equipment
+		set bindtype = #{bindtype}
+		where code =
+		#{code,jdbcType=VARCHAR}
+	</update>
+	<update id="updateEquipment" parameterType="com.hedong.hedongwx.entity.Equipment">
+		update hd_equipment
+		<set>
+			<if test="ccid != null">
+				ccid = #{ccid,jdbcType=VARCHAR},
+			</if>
+			<if test="imei != null">
+				imei = #{imei,jdbcType=VARCHAR},
+			</if>
+			<if test="csq != null">
+				csq = #{csq,jdbcType=VARCHAR},
+			</if>
+			<if test="ipaddr != null">
+				ipaddr = #{ipaddr,jdbcType=VARCHAR},
+			</if>
+			<if test="bindtype != null">
+				bindtype = #{bindtype,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=TINYINT},
+			</if>
+			<if test="hardversion != null">
+				hardversion = #{hardversion,jdbcType=VARCHAR},
+			</if>
+			<if test="hardversionnum != null">
+				hardversionnum = #{hardversionnum,jdbcType=VARCHAR},
+			</if>
+			<if test="softversionnum != null">
+				softversionnum = #{softversionnum,jdbcType=VARCHAR},
+			</if>
+			<if test="location != null">
+				location = #{location,jdbcType=VARCHAR},
+			</if>
+			<if test="lon != null">
+				lon = #{lon,jdbcType=DECIMAL},
+			</if>
+			<if test="lat != null">
+				lat = #{lat,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="registTime != null">
+				regist_time = #{registTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tempid != null">
+				tempid = #{tempid,jdbcType=INTEGER},
+			</if>
+			<if test="aid != null">
+				aid = #{aid,jdbcType=INTEGER},
+			</if>
+			<if test="several != null">
+				several = #{several,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="liveTime != null">
+				live_time = #{liveTime,jdbcType=INTEGER},
+			</if>
+			<if test="deviceType != null">
+				device_type = #{deviceType,jdbcType=INTEGER},
+			</if>
+			<if test="deviceIdIos != null">
+				device_id_ios = #{deviceIdIos,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceIdAndroid != null">
+				device_id_android = #{deviceIdAndroid,jdbcType=VARCHAR},
+			</if>
+			<if test="totalOnlineEarn != null">
+				total_online_earn = #{totalOnlineEarn,jdbcType=DOUBLE},
+			</if>
+			<if test="nowOnlineEarn != null">
+				now_online_earn = #{nowOnlineEarn,jdbcType=DOUBLE},
+			</if>
+			<if test="totalCoinsEarn != null">
+				total_coins_earn = #{totalCoinsEarn,jdbcType=INTEGER},
+			</if>
+			<if test="nowCoinsEarn != null">
+				now_coins_earn = #{nowCoinsEarn,jdbcType=INTEGER},
+			</if>
+			<if test="expirationTime != null">
+				expiration_time = #{expirationTime,jdbcType=INTEGER},
+			</if>
+		</set>
+		where code = #{code,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateEquipmentRemark">
+		update hd_equipment set remark = #{remark} where code = #{code}
+	</update>
+	
+	<update id="updateEquHardversionByCode">
+		update hd_equipment set hardversion = #{hardversion} where code = #{code}
+	</update>
+	
+	<update id="updateEquAidByAid">
+		update hd_equipment set aid = 0 where aid = #{aid}
+	</update>
+	
+	<update id="updateEquLiveTimeByCode" parameterType="com.hedong.hedongwx.entity.Equipment">
+		update hd_equipment set live_time = #{liveTime} where code = #{code}
+	</update>
+	
+	<!-- 查询用户可用商户关联管理员下的所有小区的所有设备编号 -->
+	<select id="selectCodeByAreaManNotNull" resultType="java.lang.String">
+		SELECT `code` from hd_equipment WHERE aid in (
+		SELECT id from hd_area WHERE merid = #{merid} and manid = #{manid})
+	</select>
+	
+	<!-- 查询用户可用商户所有小区下所有无管理员的设备以及未绑定小区的设备编号 -->
+	<select id="selectCodeByAreaManIsNull" resultType="java.lang.String">
+		SELECT `code` from hd_equipment WHERE aid in (
+		SELECT id from hd_area WHERE (merid = #{merid} and (manid = 0 or manid is null))) or (aid = 0 and `code` in (
+					SELECT `code` from hd_user_equipment where user_id = 1))
+	</select>
+	
+	<select id="selectEndDeviceNum" parameterType="java.lang.Integer" resultType="java.lang.String">
+		select code from hd_equipment 
+		<if test="deviceType != null">
+			where device_type = #{deviceType}
+		</if>
+		 order by code desc limit 1
+	</select>
+	
+	<select id="selectBluetoothMac" resultType="com.hedong.hedongwx.entity.Equipment">
+		select device_id_ios,device_id_android from hd_equipment where code = #{code}
+	</select>
+	
+	<select id="selectBluetoothExist" resultType="com.hedong.hedongwx.entity.Equipment">
+		select code,device_id_ios,device_id_android from hd_equipment where device_id_android = #{deviceId}
+	</select>
+	
+	<select id="selectLast24Hours" resultType="java.lang.Integer">
+		select count(`code`) as codenum from hd_equipment where device_type = 2 and live_time >=  now() - interval 24 hour;
+	</select>
+	
+	<select id="selectLastMonth" resultType="java.lang.Integer">
+		select count(`code`) as codenum from hd_equipment where device_type = 2 and live_time >=  now() - interval 30 day;
+	</select>
+	
+	<update id="updateEquEarn">
+		update hd_equipment set
+		<if test="type == 1">
+			<if test="money != null">
+				total_online_earn = total_online_earn + #{money},
+				now_online_earn = now_online_earn + #{money}
+			</if>
+		</if>
+		<if test="type == 0">
+			<if test="money != null">
+				total_online_earn = total_online_earn - #{money},
+				now_online_earn = now_online_earn - #{money}
+			</if>
+		</if>
+		where code = #{code}
+	</update>
+	
+	<update id="everydayResetEquEarn">
+		update hd_equipment set
+		now_online_earn = 0,
+		now_coins_earn = 0
+	</update>
+	
+	<!-- ************************************************************************************************  -->
+	<select id="selectEquiTestSeveral" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.Equipment">
+		SELECT * FROM hd_equipment WHERE code = #{code,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectEqucode" parameterType="com.hedong.hedongwx.entity.Equipment" resultType="com.hedong.hedongwx.entity.Equipment">
+		SELECT * FROM hd_equipment
+		<where>
+			<if test="tempid!=null"> AND tempid = #{tempid,jdbcType=INTEGER}</if>
+		</where>
+	</select>
+	
+	<!-- 查询设备列表 (跳转设备列表) -->
+	<select id="selectEquList"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  e.*,u.id AS merid,u.username,u.phone_num,a.name,a.address
+		FROM hd_equipment e LEFT JOIN hd_user_equipment t ON e.`code` = t.equipment_code LEFT JOIN  hd_user u ON t.user_id = u.id LEFT JOIN
+		hd_area a ON e.aid = a.id
+	    <where> 
+	        <if test=" uid!=null and uid!=''"> AND t.user_id = #{uid} </if>
+			<if test=" code!=null and  code!=''"> AND e.`code` LIKE '%${code}%' </if>
+			<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+			<if test=" username!=null and  username!=''"> AND u.realname LIKE '%${username}%' </if>
+			<if test=" phone!=null and  phone!=''"> AND u.phone_num LIKE '%#{phone}%' </if>
+			<if test=" sort!=null and  sort!=''"> AND e.imei LIKE '%${sort}%' </if>
+		    <if test=" state!=null and  state!=''"> AND e.ccid LIKE '%${state}%' </if>
+		    <if test=" statement!=null and statement!=''"> AND  e.hardversion = #{statement}</if>
+		    <if test=" number!=null and number!=''"> AND  e.softversionnum = #{number}</if>
+		    <if test=" order!=null and order!=''"> AND  e.hardversionnum = #{order}</if>
+			<if test=" type!=null and  type!='' and type!=-1"> AND e.bindtype = #{type} </if>
+	        <if test=" status!=null and status!='' and status!=-1"> AND e.state = #{status}</if>
+	        <if test=" rank!=null and rank!=''"> AND e.several IN (${rank}) </if>
+	        <if test=" source!=null and source!=''"> AND e.aid = #{source} </if>
+		    <if test=" paramete!=null and paramete!=''"> AND a.name LIKE '%${paramete}%' </if>
+		    <if test=" deviceType!=null and deviceType!=''"> AND e.device_type = #{deviceType} </if>
+	    </where>
+	    <if test=" remark!=null and remark!=''"> ORDER BY ${remark} </if>
+        <!-- <if test=" remark==0"> ORDER BY e.csq  ASC </if>
+        <if test=" remark==1"> ORDER BY e.csq DESC </if> -->
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- *** 设备端口号操作  **** -->
+	<select id="slelecToPortINfo" resultType="String">
+		SELECT DISTINCT(port) FROM hd_equipmentport WHERE equip = #{equip} AND merid =#{merid}
+	</select>
+	
+	<select id="slelectPortInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT * FROM hd_equipmentport p LEFT JOIN hd_user u ON p.uid = u.id
+		<where>
+		  <if test=" rank != null"> AND p.id = #{rank} </if>
+		  <if test=" code != null"> AND p.equip = #{code} </if>
+		  <if test=" uid != null"> AND p.uid = #{uid} </if>
+		  <if test=" dealer != null"> AND p.merid = #{dealer} </if>
+		  <if test=" sort != null"> AND p.port = #{sort} </if>
+		</where>
+	</select>
+	
+	<select id="slelectPortInfoList" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT * FROM hd_equipmentport p LEFT JOIN hd_user u ON p.uid = u.id
+		<where>
+		  <if test=" rank != null"> AND p.id = #{rank} </if>
+		  <if test=" code != null"> AND p.equip = #{code} </if>
+		  <if test=" uid != null"> AND p.uid = #{uid} </if>
+		  <if test=" dealer != null"> AND p.merid = #{dealer} </if>
+		  <if test=" sort != null"> AND p.port = #{sort} </if>
+		</where>
+	</select>
+	
+	<insert id="insertPortdate">
+		INSERT INTO hd_equipmentport (uid, merid, equip, port, creat_time)
+		values (#{uid}, #{merid}, #{equip}, #{port}, Now())
+	</insert>
+	  
+	<update id="updatePortdate" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_equipmentport
+		<set>
+		  <if test=" code != null"> AND equip = #{ code,jdbcType=INTEGER}, </if>
+		  <if test=" uid != null"> AND uid = #{ uid,jdbcType=INTEGER}, </if>
+		  <if test=" sort != null"> AND port = #{ sort,jdbcType=INTEGER}, </if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updatePortidfo" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_equipmentport SET uid = #{uid} WHERE equip = #{equip} AND port = #{port}
+	</update>
+	
+	<delete id="deletePortdate" parameterType="int">
+		DELETE FROM hd_equipmentport  WHERE id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="agentEquipCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT SUM(total_online_earn) AS totalmoney,SUM(total_online_earn) AS totalonearn,SUM(total_coins_earn) AS totalcoinsearn,
+			   SUM(now_online_earn) AS nowonearn,SUM(now_coins_earn) AS nowcoinsearn
+		FROM hd_equipment e LEFT JOIN hd_user_equipment ue ON e.`code` = ue.equipment_code 
+		<where>
+			<if test=" code!=null and code!=''"> AND e.code = #{code} </if>
+			<if test=" uid!=null and uid!=''"> AND ue.user_id = #{uid} </if>
+			<if test=" source!=null and source!=''"> AND e.aid = #{source} </if>
+		</where>
+	</select>
+	<!--设备的到期时间增加一年 -->
+	<update id="updateExpirationTime">
+		update hd_equipment 
+		set expiration_time=DATE_ADD(expiration_time,INTERVAL 1 YEAR)
+		WHERE `code`=#{code}
+	</update>
+	<!-- 设备到期提醒 -->
+	<select id="equipmetExpireRemind" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		select u.id,u.username,u.realname,ue.equipment_code,e.expiration_time from hd_user_equipment ue
+		LEFT join hd_equipment e
+		on ue.equipment_code=e.code
+		LEFT join hd_user u
+		on ue.user_id=u.id
+		<where>
+			<if test=" uid!=null and uid!=''"> AND ue.user_id = #{uid} </if>
+			AND e.expiration_time IS not NULL
+		</where>
+	</select>
+	<!-- 展示商家未绑定得设备并按到期时间排序 -->
+	<select id="selectUnbindEqulistOrderyByExpire" resultType="com.hedong.hedongwx.entity.Equipment">
+		SELECT
+		<include refid="Equipment_Column_List" />
+		from hd_equipment WHERE aid = 0 and `code` IN (select equipment_code from hd_user_equipment where user_id = #{uid})
+		ORDER BY expiration_time ASC
+	</select>
+	<!-- 展示小下得设备并按设备得到期时间排序 -->
+	<select id="selectAreaEqulistOrderyByExpire" resultType="com.hedong.hedongwx.entity.Equipment">
+		select
+		<include refid="Equipment_Column_List" />
+		from hd_equipment where aid = #{aid}
+		ORDER BY expiration_time ASC
+	</select>
+	<!-- 根据设备号将设备的IMEI设置为null -->
+	<update id="deleteEquipmentIMEIByCode" parameterType="java.lang.String">
+		UPDATE hd_equipment SET imei=NULL WHERE code = #{code}
+	</update>
+	<!-- 超级管理员定制设备号 -->
+	<update id="customizationCode" parameterType="java.lang.String">
+		UPDATE hd_equipment SET code=#{newCode} WHERE code=#{oldCode}
+	</update>
+	<!-- =======================PC端首页================================== -->
+	<!--1-PC端首页设备数据-->
+	<select id="homePageEquip" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT 
+		SUM(CASE WHEN `code` THEN 1 ELSE 0 END) AS equipmentNum,
+		SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) AS onlineNum,
+		SUM(CASE WHEN bindtype=1 THEN 1 ELSE 0 END) AS bingedNum
+		FROM hd_equipment e
+		LEFT JOIN hd_user_equipment ue
+		ON e.`code`= ue.equipment_code
+		<where>
+			<if test="merId != null">
+				and ue.user_id=#{merId}
+			</if>
+		</where>
+	</select>
+	<!--2-PC端首页用户数据-->
+	<select id="homePageUser" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT *  FROM
+			<if test="merId != null">
+			(
+				SELECT COUNT(*) AS userNum FROM hd_user WHERE merid=#{merId}
+			)a,
+			(
+				SELECT earnings AS earn,1 AS merNum FROM hd_user WHERE id=#{merId}
+			)b
+			</if>
+			<if test="merId == null">
+			(
+				SELECT 
+				COUNT(*)AS userNum,
+				SUM(CASE WHEN rank IN(0,2) THEN earnings ELSE 0 END) AS earn
+				FROM hd_user
+			)a,
+			(
+				SELECT COUNT(DISTINCT user_id) AS merNum
+				FROM hd_user_equipment
+			)b
+			</if>
+	</select>
+
+	<!---PC端首页缴费数据和提现数据-->
+	<select id="homePageFeescale" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT  a.feescaleEarns,
+				a.wxFeescale,
+				a.wallentFeescale,
+				b.totalExtract,
+				b.totalService,
+				b.extrac,
+				b.service
+		FROM(
+			SELECT 
+				SUM(CASE WHEN state=1 THEN price ELSE 0 END) AS feescaleEarns,
+				SUM(CASE WHEN paytype=4 and state=1 THEN price ELSE 0 END) AS wxFeescale,
+				SUM(CASE WHEN paytype!=4 and state=1 THEN price ELSE 0 END) AS wallentFeescale
+			FROM hd_fluxtoll
+			<where>
+				<if test="merId != null">
+					and merid=#{merId} 
+				</if>
+			</where>
+		)a,
+		(
+			SELECT 
+				SUM(CASE WHEN `status` != 2 THEN money ELSE 0 END) AS totalExtract,
+				SUM(CASE WHEN `status` != 2 THEN servicecharge ELSE 0 END ) AS totalService,
+				SUM(CASE WHEN `status` = 0 THEN money ELSE 0 END) AS extrac,
+				SUM(CASE WHEN `status` = 0 THEN servicecharge ELSE 0 END) AS service
+			FROM hd_withdraw
+			<where>
+				<if test="merId != null">
+					and user_id=#{merId}
+				</if>
+			</where>
+		)b
+	</select>
+	
+	<!--4-PC端首页今日收益数据 -->
+	<select id="homePageTodayEarn" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			SUM(CASE WHEN paysource != 8 AND paytype = 2 AND `status` = 1 THEN money ELSE 0 END) AS tWechatMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 3 AND `status` = 1 THEN money ELSE 0 END) AS tAlipayMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 4 AND `status` = 1 THEN money ELSE 0 END) AS tUnionPayMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS tRefWechatMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 3 AND `status` = 2 THEN money ELSE 0 END) AS tRefAlipayMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 4 AND `status` = 2 THEN money ELSE 0 END) AS tRefUnionPayMoney
+		FROM  hd_mer_detail
+		<where>
+			<if test="merId != null">
+				and merid=#{merId} and CURDATE()=DATE_FORMAT(create_time,'%Y-%m-%d')
+			</if>
+			<if test="merId == null">
+				and CURDATE()=DATE_FORMAT(create_time,'%Y-%m-%d')
+			</if>
+		</where>
+	</select>
+	<!--5-PC端首页总收益数据-->
+	<select id="homePageTotalEarn"  parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			SUM(CASE WHEN paysource != 8 AND paytype = 2 AND `status` = 1 THEN money ELSE 0 END) AS wxMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 3 AND `status` = 1 THEN money ELSE 0 END) AS aliMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 4 AND `status` = 1 THEN money ELSE 0 END) AS unionMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS rWxMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 3 AND `status` = 2 THEN money ELSE 0 END) AS rAliMoney,
+			SUM(CASE WHEN paysource != 8 AND paytype = 4 AND `status` = 2 THEN money ELSE 0 END) AS rUnionMoney
+		FROM  hd_mer_detail
+		<where>
+			<if test="merId != null">
+				and merid=#{merId}
+			</if>
+		</where>
+		<!-- SELECT a.twxmoney,
+			 a.talimoney,
+			 a.trwxmoney,
+			 a.tralimoney,
+			 b.wxmoney,
+			 b.alimoney,
+			 b.rwxmoney,
+			 b.ralimoney
+        FROM
+		(
+			SELECT
+					SUM(CASE WHEN paysource != 8 AND paytype = 2 AND `status` = 1 THEN money ELSE 0 END) AS twxmoney,
+					SUM(CASE WHEN paysource != 8 AND paytype = 3 AND `status` = 1 THEN money ELSE 0 END) AS talimoney,
+					SUM(CASE WHEN paysource != 8 AND paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS trwxmoney,
+					SUM(CASE WHEN paysource != 8 AND paytype = 3 AND `status` = 2 THEN money ELSE 0 END) AS tralimoney
+				FROM  hd_mer_detail WHERE CURDATE()=DATE_FORMAT(create_time,'%Y-%m-%d')
+		)a,
+		(
+			SELECT
+					SUM(CASE WHEN paysource != 8 AND paytype = 2 AND `status` = 1 THEN money ELSE 0 END) AS wxmoney,
+					SUM(CASE WHEN paysource != 8 AND paytype = 3 AND `status` = 1 THEN money ELSE 0 END) AS alimoney,
+					SUM(CASE WHEN paysource != 8 AND paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS rwxmoney,
+					SUM(CASE WHEN paysource != 8 AND paytype = 3 AND `status` = 2 THEN money ELSE 0 END) AS ralimoney
+				FROM  hd_mer_detail
+		)b -->
+	</select>
+	<!-- ===========================PC端首页=============================== -->
+	
+	<!-- *** 请暂时不要在*号范围内添加   thanks ***********************************************************   -->
+	<!-- ORIGGIN  ANEW AFRESH
+		 根据设备号查询设备信息与设备关联信息(如:设备绑定人员信息、设备所属小区信息)
+	 -->
+	<select id="getDeviceRelevanceInfo" parameterType="java.lang.String"  resultType="java.util.Map">
+		SELECT e.*, u.id AS merid, a.address AS areaaddress, a.`name` AS areaname, a.tempid AS waltempid, a.tempid2 AS onltempid, u.username AS mernick, 
+			   u.realname AS realname, u.openid, u.phone_num AS merphone, u.servephone AS merservephone, u.payhint, u.submer
+		FROM hd_equipment e LEFT JOIN hd_user_equipment ue ON e.`code` = ue.equipment_code LEFT JOIN hd_area a ON e.aid = a.id LEFT JOIN hd_user u ON ue.user_id = u.id
+		WHERE e.`code` = #{devicenum,jdbcType=VARCHAR}
+	</select>
+	<!-- *** 请暂时不要在*号范围内添加   thanks ***********************************************************   -->
+	<!-- 查询设备的位置信息 -->
+	<select id="seleLocationData" resultType="java.util.Map">
+		SELECT `code`,lon,lat
+		FROM hd_equipment
+		WHERE lon IS NOT NULL
+		AND lat IS NOT NULL; 
+	</select>
+	
+	<!-- origin 查询设备计数信息【 查询所有设备数量 的在线数量、领先数量、绑定数量、未绑定数量】 -->
+	<select id="inquireDeviceCount" parameterType="java.lang.Integer"  resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) AS online,
+			SUM(CASE WHEN state=0 THEN 1 ELSE 0 END) AS disline,
+			SUM(CASE WHEN bindtype=0 THEN 1 ELSE 0 END) AS disbinding,
+			SUM(CASE WHEN bindtype=1 THEN 1 ELSE 0 END) AS onbinding
+ 		FROM hd_equipment e LEFT JOIN hd_user_equipment ue ON e.`code`=ue.equipment_code
+ 		<where>
+		  <if test="userId != null"> AND ue.user_id = #{userId,jdbcType=INTEGER} </if>
+		</where>
+	</select>
+	
+	<!-- 分页查询符合条件的数据 -->
+	<select id="exportDeviceData" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  e.code,e.remark,e.expiration_time,e.create_time,
+		        e.imei,e.ccid,e.hardversion,e.softversionnum,
+		        e.hardversionnum,a.name,
+		        u.username,u.phone_num
+		FROM hd_equipment e 
+		LEFT JOIN hd_user_equipment t 
+		ON e.`code` = t.equipment_code 
+		LEFT JOIN  hd_user u 
+		ON t.user_id = u.id 
+		LEFT JOIN hd_area a 
+		ON e.aid = a.id
+	    <where> 
+	    	<if test=" code!=null and code!=''">AND e.`code`=#{code} </if>
+	    	<if test=" nickname!=null and nickname!=''">AND u.username LIKE '%${nickname}%' </if>
+			<if test=" phone!=null and phone!=''">AND u.phone_num = #{phone} </if>
+			<if test=" username!=null and username!=''">AND u.realname LIKE '%${username}%' </if>
+			<if test=" sort!=null and sort!=''">AND e.imei LIKE '%${sort}%' </if>
+		    <if test=" state!=null and state!=''">AND e.ccid LIKE '%${state}%' </if>
+		    <if test=" paramete!=null and paramete!=''"> AND a.name LIKE '%${paramete}%' </if>
+		    <if test=" statement!=null and statement!=''"> AND e.hardversion = #{statement}</if>
+		    <if test=" number!=null and number!=''">AND e.softversionnum = #{number}</if>
+		    <if test=" order!=null and order!=''">AND e.hardversionnum = #{order}</if>
+	        <if test=" status!=null and status!='' and status!=-1"> AND e.state = #{status}</if>
+	    </where>
+	   LIMIT #{startnumber},#{pages}
+	</select>
+	
+	
+	
+	
+	
+</mapper>

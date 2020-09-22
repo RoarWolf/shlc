@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.TradeRecordDao">
+	<sql id="TradeRecord_Column_List">
+		id, merid, manid, uid, ordernum, money, mermoney, manmoney, code, paysource, paytype, status, hardver, comment, create_time
+	</sql>
+	
+	<select id="getTraderecordList" parameterType="com.hedong.hedongwx.entity.TradeRecord" resultType="com.hedong.hedongwx.entity.TradeRecord">
+		SELECT <include refid="TradeRecord_Column_List" />
+		FROM hd_traderecord 
+		<where>
+			<if test=" id!=null and id!=''"> AND id = #{id} </if>
+			<if test=" merid!=null and merid!=''"> AND merid = #{merid} </if>
+			<if test=" manid!=null and manid!=''"> AND manid = #{manid} </if>
+			<if test=" uid!=null and uid!=''"> AND uid = #{uid} </if>
+			<if test=" ordernum!=null and ordernum!=''"> AND ordernum = #{ordernum} </if>
+			<if test=" money!=null and money!=''"> AND money = #{money} </if>
+			<if test=" mermoney!=null and mermoney!=''"> AND mermoney = #{mermoney} </if>
+			<if test=" manmoney!=null and manmoney!=''"> AND manmoney = #{manmoney} </if>
+			<if test=" code!=null and code!=''"> AND code = #{code} </if>
+			<if test=" paysource!=null and paysource!=''"> AND paysource = #{paysource} </if>
+			<if test=" paytype!=null and paytype!=''"> AND paytype = #{paytype} </if>
+			<if test=" status!=null and status!=''"> AND status = #{status} </if>
+			<if test=" hardver!=null and hardver!=''"> AND hardver = #{hardver} </if>
+		</where>
+	</select>
+	
+	<insert id="insertTradeRecordData" parameterType="com.hedong.hedongwx.entity.TradeRecord">
+	  INSERT INTO hd_traderecord
+	    <trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="merid != null"> merid, </if>
+	      <if test="manid != null"> manid, </if>
+	      <if test="uid != null">  uid, </if>
+	      <if test="ordernum != null"> ordernum, </if>
+	      <if test="money != null"> money, </if>
+	      <if test="mermoney != null"> mermoney,  </if>
+	      <if test="manmoney != null"> manmoney, </if>
+	      <if test="code != null"> code, </if>
+	      <if test="paysource != null"> paysource, </if>
+	      <if test="paytype != null"> paytype, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="hardver != null"> hardver, </if>
+	      <if test="comment != null"> comment, </if>
+	      <if test="createTime != null"> create_time, </if>
+	    </trim>
+	    <trim prefix=" VALUES (" suffix=")" suffixOverrides=",">
+	      <if test="merid != null">  #{merid,jdbcType=INTEGER}, </if>
+	      <if test="manid != null">  #{manid,jdbcType=INTEGER}, </if>
+	      <if test="uid != null">  #{uid,jdbcType=INTEGER}, </if>
+	      <if test="ordernum != null">  #{ordernum,jdbcType=VARCHAR}, </if>
+	      <if test="money != null">  #{money,jdbcType=DOUBLE}, </if>
+	      <if test="mermoney != null">  #{mermoney,jdbcType=DOUBLE}, </if>
+	      <if test="manmoney != null">  #{manmoney,jdbcType=DOUBLE}, </if>
+	      <if test="code != null">  #{code,jdbcType=VARCHAR}, </if>
+	      <if test="paysource != null">  #{paysource,jdbcType=INTEGER}, </if>
+	      <if test="paytype != null">  #{paytype,jdbcType=INTEGER}, </if>
+	      <if test="status != null">  #{status,jdbcType=INTEGER}, </if>
+	      <if test="hardver != null">  #{hardver,jdbcType=VARCHAR}, </if>
+	      <if test="comment != null">  #{comment,jdbcType=VARCHAR}, </if>
+	      <if test="createTime != null"> #{createTime,jdbcType=DATE}, </if>
+	    </trim>
+	</insert>
+	
+	<insert id="insertTradeRecord" parameterType="com.hedong.hedongwx.entity.TradeRecord">
+		insert into hd_traderecord (merid, uid, ordernum, money, mermoney, code, paysource, paytype, status, hardver, create_time)
+		values (#{merid}, #{uid}, #{ordernum}, #{money}, #{mermoney}, #{code}, #{paysource}, #{paytype}, #{status}, #{hardver}, #{createTime})
+	</insert>
+	
+	<insert id="insertToTradeRecord" parameterType="com.hedong.hedongwx.entity.TradeRecord">
+		insert into hd_traderecord (merid, manid, uid, ordernum, money, mermoney, manmoney, code, paysource, paytype, status, hardver, create_time, comment)
+		values (#{merid}, #{manid}, #{uid}, #{ordernum}, #{money}, #{mermoney}, #{manmoney}, #{code}, #{paysource}, #{paytype}, #{status}, #{hardver}, #{createTime}, #{comment})
+	</insert>
+	
+	<!-- 查询交易记录数据与商户、合伙人、 -->	
+	<select id="selectTradeDetails" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT t.*,mu.username AS dealer,mu.realname AS merealname,mu.phone_num AS merphonenum,u.username AS partnernick,
+			   u.realname AS partnername,u.phone_num AS partnerphone,tu.username AS tonick,tu.id AS toid 
+		FROM   hd_traderecord t LEFT JOIN hd_user mu ON t.merid = mu.id LEFT JOIN hd_user u ON t.manid = u.id  LEFT JOIN hd_user tu ON t.uid = tu.id 
+		<where>
+			<if test=" state!=null and state!=''"> AND t.uid = #{state}</if>
+			<if test=" uid!=null and uid!=''"> AND t.merid = #{uid}</if>
+			<if test="code!=null and code!=''"> AND t.code = #{code} </if>
+			<if test="order!=null and order!=''"> AND t.ordernum = #{order} </if>
+			<if test="status!=null and status!=''"> AND t.status = #{status} </if>
+			<if test="startTime!=null and startTime!=''"> AND t.create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND t.create_time &lt;= #{endTime} </if>
+		</where>
+			ORDER BY t.id DESC
+	   	 	<if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+
+	<!-- 微信设备管理查询交易记录数据 -->	
+	<select id="seleTradeToWechat" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT t.*,mu.username AS dealer,mu.realname AS murealname,mu.phone_num AS muphonenum,u.username AS uusername,
+			   u.realname AS urealname,u.phone_num AS uphonenum 
+		FROM   hd_traderecord t LEFT JOIN hd_user mu ON t.merid = mu.id LEFT JOIN hd_user u ON t.uid = u.id LEFT JOIN hd_equipment e ON t.`code` = e.`code`
+		<where>
+			<if test=" uid!=null and uid!=''"> and t.merid = #{uid}</if>
+			<if test=" dealer!=null and dealer!=''"> and t.comment LIKE '%${dealer}%' </if>
+			<if test="code!=null and code!=''"> AND t.code = #{code} </if>
+			<if test="startTime!=null and startTime!=''"> AND t.create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND t.create_time &lt;= #{endTime} </if>
+		</where>
+			ORDER BY t.id DESC 
+	   	 	<if test="number!=null">  LIMIT #{paramete},#{statement} </if>
+	</select>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<!-- 查询交易记录所有数据总条数 -->	
+	<select id="selectTradeRecordCount" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM   hd_traderecord t 
+		LEFT JOIN hd_user mu 
+		ON t.merid = mu.id 
+		LEFT JOIN hd_user u 
+		ON t.uid = u.id 
+		LEFT JOIN hd_equipment e 
+		ON t.`code` = e.`code`  
+	    LEFT JOIN hd_area a 
+	    ON e.aid = a.id 
+		<where>
+			<!-- <if test="rank!=null and rank!=''"> AND t.id &gt; #{rank}</if> -->
+			<if test="rank!=null and rank!=''"> AND t.id = #{rank}</if>
+			<if test="order!=null and order!=''"> AND t.ordernum = #{order} </if>
+			<if test="nickname!=null and nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+			<if test="dealer!=null and dealer!=''"> AND mu.username LIKE '%#{dealer}%' </if>
+			<if test="mobile!=null and mobile!=''"> AND mu.phone_num LIKE '%${mobile}%' </if>
+			<if test="code!=null and code!=''"> AND t.code LIKE '%${code}%' </if>
+			<if test="number!=null and number!=''"> AND e.code LIKE '%${number}%' </if>
+			<if test="state!=null and state!='' and state!=0"> AND t.status = #{state} </if>
+			<if test="source!=null and source!=''"> AND t.paysource IN (${source}) </if>
+			<if test="type!=null and type!='' and type!=0"> AND t.paytype =#{type} </if>
+			<if test=" uid!=null and uid!=''"> AND t.merid = #{uid} </if>
+			<if test="startTime!=null and startTime!=''"> AND t.create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND t.create_time &lt;= #{endTime} </if>\
+		</where>
+	</select>
+	<!-- 查询交易记录所有数据 -->	
+	<select id="selectTradeRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT t.*,mu.username AS dealer, mu.realname AS murealname, mu.phone_num AS muphonenum, u.username AS uusername,
+		       u.realname AS urealname, u.phone_num AS uphonenum, e.code AS eqcode,e.remark AS codename,
+			   a.`name` AS areaname,a.divideinto
+		FROM  hd_traderecord t LEFT JOIN hd_user mu ON t.merid = mu.id LEFT JOIN hd_user u ON t.uid = u.id 
+		LEFT JOIN hd_equipment e ON t.`code` = e.`code` LEFT JOIN hd_area a ON e.aid = a.id 
+		<where> 
+			<!-- <if test="rank!=null and rank!=''"> AND t.id &gt; #{rank}</if> -->
+			<if test="rank!=null and rank!=''"> AND t.id = #{rank}</if>
+			<if test="order!=null and order!=''"> AND t.ordernum = #{order} </if>
+			<if test="nickname!=null and nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+			<if test="dealer!=null and dealer!=''"> AND mu.username LIKE '%#{dealer}%' </if>
+			<if test="mobile!=null and mobile!=''"> AND mu.phone_num LIKE '%${mobile}%' </if>
+			<if test="code!=null and code!=''"> AND t.code LIKE '%${code}%' </if>
+			<if test="number!=null and number!=''"> AND e.code LIKE '%${number}%' </if>
+			<if test="state!=null and state!='' and state!=0"> AND t.status = #{state} </if>
+			<if test="source!=null and source!=''"> AND t.paysource IN (${source}) </if>
+			<if test="type!=null and type!='' and type!=0"> AND t.paytype =#{type} </if>
+			<if test=" uid!=null and uid!=''"> AND t.merid = #{uid} </if>
+			<if test="startTime!=null and startTime!=''"> AND t.create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND t.create_time &lt;= #{endTime} </if>
+		</where>
+			 ORDER BY t.id DESC
+	   	  <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+		<!-- 查询交易记录所有数据 -->	
+	<select id="selectTradeRecordA" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT t.ordernum,t.merid,t.uid,t.code,t.money,t.manmoney,
+        	   t.mermoney,t.status,t.paysource,t.paytype,t.create_time,
+    		   mu.username AS dealer,u.username AS uusername
+    	FROM hd_traderecord t
+        LEFT JOIN hd_user mu
+        ON t.merid = mu.id
+        LEFT JOIN hd_user u
+        ON t.uid = u.id
+		<where>
+			<if test="id!=null"> AND t.id &lt;= #{id}</if>
+		    <if test="startTime!= null and endTime!= null">
+				AND t.create_time BETWEEN #{startTime} AND #{endTime}
+			</if>
+			<if test="order!=null and order!=''"> AND t.ordernum = #{order} </if>
+			<if test=" uid!=null and uid!=''"> AND t.merid = #{uid} </if>
+			<if test="rank!=null and rank!=''"> AND t.id = #{rank}</if>
+			<if test="nickname!=null and nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+			<if test="dealer!=null and dealer!=''"> AND mu.username LIKE '%#{dealer}%' </if>
+			<if test="mobile!=null and mobile!=''"> AND mu.phone_num LIKE '%${mobile}%' </if>
+			<if test="code!=null and code!=''"> AND t.code LIKE '${code}%' </if>
+			<if test="state!=null and state!='' and state!=0"> AND t.status = #{state} </if>
+			<if test="source!=null and source!=''"> AND t.paysource=#{source} </if>
+			<if test="type!=null and type!='' and type!=0"> AND t.paytype =#{type} </if>
+		</where>
+		 ORDER BY t.id DESC
+	   	 LIMIT #{startnumber},#{pages}
+	</select>
+	
+	
+	<!-- 消费 微信。支付宝金额与订单数  -->
+	<select id="timingCollectMoney" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN `status` = 1 AND paytype = 2 THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 3 THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 4 THEN 1 ELSE 0 END) AS wecappletnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 5 THEN 1 ELSE 0 END) AS aliappletnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 12 THEN 1 ELSE 0 END) AS unionpaynum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 2 THEN money ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 3 THEN money ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 4 THEN money ELSE 0 END) AS wecappletmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 5 THEN money ELSE 0 END) AS aliappletmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 12 THEN money ELSE 0 END) AS unionpaymoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 2 THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 3 THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 4 THEN 1 ELSE 0 END) AS refwecappletnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 5 THEN 1 ELSE 0 END) AS refaliappletnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 12 THEN 1 ELSE 0 END) AS refunionpaynum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 2 THEN money ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 3 THEN money ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 4 THEN money ELSE 0 END) AS refwecappletmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 5 THEN money ELSE 0 END) AS refaliappletmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 12 THEN money ELSE 0 END) AS refunionpaymoney
+		FROM  hd_traderecord 
+		<where>
+			<if test=" uid!=null and uid!=''"> AND uid = #{uid} </if>
+			<if test=" dealer!=null and  dealer!=''"> AND merid = #{dealer} </if>
+			<if test=" code!=null and  code!=''"> AND code = #{code} </if>
+			<if test=" source!=null and source!=''"> AND paysource = #{source} </if>
+			<if test=" type!=null and  type!=''"> AND paytype = #{type} </if> 
+			<if test=" status!=null and  status!=''"> AND status = #{status} </if>
+			<if test=" remark!=null and remark!=''"> AND hardver = #{remark} </if>
+			<if test=" startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+	</select>
+	
+	<!-- 合伙人微信  。支付宝金额与订单数  -->
+	<select id="partnerCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN `status` = 1 AND paytype = 2 THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 3 THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 4 THEN 1 ELSE 0 END) AS wecappletnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 5 THEN 1 ELSE 0 END) AS aliappletnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 2 THEN manmoney ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 3 THEN manmoney ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 4 THEN manmoney ELSE 0 END) AS wecappletmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 5 THEN manmoney ELSE 0 END) AS aliappletmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 2 THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 3 THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 4 THEN 1 ELSE 0 END) AS refwecappletnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 5 THEN 1 ELSE 0 END) AS refaliappletnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 2 THEN manmoney ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 3 THEN manmoney ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 4 THEN manmoney ELSE 0 END) AS refwecappletmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 5 THEN manmoney ELSE 0 END) AS refaliappletmoney
+		FROM  hd_traderecord 
+		<where>
+			<if test=" uid!=null and uid!=''"> AND manid = #{uid} </if>
+			<if test=" dealer!=null and  dealer!=''"> AND merid = #{dealer} </if>
+			<if test=" code!=null and  code!=''"> AND code = #{code} </if>
+			<if test=" source!=null and source!=''"> AND paysource = #{source} </if>
+			<if test=" type!=null and  type!=''"> AND paytype = #{type} </if> 
+			<if test=" status!=null and  status!=''"> AND status = #{status} </if>
+			<if test=" remark!=null and remark!=''"> AND hardver = #{remark} </if>
+			<if test=" startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+	</select>
+	
+	<!-- 商户 微信。支付宝金额与订单数  -->
+	<select id="merchantCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN `status` = 1 AND paytype = 2 THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 3 THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 4 THEN 1 ELSE 0 END) AS wecappletnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 5 THEN 1 ELSE 0 END) AS aliappletnum,
+			SUM(CASE WHEN `status` = 1 AND paytype = 2 THEN mermoney ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 3 THEN mermoney ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 4 THEN mermoney ELSE 0 END) AS wecappletmoney,
+			SUM(CASE WHEN `status` = 1 AND paytype = 5 THEN mermoney ELSE 0 END) AS aliappletmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 2 THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 3 THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 4 THEN 1 ELSE 0 END) AS refwecappletnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 5 THEN 1 ELSE 0 END) AS refaliappletnum,
+			SUM(CASE WHEN `status` = 2 AND paytype = 2 THEN mermoney ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 3 THEN mermoney ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 4 THEN mermoney ELSE 0 END) AS refwecappletmoney,
+			SUM(CASE WHEN `status` = 2 AND paytype = 5 THEN mermoney ELSE 0 END) AS refaliappletmoney
+		FROM  hd_traderecord 
+		<where>
+			<if test=" uid!=null and uid!=''"> AND manid = #{uid} </if>
+			<if test=" dealer!=null and  dealer!=''"> AND merid = #{dealer} </if>
+			<if test=" code!=null and  code!=''"> AND code = #{code} </if>
+			<if test=" source!=null and source!=''"> AND paysource = #{source} </if>
+			<if test=" type!=null and  type!=''"> AND paytype = #{type} </if> 
+			<if test=" status!=null and  status!=''"> AND status = #{status} </if>
+			<if test=" remark!=null and remark!=''"> AND hardver = #{remark} </if>
+			<if test=" startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+	</select>
+	
+	<select id="expendtotourist" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT DISTINCT uid FROM hd_traderecord 
+		<where>
+			<if test=" uid!=null and uid!=''"> AND merid = #{uid} </if>
+			<if test=" sort!=null and sort!=''"> AND manid = #{sort} </if>
+			<if test=" status!=null and status!=''"> AND `status` = #{status} </if>
+			<if test=" startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+	</select>
+	
+	<select id="selectPartByParam" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="com.hedong.hedongwx.entity.TradeRecord">
+		SELECT  <include refid="TradeRecord_Column_List" /> FROM hd_traderecord 
+		<where>
+			<if test="dealer != null and dealer != ''"> AND merid = #{dealer} </if>
+			<if test="order != null and order != ''"> AND ordernum LIKE '%${order}%' </if>
+			<if test="code != null and code != ''"> AND code = #{code} </if>
+			<if test="type != null and type != ''"> AND paytype IN (#{type}) </if>
+			<if test="status != null and status != ''"> AND status = #{status} </if>
+			<if test=" startTime != null and startTime != ''"> AND create_time &gt;= #{startTime} </if>
+			<if test=" endTime != null and endTime != ''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+		order by id desc
+		<if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- origin 查询交易数据数据信息返回为List<TradeRecord>格式  -->
+	<select id="getTradeRecordListInfo" parameterType="com.hedong.hedongwx.entity.TradeRecord" resultType="com.hedong.hedongwx.entity.TradeRecord">
+		SELECT <include refid="TradeRecord_Column_List" />
+		FROM hd_traderecord 
+		<where>
+			<if test=" id!=null and id!=''"> AND id = #{id} </if>
+			<if test=" merid!=null and merid!=''"> AND merid = #{merid} </if>
+			<if test=" manid!=null and manid!=''"> AND manid = #{manid} </if>
+			<if test=" uid!=null and uid!=''"> AND uid = #{uid} </if>
+			<if test=" ordernum!=null and ordernum!=''"> AND ordernum = #{ordernum} </if>
+			<if test=" money!=null and money!=''"> AND money = #{money} </if>
+			<if test=" mermoney!=null and mermoney!=''"> AND mermoney = #{mermoney} </if>
+			<if test=" manmoney!=null and manmoney!=''"> AND manmoney = #{manmoney} </if>
+			<if test=" code!=null and code!=''"> AND code = #{code} </if>
+			<if test=" paysource!=null and paysource!=''"> AND paysource = #{paysource} </if>
+			<if test=" paytype!=null and paytype!=''"> AND paytype = #{paytype} </if>
+			<if test=" status!=null and status!=''"> AND status = #{status} </if>
+			<if test=" hardver!=null and hardver!=''"> AND hardver = #{hardver} </if>
+		</where>
+	</select>
+	
+	<!-- origin 查询交易数据重复插入的数据信息 -->
+	<select id="selectRepetitionData" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT t.*,u.username AS nick,u.realname AS `name`,u.phone_num AS phone 
+		FROM hd_traderecord t LEFT JOIN hd_user u ON t.merid = u.id 
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND merid = #{dealer} </if>
+			<if test="source!=null and source!=''"> AND paysource = #{source} </if>
+			<if test="type!=null and type!=''"> AND paytype = #{type} </if>
+			<if test="status!=null and status!=''"> AND status = #{status} </if>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+		 group by t.ordernum having count(t.ordernum) > 1
+	</select>
+	
+	<update id="updateTradeMoney">
+		update hd_traderecord set money=#{money} where ordernum = #{ordernum}
+	</update>
+	
+	<update id="updateTradeOrderInfo">
+	<!-- 	UPDATE hd_traderecord SET ordernum = CONCAT('ch', ordernum) WHERE id =  #{id,jdbcType=INTEGER} -->
+		UPDATE hd_traderecord SET ordernum = #{ordernum} WHERE id = #{id} 
+	</update>
+	
+	<select id="getTraderecordOrder" resultType="java.lang.String">
+		SELECT ordernum FROM hd_traderecord WHERE paytype in (2,4) 
+		<if test=" status != null and status != '' "> AND status = #{status} </if>
+		<if test=" begintime != null and begintime != '' "> AND create_time &gt;=#{begintime} </if>
+		<if test=" endtime != null and endtime != '' "> AND create_time &lt;=#{endtime} </if>
+	</select>
+	
+	<select id="refundTradeInquire" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT t.*,mu.username AS dealernick,mu.realname AS dealername,mu.phone_num AS dealerphone,
+			   mu.servephone,mu.earnings AS dealerearnings,mu.submer, u.username AS touristnick, 
+			   u.realname AS touristname,u.phone_num AS touristhone, u.openid AS uopenid
+		FROM   hd_traderecord t LEFT JOIN hd_user mu ON t.merid = mu.id LEFT JOIN hd_user u ON t.uid = u.id 
+		WHERE t.ordernum = #{ordernum};
+	</select>
+	
+	<select id="tradeRecordCompute" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN `status` = 1 THEN 1 ELSE 0 END) AS num,
+			SUM(CASE WHEN `status` = 1 THEN money ELSE 0 END) AS money
+		FROM  hd_traderecord 
+		<where>
+			<if test=" uid!=null and uid!=''"> AND uid = #{uid} </if>
+			<if test=" dealer!=null and  dealer!=''"> AND merid = #{dealer} </if>
+			<!-- <if test=" dealer!=null and  dealer!=''"> AND merid = #{dealer} </if> -->
+			<if test=" code!=null and  code!=''"> AND code = #{code} </if>
+			<if test=" source!=null and source!=''"> AND paysource = #{source} </if>
+			<if test=" type!=null and  type!=''"> AND paytype = #{type} </if> 
+			<if test=" status!=null and  status!=''"> AND status = #{status} </if>
+			<if test=" remark!=null and remark!=''"> AND hardver = #{remark} </if>
+			<if test=" startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+	</select>
+
+
+	<!--获取符合条件的第一条数据主键,可以在分页后记录ID-->
+	<select id="selectTradeId" parameterType="com.hedong.hedongwx.entity.Parameters"
+			resultType="java.lang.Integer">
+		SELECT t.id
+		FROM hd_traderecord t
+		LEFT JOIN hd_user mu
+		ON t.merid = mu.id
+		LEFT JOIN hd_user u
+		ON t.uid = u.id
+		<where>
+			<if test="startTime != null and endTime != null">
+				AND t.create_time BETWEEN  #{startTime} AND #{endTime}
+			</if>
+			<if test="order!=null and order!=''"> AND t.ordernum = #{order}</if>
+			<if test="uid != null and uid!=0">AND t.merid=#{uid}</if>
+			<if test="nickname!=null and nickname!=''"> AND u.username LIKE '${nickname}%'</if>
+			<if test="dealer!=null and dealer!=''"> AND mu.username LIKE '${dealer}%'</if>
+			<if test="mobile!=null and mobile!=''"> AND mu.phone_num=#{mobile}</if>
+			<if test="code!=null and code!=''"> AND t.code =#{code}</if>
+			<if test="orderStatus!=null and orderStatus!=0"> AND t.status = #{orderStatus} </if>
+			<if test="paySource!=null and paySource!=0 "> AND t.paysource =#{paySource} </if>
+			<if test="payType!=null and payType!=0"> AND t.paytype =#{payType} </if>
+			order by t.id desc
+		</where>
+		<if test="startnumber!=null">LIMIT #{startnumber},1 </if>
+		<if test="startnumber==null">LIMIT 1</if>
+	</select>
+
+	<!--查询符合条件的总条数-->
+	<select id="selectTradeCount" parameterType="com.hedong.hedongwx.entity.Parameters"
+			resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM hd_traderecord t
+		LEFT JOIN hd_user mu
+		ON t.merid = mu.id
+		LEFT JOIN hd_user u
+		ON t.uid = u.id
+		<where>
+			<if test="id!=null"> AND t.id &lt;=#{id}</if>
+			<if test="startTime!= null and endTime!= null">
+				AND t.create_time BETWEEN  #{startTime} AND #{endTime}
+			</if>
+			<if test="order!=null and order!=''"> AND t.ordernum = #{order} </if>
+			<if test="uid != null and uid!=0">AND t.merid=#{uid}</if>
+			<if test="nickname!=null and nickname!=''"> AND u.username LIKE '${nickname}%' </if>
+			<if test="dealer!=null and dealer!=''"> AND mu.username LIKE '${dealer}%' </if>
+			<if test="mobile!=null and mobile!=''"> AND mu.phone_num=#{mobile} </if>
+			<if test="code!=null and code!=''"> AND t.code= #{code} </if>
+			<if test="orderStatus!=null and orderStatus!=0"> AND t.status = #{orderStatus} </if>
+			<if test="paySource!=null and paySource!=0 "> AND t.paysource =#{paySource} </if>
+			<if test="payType!=null and payType!=0"> AND t.paytype =#{payType} </if>
+		</where>
+	</select>
+
+	<!--进入交易记录首页汇总数据-->
+	<select id="selectTradeCollect" parameterType="com.hedong.hedongwx.entity.Parameters"
+			resultType="java.util.Map">
+		SELECT
+			SUM(CASE WHEN t.status=1 AND t.paytype=1 THEN t.money ELSE 0 END) AS walletmoney,
+			SUM(CASE WHEN t.status=1 AND t.paytype!=1 THEN t.money ELSE 0 END) AS totalmoney,
+			SUM(CASE WHEN t.status=2 AND t.paytype=1 THEN t.money ELSE 0 END) AS refwalletmoney,
+			SUM(CASE WHEN t.status=2 AND t.paytype!=1 THEN t.money ELSE 0 END) AS reftotalmoney
+		FROM hd_traderecord t
+		WHERE t.id &lt;= #{id}
+		AND t.create_time BETWEEN  #{startTime} AND #{endTime}
+	</select>
+
+	<!-- 根据条件查询记录时的汇总数据-->
+	<select id="selectMerTradeCollect" parameterType="com.hedong.hedongwx.entity.Parameters"
+			resultType="java.util.Map">
+		SELECT
+			SUM(CASE WHEN t.status=1 AND t.paytype=1 THEN t.money ELSE 0 END) AS walletmoney,
+			SUM(CASE WHEN t.status=1 AND t.paytype!=1 THEN t.money ELSE 0 END) AS totalmoney,
+			SUM(CASE WHEN t.status=2 AND t.paytype=1 THEN t.money ELSE 0 END) AS refwalletmoney,
+			SUM(CASE WHEN t.status=2 AND t.paytype!=1 THEN t.money ELSE 0 END) AS reftotalmoney
+		FROM hd_traderecord t
+		LEFT JOIN hd_user mu
+		ON t.merid = mu.id
+		LEFT JOIN hd_user u
+		ON t.uid = u.id
+		<where>
+			<if test="id!=null"> AND t.id &lt;=#{id}</if>
+			<if test="startTime!= null and endTime!= null">
+				AND t.create_time BETWEEN #{startTime} AND #{endTime}
+			</if>
+			<if test="order!=null and order!=''"> AND t.ordernum = #{order} </if>
+			<if test="uid != null and uid!=0"> AND t.merid=#{uid}</if>
+			<if test="nickname!=null and nickname!=''"> AND u.username LIKE '${nickname}%'</if>
+			<if test="dealer!=null and dealer!=''"> AND mu.username LIKE '${dealer}%'</if>
+			<if test="mobile!=null and mobile!=''"> AND mu.phone_num = #{mobile}</if>
+			<if test="code!=null and code!=''"> AND t.code = #{code}</if>
+			<if test="orderStatus!=null and orderStatus!=0"> AND t.status = #{orderStatus}</if>
+			<if test="paySource!=null and paySource!=0 "> AND t.paysource =#{paySource}</if>
+			<if test="payType!=null and payType!=0"> AND t.paytype =#{payType}</if>
+		</where>
+
+	</select>
+
+
+	<!--分页查询符合条件的交易数据-->
+	<select id="selectTradeData" parameterType="com.hedong.hedongwx.entity.Parameters"
+			resultType="java.util.Map">
+		SELECT t.ordernum,t.merid,t.uid,t.code,t.money,t.manmoney,
+        	   t.mermoney,t.status,t.paysource,t.paytype,t.create_time,
+    		   mu.username AS dealer,u.username AS uusername
+    	FROM hd_traderecord t
+        LEFT JOIN hd_user mu
+        ON t.merid = mu.id
+        LEFT JOIN hd_user u
+        ON t.uid = u.id
+        <where>
+			<if test="id!=null"> AND t.id &lt;= #{id}</if>
+			<if test="startTime!= null and endTime!= null">
+				AND t.create_time BETWEEN #{startTime} AND #{endTime}
+			</if>
+			<if test="uid!= null and uid!=0">AND t.merid=#{uid}</if>
+			<if test="order!=null and order!=''"> AND t.ordernum = #{order}</if>
+			<if test="nickname!=null and nickname!=''"> AND u.username LIKE '${nickname}%'</if>
+			<if test="dealer!=null and dealer!=''"> AND mu.username LIKE '${dealer}%'</if>
+			<if test="mobile!=null and mobile!=''"> AND mu.phone_num = #{mobile}</if>
+			<if test="code!=null and code!=''"> AND t.code =#{code}</if>
+			<if test="orderStatus!=null and orderStatus!=0"> AND t.status = #{orderStatus}</if>
+			<if test="paySource!=null and paySource!=0 "> AND t.paysource =#{paySource}</if>
+			<if test="payType!=null and payType!=0"> AND t.paytype =#{payType}</if>
+			ORDER BY t.id DESC
+		</where>
+		LIMIT #{pages}
+	</select>
+	
+</mapper>
+
+

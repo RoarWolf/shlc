@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hedong.hedongwx.dao.TemplateDao">
+	
+	<sql id="Template_List">
+		id, name, merchantid, status, permit, walletpay, ifmonth, ifalipay, create_time, remark, common1, common2, 
+		common3, grade, stairid, rank, charge_info
+	</sql>
+	
+	<!-- 查询对应条件模板的个数 -->
+	<select id="verifyTemplate" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM hd_templateparent WHERE `status` = #{status}  AND merchantid = #{merid} 
+	</select>
+	
+	<select id="getParentTemplateList" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	    SELECT  <include refid="Template_List"/> FROM hd_templateparent;
+	</select>
+	
+	<select id="getParentTemplateOne" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	    SELECT  <include refid="Template_List"/> FROM hd_templateparent where id = #{id}
+	</select>
+	
+	<select id="templateByName" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	    SELECT  <include refid="Template_List"/> FROM hd_templateparent 
+	    WHERE `status` = #{status}  AND merchantid = #{merid} AND name = #{name}
+	</select>
+	
+	<select id="getParentTemforOffLine" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	 	SELECT  <include refid="Template_List"/> FROM hd_templateparent  
+	 	WHERE status = #{status} AND merchantid IN(#{num},#{merchantid}) 
+	</select>
+	
+	<select id="getParentTemplateListByMerchantid" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	 	SELECT <include refid="Template_List"/> FROM hd_templateparent  WHERE 1=1 AND stairid = 0 
+	 	<if test="merchantid != null"> AND merchantid = #{merchantid} </if>
+	 	<if test="status != null"> AND status = #{status} </if>
+	 	ORDER BY common3 DESC
+	</select>
+	
+	<select id="getParentTemplateListByMerchantidwolf" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	 	SELECT <include refid="Template_List"/> FROM hd_templateparent  WHERE 1=1 AND stairid = 0 
+	 	<if test="merchantid != null"> and merchantid = #{merchantid} </if>
+	 	<if test="status != null"> and status = #{status} </if>
+	</select>
+	
+	<select id="templateGradeClassify" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	 	SELECT <include refid="Template_List"/> FROM hd_templateparent  WHERE 1=1 
+	 	<if test="merchantid != null"> AND merchantid = #{merchantid} </if>
+	 	<if test="status != null"> AND status = #{status} </if>
+	 	<if test="stairid != null"> AND stairid = #{stairid} </if>
+	 	<if test="rank != null"> AND rank = #{rank} </if>
+	</select>
+	
+	<select id="templateGradeInfo" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	 	SELECT * FROM hd_templateparent WHERE id = #{stairid}
+		UNION
+	 	SELECT <include refid="Template_List"/> FROM hd_templateparent  
+	 	WHERE  merchantid = #{merchantid} AND status = #{status}  AND stairid = #{stairid}
+	</select>
+	
+	<insert id="insertDufaultTemplate">
+		{call insertTempate(#{uid})}
+	</insert>
+	
+	<insert id="insertOfflineTemp">
+		{call insetofflinetemp(#{merid})}
+	</insert>
+	
+	<insert id="insertInCoinsTemp">
+		{call insertinCoinstemp(#{merid})}
+	</insert>
+	
+	<!-- 数插入钱包模板 -->	
+	<insert id="insertWalletTemp">
+		{call insertwallettemp(#{merid})}
+	</insert>
+	
+	<!-- 根据函数据插入在线卡模板 -->	
+	<insert id="insertOnlineTemp">
+		{call insertonlinetemp(#{merid})}
+	</insert>
+	
+	<insert id="insertMonthTemp">
+		{call insertmonthtemp(#{merid})}
+	</insert>
+	
+	<insert id="insertClassifyTem">
+		{call insertClassifyTem(#{temone},#{temtwo},#{temthree},#{merid},#{status},#{permit},#{walletype},#{grade},
+		#{remark},#{common},#{permit})}
+	</insert>
+	
+	<insert id="insertStairTemp" parameterType="com.hedong.hedongwx.entity.TemplateParent" 
+	  useGeneratedKeys="true" keyProperty="id">
+	  insert into hd_templateparent
+	  <trim prefix="(" suffix=")" suffixOverrides="," >
+		<if test="name != null" > name,</if>
+		<if test="merchantid != null" > merchantid,</if>
+		<if test="status != null" >status,</if>
+		<if test="permit != null" > permit,</if>
+		<if test="walletpay != null" >walletpay,</if>
+		<if test="ifmonth != null" > ifmonth,</if>
+		<if test="ifalipay != null" > ifalipay,</if>
+		<if test="grade != null" >grade,</if>
+		<if test="stairid != null" >stairid,</if>
+		<if test="rank != null" >rank,</if>
+		<if test="remark != null" > remark,</if>
+		<if test="common1 != null" >common1,</if>
+		<if test="common2 != null" > common2,</if>
+		<if test="common3 != null" >common3,</if>
+		<if test="chargeInfo !=null">charge_info,</if>
+		<if test="createTime != ''" >create_time,</if>
+	  </trim>
+	  <trim prefix="values (" suffix=")" suffixOverrides="," >
+		<if test="name != null" > #{name,jdbcType=VARCHAR},</if>
+		<if test="merchantid != null" > #{merchantid,jdbcType=INTEGER},</if>
+		<if test="status != null" > #{status,jdbcType=INTEGER},</if>
+		<if test="permit != null" > #{permit,jdbcType=INTEGER},</if>
+		<if test="walletpay != null" > #{walletpay,jdbcType=INTEGER},</if>
+		<if test="ifmonth != null" > #{ifmonth,jdbcType=INTEGER},</if>
+		<if test="ifalipay != null" > #{ifalipay,jdbcType=INTEGER},</if>
+		<if test="grade != null" > #{grade,jdbcType=INTEGER},</if>
+		<if test="stairid != null" > #{stairid,jdbcType=INTEGER},</if>
+		<if test="rank != null" > #{rank,jdbcType=INTEGER},</if>
+		<if test="remark != null" > #{remark,jdbcType=VARCHAR},</if>
+		<if test="common1 != null" > #{common1,jdbcType=VARCHAR},</if>
+		<if test="common2 != null" > #{common2,jdbcType=INTEGER},</if>
+		<if test="common3 != null" > #{common3,jdbcType=VARCHAR},</if>
+		<if test="chargeInfo !=null">#{chargeInfo,jdbcType=VARCHAR},</if>
+		<if test="createTime != ''" > now(),</if>
+	  </trim>
+	</insert>
+		
+	<insert id="insertParentTemplate" parameterType="com.hedong.hedongwx.entity.TemplateParent">
+		insert into hd_templateparent
+		(name,merchantid,status,permit,walletpay,ifmonth,ifalipay,grade,create_time,remark,common1,common2,common3)
+		values
+		(#{name,jdbcType=VARCHAR}, #{merchantid,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{permit,jdbcType=INTEGER},
+		#{walletpay,jdbcType=INTEGER},#{ifmonth,jdbcType=INTEGER},#{ifalipay,jdbcType=INTEGER},#{grade,jdbcType=INTEGER},
+		now(), #{remark,jdbcType=VARCHAR}, #{common1,jdbcType=VARCHAR}, #{common2,jdbcType=INTEGER}, #{common3,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updatepartemcom">
+	    update hd_templateparent SET common3 = #{common3} 
+	    WHERE common3 = 1 AND merchantid = #{merid} AND `status` = #{status}
+	</update>
+	
+	<update id="updateParentTemplate" parameterType="com.hedong.hedongwx.entity.TemplateParent">
+	    update hd_templateparent
+	     <trim prefix="set" suffixOverrides=",">
+		  <if test="name != null"> name =#{ name,jdbcType=VARCHAR},</if>
+		  <if test="merchantid != null">merchantid =#{ merchantid,jdbcType=INTEGER},</if>
+		  <if test="status != null">status =#{ status,jdbcType=INTEGER},</if>
+		  <if test="permit != null">permit =#{ permit,jdbcType=INTEGER},</if>
+		  <if test="walletpay != null">walletpay =#{ walletpay,jdbcType=INTEGER},</if>
+		  <if test="ifmonth != null">ifmonth =#{ ifmonth,jdbcType=INTEGER},</if>
+		  <if test="ifalipay != null">ifalipay =#{ ifalipay,jdbcType=INTEGER},</if>
+		  <if test="grade != null">grade =#{ grade,jdbcType=INTEGER},</if>
+		  <if test="stairid != null">stairid =#{ stairid,jdbcType=INTEGER},</if>
+		  <if test="rank != null">rank =#{ rank,jdbcType=INTEGER},</if>
+		  <if test="createTime != null">create_time =#{ createTime,jdbcType=VARCHAR},</if>
+		  <if test="remark != null">remark =#{ remark,jdbcType=VARCHAR},</if>
+		  <if test="common1 != null">common1 =#{ common1,jdbcType=VARCHAR},</if>
+		  <if test="common2 != null">common2 =#{ common2,jdbcType=INTEGER},</if>
+		  <if test="common3 != null">common3 =#{ common3,jdbcType=VARCHAR},</if>
+		  <if test="chargeInfo != null">charge_info =#{ chargeInfo,jdbcType=VARCHAR},</if>
+		 </trim>
+		 WHERE id=#{id}
+	</update>
+	
+	<delete id="deleteParentTemplate"  parameterType="java.lang.Integer" >
+      delete from hd_templateparent where id = #{id}
+	</delete>
+	
+	<select id="selectpartemp" parameterType="com.hedong.hedongwx.entity.TemplateParent" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	    SELECT  <include refid="Template_List"/> FROM  hd_templateparent 
+	    <where>
+		  <if test="id !=null "> AND id = #{id} </if>
+		  <if test="name !=null "> AND name LIKE '%${name}%' </if>
+		  <if test="merchantid !=null "> AND merchantid = #{merchantid} </if>
+		  <if test="status !=null "> AND status = #{status} </if>
+		  <if test="permit !=null "> AND permit = #{permit} </if>
+		  <if test="walletpay !=null "> AND walletpay = #{walletpay} </if>
+		  <if test="grade !=null "> AND grade = #{grade} </if>
+		  <if test="remark !=null "> AND remark LIKE '%${remark}%' </if>
+		  <if test="common1 !=null "> AND common1 = #{common1} </if>
+		  <if test="common2 !=null "> AND common2 = #{common2} </if>
+		  <if test="common3 !=null "> AND common3 = #{common3} </if>
+	    </where>
+	</select>
+	
+	
+	<!-- *** 请暂时不要在*号范围内添加   thanks ***********************************************************   -->
+	<!-- ORIGGIN  ANEW AFRESH
+		 相同参数返回
+	 -->
+	<sql id="Template_Param">
+		id, name, merchantid, status, permit, walletpay, ifmonth, ifalipay, create_time, remark, common1, common2, 
+		common3, grade, stairid, rank, charge_info
+	</sql>
+	
+	<!-- ORIGGIN  ANEW AFRESH
+		 同类型条件
+	 -->
+	<sql id="Template_Condition">
+		<if test=" id !=null and id != '' "> AND id = #{id} </if>
+	  	<if test=" merid != null and merid != '' "> AND merchantid = #{merid} </if>
+	  	<if test=" status !=null and status != '' "> AND status = #{status} </if>
+	  	<if test=" stairid != null and stairid != '' "> AND stairid = #{stairid} </if>
+	</sql>
+	
+	<!-- ORIGGIN  ANEW AFRESH
+		 根据参数获取主模板信息 返回数据类型为 map（单条）数据
+	 -->
+	<select id="selectStairTempOneInfo" parameterType="java.lang.String"  resultType="java.util.Map">
+		SELECT <include refid="Template_Param"/> FROM hd_templateparent 
+		<where> <include refid="Template_Condition"/> </where>
+		ORDER BY create_time DESC
+	</select>
+	
+	<!-- ORIGGIN  ANEW AFRESH
+		 根据参数获取主模板信息 返回数据类型为list<map>多条数据
+	 -->
+	<select id="inquireStairTempListInfo" parameterType="java.lang.String"  resultType="java.util.Map">
+		SELECT <include refid="Template_Param"/> FROM hd_templateparent 
+		<where> <include refid="Template_Condition"/> </where>
+		ORDER BY create_time DESC
+	</select>
+	
+	<!-- ORIGGIN  ANEW AFRESH
+		 根据参数获取主模板信息 返回数据类型为list<实体类>多条数据
+	 -->
+	<select id="queryStairTempListInfo" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	 	SELECT <include refid="Template_Param"/> FROM hd_templateparent 
+		<where> <include refid="Template_Condition"/> </where>
+	</select>
+	
+	<!-- ORIGGIN  ANEW AFRESH
+		 根据参数获取主模板信息 返回数据类型为 实体类（单条）数据
+	 -->
+	<select id="searchStairTempOneInfo" resultType="com.hedong.hedongwx.entity.TemplateParent">
+	 	SELECT <include refid="Template_Param"/> FROM hd_templateparent
+		<where> <include refid="Template_Condition"/> </where>
+	</select>
+	
+	<!-- ORIGGIN  ANEW AFRESH
+		获取对应商户名下该类型的主模板数量  返回Integer 类型的数量值
+	 -->
+	<select id="acquireTempNumber" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM hd_templateparent WHERE `status` = #{status}  AND merchantid = #{merid} 
+	</select>
+	<!-- *** 请暂时不要在*号范围内添加   thanks *************************************************************   -->
+	
+	
+</mapper>

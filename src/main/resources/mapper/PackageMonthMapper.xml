@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.PackageMonthDao">
+	
+	<select id="selectPackageMonthByUid" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.PackageMonth">
+		select * from hd_packagemonth where uid = #{uid}
+	</select>
+	
+	<insert id="insertPackageMonth" parameterType="com.hedong.hedongwx.entity.PackageMonth" >
+    insert into hd_packagemonth
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="surpnum != null" >
+        surpnum,
+      </if>
+      <if test="todaysurpnum != null" >
+        todaysurpnum,
+      </if>
+      <if test="everydaynum != null" >
+        everydaynum,
+      </if>
+      <if test="everymonthnum != null" >
+        everymonthnum,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="elec != null" >
+        elec,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="surpnum != null" >
+        #{surpnum,jdbcType=INTEGER},
+      </if>
+      <if test="todaysurpnum != null" >
+        #{todaysurpnum,jdbcType=INTEGER},
+      </if>
+      <if test="everydaynum != null" >
+        #{everydaynum,jdbcType=INTEGER},
+      </if>
+      <if test="everymonthnum != null" >
+        #{everymonthnum,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=INTEGER},
+      </if>
+      <if test="elec != null" >
+        #{elec,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        DATE_ADD(#{endTime},INTERVAL #{monthnum} MONTH)
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updatePackageMonth" parameterType="com.hedong.hedongwx.entity.PackageMonth" >
+    update hd_packagemonth
+    <set >
+      <if test="surpnum != null" >
+        surpnum = #{surpnum,jdbcType=INTEGER},
+      </if>
+      <if test="todaysurpnum != null" >
+        todaysurpnum = #{todaysurpnum,jdbcType=INTEGER},
+      </if>
+      <if test="everydaynum != null" >
+        everydaynum = #{everydaynum,jdbcType=INTEGER},
+      </if>
+      <if test="everymonthnum != null" >
+        everymonthnum = #{everymonthnum,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=INTEGER},
+      </if>
+      <if test="elec != null" >
+        elec = #{elec,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        end_time = DATE_ADD(#{endTime},INTERVAL #{monthnum} MONTH)
+      </if>
+    </set>
+    where uid = #{uid,jdbcType=INTEGER}
+  </update>
+  
+  <update id="everydaynumReset">
+  	update hd_packagemonth set todaysurpnum = everydaynum where everydaynum != 0
+  </update>
+  
+  <insert id="insertPackageMonthRecord" parameterType="com.hedong.hedongwx.entity.PackageMonthRecord">
+  	insert into hd_packagemonth_record (uid,merid,ordernum,money,paysource,status,everydaynum,changenum,surpnum,changemonth,time,elec,create_time)
+  	values (#{uid},#{merid},#{ordernum},#{money},#{paysource},#{status},#{everydaynum},#{changenum},#{surpnum},#{changemonth},#{time},#{elec},#{createTime})
+  </insert>
+  
+  <update id="updatePackageMonthRecord" parameterType="com.hedong.hedongwx.entity.PackageMonthRecord">
+  	update hd_packagemonth_record
+  	<set>
+  		<if test="status != null">
+  			status = #{status},
+  		</if>
+  		<if test="ifrefund != null">
+  			ifrefund = #{ifrefund},
+  		</if>
+  	</set>
+  	 where 1 = 1
+  	 <if test="ordernum != null">
+  		and ordernum = #{ordernum}
+  	 </if>
+  	 <if test="id != null">
+  		and id = #{id}
+  	 </if>
+  </update>
+  
+  <select id="selectMonthRecordByOrdernum" resultType="com.hedong.hedongwx.entity.PackageMonthRecord">
+  	select * from hd_packagemonth_record where 1=1 
+  	<if test="ordernum != null">
+	  	and ordernum = #{ordernum}
+  	</if>
+  	<if test="status != null">
+	  	and status = #{status}
+  	</if>
+  </select>
+  
+  <select id="selectMonthRecordListByUid" resultType="com.hedong.hedongwx.entity.PackageMonthRecord">
+  	select * from hd_packagemonth_record where uid = #{uid} and status != 0 order by id desc
+  </select>
+  
+  <select id="selectMonthRecordByEntiy" parameterType="com.hedong.hedongwx.entity.PackageMonthRecord" resultType="com.hedong.hedongwx.entity.PackageMonthRecord">
+  	select * from hd_packagemonth_record 
+  	<where>
+  		<if test="uid !=null"> AND uid = #{uid} </if>
+  		<if test="ordernum !=null "> AND ordernum = #{ordernum} </if>
+  		<if test="paysource !=null "> AND paysource = #{paysource} </if>
+  		<if test="status !=null "> AND status = #{status} </if>
+  	</where>
+  </select>
+  
+  <select id="selectMonthRecordById" resultType="com.hedong.hedongwx.entity.PackageMonthRecord">
+  	select * from hd_packagemonth_record where id = #{id}
+  </select>
+  
+  <select id="selectMonthRecordByParam" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+  	SELECT r.*,u.username AS nickname FROM hd_packagemonth_record r LEFT JOIN hd_user u ON r.uid = u.id WHERE status != 0 
+  	<if test="dealer !=null and dealer !=''"> AND r.merid = #{dealer} </if>
+  	<if test="nickname !=null and nickname !=''"> AND u.username LIKE '%${nickname}%' </if>
+  	<if test="order !=null and order !=''"> AND r.ordernum LIKE '%${order}%' </if>
+    <if test="startTime!=null and startTime!=''"> AND r.create_time &gt;= #{startTime} </if>
+	<if test="endTime!=null and endTime!=''"> AND r.create_time &lt;= #{endTime} </if>
+ <!--  	<if test=" !=null and  !=''"> </if> -->
+  	ORDER BY r.create_time DESC 
+  	<if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+  </select>
+  
+</mapper>

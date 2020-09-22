@@ -1,0 +1,10 @@
+#mq配置
+com:
+  mqtt:
+    host: tcp://47.93.203.50:1883
+    clientid: mqttjs_e8022a4d0b
+    topic: good,test,yes
+    username: admins
+    password: admins
+    timeout: 10
+    keepalive: 20

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hedong.hedongwx.dao.LostOrderDao">
+
+	<sql id="LostOrder_Column_Param">
+		creattime,commonId,businessnum,childBusinessnum,equipmentnum,
+		WxOrderNo,BusinessOrderNo,UserIdentity,TransType,TransStatus,
+		PaymentBank,Currency,TotalAmount,RedEnvelopesAmount,WxRefundNo,
+		BusinessRefundNo,RefundAmount,RedEnvelopesRefundAmount,RefundType,RefundStatus,
+		BusinessName,BusinessData,Fee,Rate,CreateDate
+	</sql>
+	
+	<!--  -->
+	<insert id="insertLostListOrder" parameterType="java.util.List">  
+	    insert ignore into hd_lostlistorder (<include refid="LostOrder_Column_Param"/>)
+		values 
+		<foreach collection="list" index="index" item="item" separator=",">
+        (#{item.creattime}, #{item.commonId}, #{item.businessnum}, #{item.childBusinessnum}, #{item.equipmentnum},
+        #{item.WxOrderNo}, #{item.BusinessOrderNo}, #{item.UserIdentity}, #{item.TransType}, #{item.TransStatus}, 
+        #{item.PaymentBank}, #{item.Currency}, #{item.TotalAmount}, #{item.RedEnvelopesAmount}, #{item.WxRefundNo}, 
+        #{item.BusinessRefundNo}, #{item.RefundAmount}, #{item.RedEnvelopesRefundAmount}, #{item.RefundType}, #{item.RefundStatus}, 
+        #{item.BusinessName}, #{item.BusinessData}, #{item.Fee}, #{item.Rate}, #{item.CreateDate})
+    	</foreach>
+	</insert> 
+	
+	<!--  -->
+	<insert id="insertLostOrder" parameterType="java.util.Map">  
+	    insert ignore into hd_lostlistorder   
+		<foreach collection="params.keys" item="key" open="(" close=")" separator="," >  
+	        ${key}  
+		</foreach>  
+		values   
+		<foreach collection="params.keys"  item="key" open="(" close=")" separator=",">  
+	        #{params[${key}]}  
+		</foreach>  
+	</insert> 
+	
+	
+	<!--  -->
+	<insert id="batchSave">
+	    <foreach collection="list" item="item" separator=";">
+	        insert ignore into hd_lostlistorder (<include refid="LostOrder_Column_Param"/> ) 
+	        values 
+	        (#{item.creattime}, #{item.commonId}, #{item.businessnum}, #{item.childBusinessnum}, #{item.equipmentnum},
+	        #{item.WxOrderNo}, #{item.BusinessOrderNo}, #{item.UserIdentity}, #{item.TransType}, #{item.TransStatus}, 
+	        #{item.PaymentBank}, #{item.Currency}, #{item.TotalAmount}, #{item.RedEnvelopesAmount}, #{item.WxRefundNo}, 
+	        #{item.BusinessRefundNo}, #{item.RefundAmount}, #{item.RedEnvelopesRefundAmount}, #{item.RefundType}, #{item.RefundStatus}, 
+	        #{item.BusinessName}, #{item.BusinessData}, #{item.Fee}, #{item.Rate}, #{item.CreateDate})
+	    </foreach>
+	</insert>
+	
+	<update id="updataLostRefundOrder" >
+		UPDATE hd_lostlistorder 
+		SET WxRefundNo = #{wxrefundno},BusinessRefundNo = #{outrefundno},
+		RefundAmount = #{refundfeemoney},RefundType = #{RefundType},RefundStatus = #{RefundStatus}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateFields">
+    	update hd_lostlistorder
+	    <set>
+	      <foreach collection="fields.entrySet()" index="key" item="value" separator=",">
+	        <if test="key != 'id'.toString()">
+	 
+	          ${key} = #{value}
+	 
+	        </if>
+	      </foreach>
+	    </set>
+    	WHERE id = #{id}
+  	</update>
+ 
+	<!-- *** 请暂时不要在*号范围内添加   thanks ***********************************************************   -->
+	<!-- ORIGGIN  ANEW AFRESH
+		 相同参数返回
+	 -->
+	<sql id="LostOrder_Param">
+		creattime,commonId,businessnum,childBusinessnum,equipmentnum,
+		WxOrderNo,BusinessOrderNo,UserIdentity,TransType,TransStatus,
+		PaymentBank,Currency,TotalAmount,RedEnvelopesAmount,WxRefundNo,
+		BusinessRefundNo,RefundAmount,RedEnvelopesRefundAmount,RefundType,RefundStatus,
+		BusinessName,BusinessData,Fee,Rate,CreateDate
+	</sql>
+	
+	<sql id="LostOrder_where_if">
+        <if test="province != '全国' and province != null">
+            wo_province = #{province}
+        </if>
+        <if test="orderType != '全部' and orderType != null">
+            and wo_type = #{orderType}
+        </if>
+        <if test="email != ''">
+            and wo_responsibility = #{email}
+        </if>
+	</sql>
+	
+	<!-- ORIGGIN  ANEW AFRESH
+		 根据参数获取主模板信息 返回数据类型为 map（单条）数据
+	 -->
+	<select id="selectStairTempOneInfo" parameterType="java.lang.String"  resultType="java.util.Map">
+		SELECT <include refid="LostOrder_Param"/> FROM hd_lostlistorder 
+		<where> <include refid="LostOrder_where_if"/> </where>
+		ORDER BY create_time DESC
+	</select>
+	
+	<!-- ORIGGIN  ANEW AFRESH
+		 根据参数获取主模板信息 返回数据类型为list<map>多条数据
+	 --> 
+	<select id="inquireListLostInfo" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT l.*,u.id AS uid, u.username AS nick, u.realname AS `name`, u.phone_num AS phone, u.merid, u.aid 
+		FROM hd_lostlistorder l LEFT JOIN hd_user u ON l.UserIdentity = u.openid 
+		<where>
+			<if test=" nickname != null and nickname != '' "> AND u.username LIKE '%${nickname}%' </if>
+			<if test=" username != null and username != '' "> AND u.realname LIKE '%${username}%' </if>
+			<if test=" phone != null and phone != '' "> AND u.phone_num LIKE '%${phone}%' </if>
+			
+			<if test=" order != null and order != '' "> AND l.BusinessOrderNo LIKE '%${order}%' </if>
+			<if test=" number != null and number != '' "> AND l.WxOrderNo LIKE '%${number}%' </if>
+			
+			<if test=" state != null and state != '' "> AND l.TransStatus = #{state} </if>
+			  
+	      	<if test=" startTime != null and startTime != '' "> and l.creattime &gt;=#{startTime} </if>
+	      	<if test=" endTime != null and endTime != '' "> and l.creattime &lt;=#{endTime} </if>
+		</where>
+      	<if test="startnumber!=null"> LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- *** 请暂时不要在*号范围内添加   thanks *************************************************************   -->
+	
+</mapper>
+   
+   

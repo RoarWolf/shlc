@@ -1,0 +1,167 @@
+package com.hedong.hedongwx.config;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class AlipayConfig {
+	// 商户appid
+	public static String APPID = "2018080960928600";
+	public static String APPLET_APPID = "2021001181651961";
+	public static String XIEZUOPID = "2088231129408284";
+	//public static String XIEZUOPID = "2088631167686895";
+	public static String MERCHPID = "2021001132691118";
+	public static String FUWUPID = "2021001133673766";
+	
+	// app_auth_token
+//	public static String APP_AUTH_TOKEN = "202002BBa15f1dcd3208433badb1d52f0704eX89";
+	public static String APP_AUTH_TOKEN = "202007BB51d02b37b98149fc8aa150c29c09cX28";
+	// 私钥 pkcs8格式的
+//	public static String RSA_PRIVATE_KEY = "MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDFu7z+TBa3T7C8FiaJ6YpJs6BOgUgDGXJM+TyI9SwwS7TVtq+R8b1TSs2XQitgyFN3Ebbqt+qHxuKxMNl5AJisRAL0tELlSFd8kEY9o+dZQqfR4jOr8CQlZdIUUlAyS3YtB0y2SjWOu7PF97KmXUdgPB1wJfltDpSwaGVHalY9Y8HAsuEfHgsqaK3xBnfpofn49S/sHo1F6aKnrC5X6WBGWQmtczbI7CfeMwza6VMEVUulPPkcWwZVjNzjtWkjGImn8LPVyR1vkW5RHsxatM2Q9Vt+aqBG36xfguEwMH3GfikkweEozjY3uNAyev0UQrNsbT9I9PLkk9pswJjNtyZTAgMBAAECggEBAKa6uBEBXcIyawcd8l8l0pp04T5xGqSqZ0vqeRXPDfSnUZNHWOHKIedC0vqxK9yO7nofMMrYS+UzWeEpHKdATnwrWQa3nRSynDqHeQLu2tvULaf3gbSAaCo0oiDKi57tLHepiRDIoEJ7mYnbZAON8ep+ph/zlU9VFSFu1b+TNabKpH7Tr79wwN20v+HJHbgFUit87uIbMHAx+S66dIhJp2d41k3E0Fcx2yMEqL+LbWFG/oKQ6/KCzkxmoCUJOKGYXF+9DeUL4JbJkrX8PMusn2omRUVjkFFpI7UIO1BerU151B2XhtAvgITNSSxqcbI5Uhloj+Md1eQ52EX+E8/KbPECgYEA5ttVGKdegVLhGpD2f8TjpFQQE07xD74Zp0PINs9C4D4/aL89dKLY/EKP4KPjHfN701CGSh5wo2KQ8D94EiTQFtys6FRFBynsNLzgb+jz9HTkfpr0rXHl+b+mNiZjQuYjloHFC2UtX/XF1w3He5dCqYEifXFGBhL8LP92E22yA3kCgYEA20Te0gdegz0GsyEEkiSlYfe19uedBXnUVuhoF0zq0pQkLsIaUugwBTkfTaR+2UvPnhj75qLdHEh5Rjt0OStyJXBj+EPomMSrZKeZQyMXKVxNbCEAHbc2tBLbOc1CPtFnZvo6zYwelHbtkS94EvwUnEbiS9Mpx9PSbN933YwX2SsCgYEAth5vmlxnBJTSenfDznYPs9KRP/o119p7OGYTq5GES40vzr2XiMzzasZD5M7FXBp6I/FRj2VGLM6UUsNvQLkD5BVA3qOkNQuQiOY8FGztD3urymkJ/05sQ8M6J1vPULZnetNzFBNEYYBtC8OWDFz+vOPfxqA2wpH1mLYLezY9idkCgYAo0jyNa3PMCQt7Q9VfA9WKVJya1+niwBipCWF/nQFGrO/DiL1v2+w8vLK4OLyo5bVEYLBc8sspXdC+I4lyr0Tz9WWXLcVa05p5Bb7BwgGo4JdFXytvXNGhWrVXoIAJw+B1SnayF7kFuNJnqie3mRiZM5Ujuq9XlXbicAQXyeISuwKBgQDcW9bCJgmTRpbT4SodoC+YUGFicZX8VKjoW4Rd+QfJ+w1A+1pDHes1+wYpqEMMTKAHokpmgq068xi3Yx4tGXH9rSo8i6pw1+cX/+EDMQ5WuXVz6hL/LbubWi9iqzZVnv3ogffbaAFKbsdiF0iecxkD5fYf3rt3mVSPLGTH+47GFg==";
+	// 沙箱私钥 pkcs8格式的
+	public static String RSA_PRIVATE_KEY = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCBldioqncQSC7u6Q340gffNNEdJXaYuiVQbxiL1lXnpYzs1j+wOGEVbSf/4lkdySPbtHVPfdaUn+Pt7zwCgazZCM5ysJtXi0I1G6MLVtRlS5eBPaM/tSuBFkP+8AsZupYRHkY99fGxcNlcQyX3OuYpScgvELA00J/HSkgcJ20OuY3xamV5hjaHXdhye0ba67oorR9/HyhSapZB8ejnbqma268XbEVJNUFXQlHjk0QL4dJV0quSqxbeFpkn52wPgiljQBgXzUbgogqE3/6D9JACKRgUc7mTtqBAtLdW3uHSXNsaa+q8/Y+X4xX45OivfcnKI/9ZO+q190+rmhUY47GXAgMBAAECggEAaMEs0zRyaawgnKuzyshm6q50uX4WgGJCVeJpUmnjKg7vfGm6NIdvG/YQ1s8wwV5faXVZO/h7JcyXYjn6JgCULSLsWVShT0TZMbt0s27u5jAUerrMJG0djQ3ly8pa/uKR+6agm+gdCRcz71ys7U4kz43AkSOJfjiEYYOQBYpto+9+hHCXVxiyqKeA4crbOdssLW3RfEdvVIce40mFvg28ZTceUZ+aecVzBbOzYeHx/0nRrFZHP8/hF5CCwqrn3YwqP2vmhgL+uOMxWU2X3BR5TYHbZcE4fXPaDGK8ieweddXSgcJIXp0HrrsqcRZuSOPH0mY76YR5JldxvqPcpdG3WQKBgQDI7vuW0Axnr1/Zf98I79EzOYAHgCrVSTNTIZdaEGA/RS8xw+EOA8BeKmC+FfBcy3rpnnT7QUOKJpFvmcp9i7NAVVXSkMgGbKsyxShc3FGDhmX8ApamdMR1qhGeZJqMQrAAL2/H02vOeRMkPI2gk0r9CDAtQar7Bdu3gLYzh81uGwKBgQClGT6jGOdn9jJlv8/KaIiPCiYiy5H4Ak8BUiHQfvNENaibVvwRtuLASC8TADAvWG2Xj3K9SDaU5AGlOOfC8Q1iuBOxUUytJtblhxScKY0dLuvYQMo7ruIMgyP+gblccAJS4HxbCarGCSfQs8T399ndyjhKQgxTXY2i7tzjProSNQKBgQCeoFwqMVC5wi+vK03OZlUHVYuHYF1wR/um00wDJA53pIyfgv327Gs/a8E4D2XUPCdqq1e6y0kglVYXfpfnCRSX40Z/lyDyQXPd/tvgg2YuqTl1/C0md+Ro57xFCTMhK7x6SPi8DmJ7fAXqg4tjiySWIZK3B7KNvZA5i/lLMRiypQKBgFbZJ80OLbTPmwVRWJJmWOe98/+7zKaFOGA+f1E5ZujLvU0x/dmntjJmBnVdVPui7cubh0Uw9p1uL7tlau1udpcmtB1D4iz30HXfkCTx6qyeYSxaMMgioADq/4VDYmnQ9jf4pRISzMXuTQaJeqTiubXlSaUuh2NXREmgk4vrFGC9AoGAZ4nuo0hnlxR9D5Cdyj07gzNDFuVfo/Otpigw5okPT8DDy6kyt5cdXwz/jWCo2E6XxTj5NsEUBiDzuxBPljhDr2quFDDoTjJ8vaaWxKJhLT6kopknU8neX6zK64zgA8Blhs+1xVo7TX9Tq2+pBJkoDkqygSXuXgnYUfXf3/ro/JI=";
+	public static String RSA_PRIVATE_KEY2 = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDMNpmApqYWO9IYn2SqhisuKiYxQoxuzA2OZzVuq6V0bihmM60AqGLSI5be+fiDL+O7cgLPa1h4FSe557oDIWCtVTemkApzDT+E5WVlCsz5MO5BVf47OZubwdf9Vc1pn4DsPYcB4TR69E7sAqtwRFCABtB8PtcY8DYvxpzMh6iV4r3cAy5ESl+dwmJawLpjYxw1tibrFDbNqab+jFvgiqMbmhF2xcNJ14ZZbFWPEKBUYZXvNEELqGaICf579lkDca2o3hGAPjd7tnPfF/xA8ySyb/MQF830z7BNQtP1oSzrCGpO+4uMRhBKiqizQLxybAggSuYijKnznyC3/E+lSymBAgMBAAECggEALYS+En8S5kHPQs3Ekn31ggTDHpfG1auGGgfHUTPRXXJwbtd16H+gB1cHegwd6J/0EwQGvFUhEyMkB7wvKiN2eSxVizrwGVUKo4S+ZRdTOPg/IzEXyfu9Q6qhikZl0vVKt12/ihu4pu9t6A1wSUXw65iZQBiBuX1RlrSenrheS4oo0/hH47PYU2aXgglIP1kkCt0OLeY8raKZemY1xW34Pc43jN2ssBt2sh675JOCiLiiMKCTwuW5YSSyCfE5/iUKbwYDL8d4Vya97rd1p6sFeX1UADTw19eLN3H3gELrlKW3920qADnkrk1ATHTnYXdd99AJMTOI95i0O40x76Y8AQKBgQDxQMMLTY6VlIJ94sucC2rwSxnWGjSkOQAHyHX9WjUMG6wFNX8bGEyOiSmL33esncv4XnBugMz20QTIvmqBCmejUQRCHCO3OvJ/AHe1/1eOuAlos58VpL+oJDrwQ8x2zTyXCUniHhh8TXTJ3503X0zU60FR0Pv1PDKOJoCh/cgmqQKBgQDYsjkzBERpLFFdumWoJXlfuB7SKoWpOYwOTM4GRuZQahYM5uXA6DeSWmZux7jK13mqTSQzf3mk3pb1jdJvHcmuBa/+HYms3B63FlR9yiXezTU8LKXYVYYGNxmSnyRqjsW3SGh0M4HkCatYWQPogMcqh4IhnZwGHb0eaRTRUdkrGQKBgADUCRdj18Z5sQz/l1Vc0KwshdUvV9jsfSyJqqYJBj+ZZLjL2zjbl3+xxtu9E6sbC5U5tccbWBjM1OhfhvwUbhCoeYxEjnbVk/mNpduRGdralOWwIC6x1xqbrTwf73bE851NIdzN36Wlmm4K/34uLJRajmnaftLztvS3+x8TQPmpAoGBAIDXBrdUlDBMT1yBFSwyi8XjvT+MVMhXFPTzqZOF2C57xPyK1JQr/c6gvUKksTS5hPdCwoF0C6mBRxRc7H9woJc9fnSCr3b9sa1+M2JPLNEaBcrvaPQFdZiAbk4FHSvWE6xz+tcMQPCK5zuyQWaeGs0ooLDH+xqP2AAazmveVFcRAoGBALM5UJShoZQ01eIjZ/KQH8eBWh8Mtn4Ayp8e9KUiHcFaBws5Wlu0bVOIVyPj5q41E+aOafn+aiNDnW/adK3w98fpFt8H9PMa2WxDgOOmiW9vRg5U+sOo1KCFgZjpHg7qwR14Iy7oWDE9k44bjClWhL1bi+cRGDvLeqACGwgZb9tz";
+	public static String RSA_PRIVATE_KEY3 = "MIIEwAIBADANBgkqhkiG9w0BAQEFAASCBKowggSmAgEAAoIBAQC9JbR5VBbYcZdhppmFz7HLCvngEtkVZ+IxYoLI266UVkCYTIG8ee/qI3GmdXjjUYs+mZhAp0qoNjgpNPBDfOm25dAfMts3G2PCAlh7O5rV36jr87SQF1wm74SjQtYcxSSl/pYNjIQIFspu4dcuz4Iyqa87cAj/k5UaLpWtVRr42MQhRJM837nHoTG0kJPWmCm7CPL+oIzpenE/o8UuLC2xKIrM+RoWssNGFEqe7T7bdihtk/iiVH8zUA83/uE1tOk6sd/V8Lw9vJt4OplVd4MJjCmzMokMDPJJzxKcNEawsb01yjM6VyGXCXSqx7JnqH6ZNp+9oyBmNgzI7vtPfRh7AgMBAAECggEBAJoiCKA6GufEIOUNWtuE9VANILQtB8N+xP8TVJoTEn+EjdzNs4cAIrY8rddEsP8kqwCXL0+4Q4kxrbA+mG+Wcel9+owB6EtOwYsOWEYLu0//k2q7TG+C6bA8zGwyAcKuEABIpsRhthHVaJ7U4IIfzOw2BDq+QEbsX7tXLNdzm6gdrVGO9czXS4hwt1pvZTLaKBEakcIsU//0RuqwDx3WOGxsQGG1qr6InL2c2JcTucX8N7unQ5FhR/5fep2D6soexKoSClRp0kFg+3HOnFYHpc/hX3Hale4ZIN5q5VwUEzgmtXqbuUjRFESxLyCXjqgKuTZZCGLOOLG7TnweTGPEwcECgYEA4/y03y4J2djU6b7itzNPecqnHbTK38VG7A60EHK452L7RV0f0CYwfleyHyTPeczBmg+U3YhlcCJUYBl6gSqvId74Kd96tDOSR2ZKwjW8HBgymaLq+guJ4Pmh4CkMZcyqXmxzQti8RN3LEGSj7N+Q2ZBXLepermB1+XntwE42S+ECgYEA1GNMUFQz3DlOz4kBbgLKAh5W+fXbHIS1aXXpNi7KkaIQ0BTJCpFThWr4VPX5vL8uIbeMvrAgVvKJd85ttbLwMcL+lmeRs4/WXrybQd5fN8ur7czwgPpBkFXIBnlNx5vBs9PWJqWEsQu5bI20S9Ryd42Tl7beDrDI0pfx04uYD9sCgYEA2juSszOxkEsDe4ASKsU95Vo7366op8yCGAH3EOuP3UWdOodqpWd48edmBHPK+k8qXxtdJzWhy9XAqICbCDtgiu6Q5Bwcq5PWCOx80Sx4lPgAr5oIjTMwVx79ecIxMNzZlCsBpdIrXUxlTZrYYyyZzfhhyvzWhtqk8xpon7T+OmECgYEAmK/mbh2KxvjgIq1BPOB+b7V2G+9XHZJ+hRnCljRfZwFXCvDWc2V04Qa9Dv9jEgFzXcQCSBiAt2FX2KysDKNesLeZpXFBuxBeMe9vwpPmaktfB+98u4yuU+CHk7fjZewg/nH9k/0MfueJ33OkOZu6yx4aDEjoLTGEvnmD3eyOXl8CgYEA3DuS8ENPhYW4sQpTfs7ihA5cIrAkkYVw9UlUxeif3PDCqVJBXGhyK9sLr9sxOKLJYgy7Ef/eUsJBXoxyuLFx15V2sBysw9ziiofUTBmpNFWLlbw/PGB8c2yl/efQxPc1R34oMHmH2ZegAIkwDH8tPkVYtKfr+1wHetcA42EqDdM=";
+	public static String APPLET_RSA_PRIVATE_KEY = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDAZ940IWkhOrUxDSEUrMTpCF7hS0Ny34zBrJADKW6Yxhdr4OxOdriZvnlmIZdDozw/kV3qfSeDgOumkyzT9MwKencyErPhVbg8dl4woZRAV4idmsUgwjqBwIBShf3/zdLGD7cDBdWFVeKIryemNxewWzVzhCGUAMPXQNfrQfJiLQ0VF8VIWvat0/NzyO6g8jTuBkNuKqOcpLoecWQuyPeCasNJEVKwOjPwKtJ6Qst44f2RFe3AXz93kFEyPFtGJZSnmuV4G47iKsD5gDnSpUCyEPLgEmvk/vzQiiGMk9hpNdduy7UXuQ6BfeonwhW6dU/K0nXTq3m6FzEOMhuY7zpZAgMBAAECggEAeJhhwMD0ONyoNs9o3aGQZhNWDNX0t6qAed/j/+dXJ7B5e6dl1aQ5/jtRsf755W4J1DoT6GZ7fsQub6Ctp0g3H5Y04ZCxaFom+NakIM0Vs+JpgYdBaU/0BeGXTKIpWs0x/+xXpDBi7YiwTUWjj13WnjX84aN+vFpiZaeB7jXOa1OEBvRXynDfMwlKI8Wyr2q1BeJq2rsyvSkvrW7omgC097NWmC5EFk42kqwF9lO+kdcf7qcKl4cmfiMFSu4ROForeAn5uaj4PIh/GcQArmvo+exDNaTPgg1pMP3UEfuCOHcDuB7G9vBDYYlrBN9T2VZvHzM04FFPX2JK23vKP0CgUQKBgQDzhp/FkPutw6Lhfw2qP8K6IPTf66pdMctap0i8dVqWDztnGOm1n8+H/XiT7ukQ9RkMVNb9tx29gDn/sXKb7sgcGuYR3p3440kHikjvb91oDtMd0FEfGM1jY/F0dEiqsEZ3qXbwzMY9rkbrM0RPxAev5kvUMPbdcaS3OsvA/Tg+BQKBgQDKQuaqZhtACm2D37riU+b3H5xTIXDENLEYYI0Mp8RnZJZYaH0K9yMTsjbXxFiFKdzJfN4gCgrx1RNZyTXQFA4RTKyKCXdkSmyC7qa8+YJHq+pOuiMTdL56BITAXbRLuwipyJf8mjoUM91xJuuK8IZJ6/pBwyyR28J9VGVjvpDnRQKBgQCo5JkyYBbssF3qnj9P7+CRTgIGul7xO3OZb6NWcN1ebTn5iqGrwSYhXn2du3gQtqukjcJ9O954atHOr7aYxsYqF82wXwCYeKlRfWqQBLk9TerFJpDcTEtFvy7aYTt0hcSZgQJohtyGMrQksu2RlJbwO3wjscHEWuit2y0sr3GuMQKBgQC0tQsTaQCluetYrDZzadTsK9DmMPVoR0+GYRUEHowKeEMfH9PATUeInGwFYMZZyyoY1rg6Vd6ra9zLFks+6fwblq588bI654eFf6V3J1EvqbhAuGsIQgDAUXMtz0p7ctJtpuur4ztKu3/4TXaafwTr3KqNwMv8USS2BwZDFIqwJQKBgBQJS2jrJIZ5AirT/5CoGCGaAp6abvETFZI7FcqmR1Uiv3/MThyfPhur4T7ZaPQFi5unMuKdPi9Pce7FAYFs/KNQHwjaqAGo3eaZPcTV0P3Q9Kt4fQys+cAynQ/to55/hcSWMT3nec30fKF8WvW8dm2hFjwpWlV0B8ZNdCBKA5MU";
+	// 服务器异步通知页面路径 需http://或者https://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+	 public static String NOTIFY_URL =  "http://www.tengfuchong.com.cn/alipay/notify_url";
+	 public static String INCOINS_NOTIFY_URL =  "http://www.tengfuchong.com.cn/alipay/incoinsNotify_url";
+	// 页面跳转同步通知页面路径 需http://或者https://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+	// 商户可以自定义同步跳转地址
+	 public static String RETURN_URL = "http://www.tengfuchong.com.cn/alipay/return_url";
+	 public static String INCOINS_RETURN_URL = "http://www.tengfuchong.com.cn/alipay/incoinsReturn_url";
+	// 请求网关地址
+	 public static String URL = "https://openapi.alipay.com/gateway.do";
+	// 沙箱请求网关地址
+//	public static String URL = "https://openapi.alipaydev.com/gateway.do";
+	// 编码
+	public static String CHARSET = "UTF-8";
+	// 返回格式
+	public static String FORMAT = "json";
+	
+	// 支付宝应用公钥
+	public static String APPALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgZXYqKp3EEgu7ukN+NIH3zTRHSV2mLolUG8Yi9ZV56WM7NY/sDhhFW0n/+JZHckj27R1T33WlJ/j7e88AoGs2QjOcrCbV4tCNRujC1bUZUuXgT2jP7UrgRZD/vALGbqWER5GPfXxsXDZXEMl9zrmKUnILxCwNNCfx0pIHCdtDrmN8WpleYY2h13YcntG2uu6KK0ffx8oUmqWQfHo526pmtuvF2xFSTVBV0JR45NEC+HSVdKrkqsW3haZJ+dsD4IpY0AYF81G4KIKhN/+g/SQAikYFHO5k7agQLS3Vt7h0lzbGmvqvP2Pl+MV+OTor33JyiP/WTvqtfdPq5oVGOOxlwIDAQAB";
+	public static String APPLET_APPALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwGfeNCFpITq1MQ0hFKzE6Qhe4UtDct+MwayQAylumMYXa+DsTna4mb55ZiGXQ6M8P5Fd6n0ng4DrppMs0/TMCnp3MhKz4VW4PHZeMKGUQFeInZrFIMI6gcCAUoX9/83Sxg+3AwXVhVXiiK8npjcXsFs1c4QhlADD10DX60HyYi0NFRfFSFr2rdPzc8juoPI07gZDbiqjnKS6HnFkLsj3gmrDSRFSsDoz8CrSekLLeOH9kRXtwF8/d5BRMjxbRiWUp5rleBuO4irA+YA50qVAshDy4BJr5P780IohjJPYaTXXbsu1F7kOgX3qJ8IVunVPytJ106t5uhcxDjIbmO86WQIDAQAB";
+	// 支付宝公钥
+	public static String ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApJHzCzT7duTDJHxXRMByycUiWAd1+7UH/EvFFSnKKpVgsx3SdstouTOut7BlyayqIpctToSFkdMT/xc2+3z8bRrOVwPa0dr/+zX2ujlZI71XIfkuGzMo0R7BPuC8sJumAaigZuQxZGzp+1AP3k9SI2puILSaoa/p6ONTR90az9eJoLO7hAfIuvOdol7kaleqJ5osS60hzTOGKCWoBu8It1QvyUMsHjBX2zLNjxdbVVcYKCqwvgaEdbeHrg0IJyUs4EQm7V6RyQYW1LZMb6K7cbhh5s+8I6TuTiVzhkxdjd19IYiehinsTVLa/XWDHj9F10aIvAzYBaj8AmBA8AoMBQIDAQAB";
+	public static String ALIPAY_PUBLIC_KEY2 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApJP10fy55QqMInwIGJuRRe6TGvtVDQQ4LEzmw7+ydcN/09mcX4FzqFJe93XiXhO3YTn7HyWQGWOrNZ8ISO06/N+PQMREqD6R/ssYZcsOIYTXOke8hXPIFOg1jXpcbVDrZP5acPn9UZMbCtcnaLFQmkTn4+1aiQ/14Up3lgQNBS+pdLJ/PS+q75q52XIkxh5sRSU5JNdY0/tz2Ke/+yXBJXhKouQ9tevuxd6d/WATmxTnELuhc4D88Esj2GBk+vN0NWny9Ezx6mO5BFrK2Mt/TgAZcCX9u/XjWd3K2nwJ9Rloe/NCvkVkGXG2fLEnXZv/x3SPZl/HlLtYCB0iSMStlwIDAQAB";
+	public static String ALIPAY_PUBLIC_KEY3 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApJHzCzT7duTDJHxXRMByycUiWAd1+7UH/EvFFSnKKpVgsx3SdstouTOut7BlyayqIpctToSFkdMT/xc2+3z8bRrOVwPa0dr/+zX2ujlZI71XIfkuGzMo0R7BPuC8sJumAaigZuQxZGzp+1AP3k9SI2puILSaoa/p6ONTR90az9eJoLO7hAfIuvOdol7kaleqJ5osS60hzTOGKCWoBu8It1QvyUMsHjBX2zLNjxdbVVcYKCqwvgaEdbeHrg0IJyUs4EQm7V6RyQYW1LZMb6K7cbhh5s+8I6TuTiVzhkxdjd19IYiehinsTVLa/XWDHj9F10aIvAzYBaj8AmBA8AoMBQIDAQAB";
+	public static String APPLET_ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApJHzCzT7duTDJHxXRMByycUiWAd1+7UH/EvFFSnKKpVgsx3SdstouTOut7BlyayqIpctToSFkdMT/xc2+3z8bRrOVwPa0dr/+zX2ujlZI71XIfkuGzMo0R7BPuC8sJumAaigZuQxZGzp+1AP3k9SI2puILSaoa/p6ONTR90az9eJoLO7hAfIuvOdol7kaleqJ5osS60hzTOGKCWoBu8It1QvyUMsHjBX2zLNjxdbVVcYKCqwvgaEdbeHrg0IJyUs4EQm7V6RyQYW1LZMb6K7cbhh5s+8I6TuTiVzhkxdjd19IYiehinsTVLa/XWDHj9F10aIvAzYBaj8AmBA8AoMBQIDAQAB";
+	
+	
+	
+	
+	//------------------------------------------------------------------------
+	//新应用公钥(支付宝服务商)
+	public static String ALIPAY_PUBLIC_NEWKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj1RYkNkCVHm+uFyFHcTmUffeMVEQiB3blsIWoyTK5/bsGWLgSDEBpUNyFoscfb1FxdAH68fMdWh9rlrhirr3IxwJhmzznD2nIzki+QXhT1qOwxrqydvAc4cuJt6GRoEJuOWSZwG/buXEJnkia+FKmyLzeZNNdYPdywGkrUMOu6KLB9HchDmkAknpvW1LxgmW7OU0YGzehPUdr42DItJpNPxOzNouYVJSvfwRzMU2iNUR8onDJC+ySB/ossMM2MFzzpfJSXZXHUCFf9MmAMSNxlPcHpe8AWBF1Q3HaVdGMZtS/xXF4JKxjDkJjESFOMoMk/AClo4sp+IlXwbKDt8qAwIDAQAB";
+	//新应用私钥(支付宝服务商)
+	public static String ALIPAY_PRIVATE_NEWKEY = "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCPVFiQ2QJUeb64XIUdxOZR994xURCIHduWwhajJMrn9uwZYuBIMQGlQ3IWixx9vUXF0Afrx8x1aH2uWuGKuvcjHAmGbPOcPacjOSL5BeFPWo7DGurJ28Bzhy4m3oZGgQm45ZJnAb9u5cQmeSJr4UqbIvN5k011g93LAaStQw67oosH0dyEOaQCSem9bUvGCZbs5TRgbN6E9R2vjYMi0mk0/E7M2i5hUlK9/BHMxTaI1RHyicMkL7JIH+iywwzYwXPOl8lJdlcdQIV/0yYAxI3GU9wel7wBYEXVDcdpV0Yxm1L/FcXgkrGMOQmMRIU4ygyT8AKWjiyn4iVfBsoO3yoDAgMBAAECggEAMdkq6E2hItIow6Ph5CWb2Pw0+b/w2PZRbdBY4SqlqyFUocuip1jr8pdPcYm2QgD26EJezuDxOhA6Tc5rzL0TwNE6etcfrsI+g+CWSjeCUf/z0OVmrQfRmhx0r64K0zCDuhuV3F9ePeqJWrwcfZqgQO5Z8XmKoglXtQgARwYgdJ8hFr+4lYaNx88y27KM1aAtiLPqdMJfQZk+rc9GYGfQEnuwYOgAPnWPpkUGt448Phs8u+4vPUGbI9wcbSc3BibpwQLCll/P5+mFa5Rj5ydwEomzfyE9ytZis6ihrdpLnZgqcYBjP7Hxs4Ty/HUKjXrmbjmNEI3b4f2/HmXTQx4lAQKBgQDHBB1UpBtSgZlfZ/h/J3fX8hCP1bIH8fZNFCV3jmZPT215/jnJd3h2ad0T+wpOmpItBWTLpPGeZzV0pvrbGVVQxdqG0gdYRDXICRT+rhIeWVdpALdm5xoCPYA0IseqNHJnnjutn66wCTypl0hq1Zla+kxf9K4Vjuj3zWH+IAb+gQKBgQC4XmbfT2BVc71qWP1Vu1gmJIRYyfn4akOmVLz8s5wtjG1ip48eUXbGZTU1I6GApy7QZ4vhGLBxmbGm/T3ArQmAsdLzxAoOAJJ1QVmryA0jcdz3o6hpXQhZj3OMToB/Z+r6KamCjxIyWjJna96+aB2ihqtb/CH4KuoMRA6Z8S/ugwKBgFXvfebNkgq3cY3T7GajmUlC+knRobVyksNHvsH4WE9I4eH6l+NZ1kdzgQYesZ2tew87tAGHcNnQgTGk5M91CfT96lWrHYbMtVhyK4GpkqNOOsNZjtg9VGrBObnJhuQFD52Uovpe6GSVKH+mlpujLjwttor8sasXcZuHMRg1pi+BAoGAfrcLN0ID8NdKgTRGcc0ASb7hY3D2KCFI+6HT/k6n8bpJV/vX5ruQycy3pB0oHBdLmpsATaY9ZuZ+bkoxTiLfnB8b4MSFMJh+EK7opaMqPIk+mMlXr4rseTmZ7f3qXSacHnHR+lTA6fCKIgDGp9FBRPoP/nmtEzbTg7im3HEjQ2cCgYAq8zLPdmmLZ66z/VGWWL8pM4UPIQrZA5jVJ9EZ2DIpVFlBkDuGsdqsqaRgs2cRsNoJGy+HCnd0CVKyJfYh4nI5XSXLU2tIQHBZbUotL2Q2F8MAnPlCjYmRnSHx8CLNi1W8tmFXdky0O6sfk1D6kwcW4IiqTVl6PMBG6cEi50PzSg==";
+	//新支付宝公钥(支付宝服务商)
+	public static String APPLETALIPAY_PUBLIC_NEWKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzZBBhmzi/+uObRVb9KZPuHpHIq7nUkOt6vks/fXDexJ2GprfjA9jbd7XDbnZld8zuqc2LxFamSoxu2Oaqcn9EmxshFMvWf38YYhrjS1LhEroEGRC48BUUhYFV9Rpk5oIBwTwZWXfws3J4DZYayj9gHuGuIt5/68FuhXVFwz8PSrMaaL2ioWok+u/0QUtVSSxY5BJwrCvWtMZ8T/pD4FM4yunkFXLibampkYxXre32+Vv25BeLi9AccuhXVuZ0sjqmTKiKELGO270CCHchnqkl+zbBY6qLyQJwAvH5UQ0H+rggPEf/MMAFg8sSm7PtrlhtnFvJduG4MgyFbi4t33hewIDAQAB";
+	//新服务商APPID(支付宝服务商)2021001171608657  
+	public static String NEWFUWUAPPID = "2021001171608657";
+	//--------------------------------------------------------------------
+	//新商户应用公钥
+	public static String PUBLICKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnoGJwS9ynVaIO2BjhEEyKlnQ9zHPu8o2POl1/eJD5mhJMxqhhbmtonaqvvKm3juPnWS4qxDA56g9o2+/gi2VFKGgeASedu0g+qn9I3en7LEzjVZlQfTG1JKDvsB/rMBLbBkSFyG02ICYiQR4FuEc3D807IYpoNbL2Lhdhzxd4rTxbf/W4qJpm/DUPPewLBvtbJv6za8cEigQLnFz9nZH90CWxvWVBzzkPWD21hNnUXIwuVA2tLMvjO4hICdF0/KLydqOuL+AWXUGax+s5kdCcZCJNlmaoPntihnzKPUWcKSon6KCwa0x+Ojf54VLt4ARKDPQPyJJSr8xg4iv9lqnTQIDAQAB";
+	//新商户应用私钥
+	public static String PRIVATEKEY = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCegYnBL3KdVog7YGOEQTIqWdD3Mc+7yjY86XX94kPmaEkzGqGFua2idqq+8qbeO4+dZLirEMDnqD2jb7+CLZUUoaB4BJ527SD6qf0jd6fssTONVmVB9MbUkoO+wH+swEtsGRIXIbTYgJiJBHgW4RzcPzTshimg1svYuF2HPF3itPFt/9biommb8NQ897AsG+1sm/rNrxwSKBAucXP2dkf3QJbG9ZUHPOQ9YPbWE2dRcjC5UDa0sy+M7iEgJ0XT8ovJ2o64v4BZdQZrH6zmR0JxkIk2WZqg+e2KGfMo9RZwpKifooLBrTH46N/nhUu3gBEoM9A/IklKvzGDiK/2WqdNAgMBAAECggEAFMmiWl6xpmbZ2QesJYUzYhCDclfrCZLciCKKIfDRvN8CcpxUgKg4WG09uWszbUPccuTpvy2kTv1mkA+wyw7VVW5ZEERyz+ALijRPCZ7AvC8FNs0U3JCQnwJUGuk+FVbmzVeAYt49zIMY/idC5KVDVrNHapmxzfE9rL+JLJpDKd8hqkMRmEuquCVCLtubrCPuPL2Hf0neM36gdPuBQYrA8rYffJ2TOZaNCNneUGQ90zgncruEiJxtCS20tw27N81xB881K3b/hd/A/PLvFUf65DUWiMDuqDvUG94SoW/wiZKqy4g+F/Vc+NQBRhYEFaOJRaO3Jwxx7mueKqoeb/FHdQKBgQDrlJ/9kmw2bbNEh/QwLIGmOi8tneUE7sgcZV6uS0M4EivWQqcZXujY1mLHmrNXwTFoBaZBKiO7reJr7KTTzJMTAxhbINWlw22fsQp1wJFzI4o00aK1yCHdqPVzQ2oQngC4X64OVA0sEdpGftkq0DDrTu/hdKhwW6A17WcKXeLqxwKBgQCsPq4oQwn/t9jCi9PbvjUHSecAVSDtm4B6ixemVXLn8IvLuUMUia+7t1NGTrBiQxTU4xyunrIxMeokwJYvQ+fcdWEp1XGc9xbVebhnuEdzvaiazy5ZLm5Q4Pz9e9mJP2iBxa/2BAZGtWBx2h0oF4q/8yYQmojUaSmg0unjAoopSwKBgQCTeQzWrgyz3eR1KC6C4bmfl5jlE4zEk74NmJ+2uEKyHR34GO2GAlX9N+fKUFuoubX2CmNTM8/+sxGkwhVEyTHgmvVqRpm4FSjQ6QFFSXFEBKGGAx26cjhRDG3q4+7HzEFjKfJJ4fAFAIAF1W6ZUI7vHxEnr+GpxJH8cEsqwC9HDQKBgD7jQ8L/dw8emM2vL9LzR3k5ylWcv0EBnY8gaaoZWLLGaMQhCBTfkIIBFS5+XHgD9f8kTLyUxIqhptN0XWE0cdtUH/2eKLUeof+fSWzVI4FmpcCgFFQLV8u/2Z7TMUGjHQ0EmJJCNehrIKNw92RD9CzRIfy972deXgyR9UMlEjyxAoGASQQeaX4OxBnlpnmqBeWnd05PaBd8RoioWpX0xWMu7E4UI3uVYGDQt6zHxV20jMmhXqs2JiQQIM4yzFBvjcAIkh8J0vnsfk9lj7JjZKhC0r3XVPr82Rb1s6G7PGSNtucf3wJzGe6atDG0FE7SCcpddUtvVCE26EiAongZgavtLmw=";
+	//新商户支付宝公钥
+	public static String ALIPAY_PUBLICKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhsQ+rqxW+ZaMly9oPhPiojIYeyTiGp8wwvl7TbG1zSeH7994IsrHnTBypktbxPunYU+1qS+1PdUZhe0M5QTX0ryUwndtDjwHCPxS8XDshFUjRHu2R7yFnCJIU0TD5e3M7cccy8C0MARkGLZ67I/0wCXlmsZhYNsHD2cE367Bw0ayUZmR3GqvBQPV1/iSIAuR3hpWYcf/Q5tWkudxEqeyG2B037IEf+18hVVUXkrFSKPrHwKoivxR0/VpnvkioWG+usqmkEIltwyJ61mRgWMQ14bTqrkVlNsFBDgXfB1jZjPK2u5jMpEt36utJCNcPBXuGya7e9jH4Xu6r/iZV2cT3wIDAQAB";
+	//授权成功的商户 PID==2088831929427803   
+	public static String NEWSHANGHUPID = "2088831929427803";
+	//新商户的APPID = 2021001172607195
+	public static String NWEMCHAPPID = "2021001172607195";
+	//新商户的tocken
+	public static String SHANGHUTOCKEN = "202007BB925430e8d3854862a1ec62149c3eeX80";
+	//--------------------------------我要充电--------------------------------------------
+	// 服务下签约生成的应用没有tocken
+	public static String QIANYUIEAPPID = "2021001171617673";
+	// 签约应用的应用公钥
+	public static String QAINYUEYINGYIONGPUBKICKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnz24bUWcJoVBw2BLN8ypb7pc9gr3k0tkdWlV5mrx/PfQ7LJ9OEKqvVAzwo3mq2p/U+AjXd+z8OhXRQkKY0e1vmL6e4pXrKkHxnEsGD3KBRCngNpmgYH4rKibUb10FBCRUan4THErBWsM0oJ5c7PBCWHHGlDTsNQPj3q7dK/Knnv1B+RCJ+6pKKs77cT8LICPOVFHVyi588tHdgS1YP+f5XJ5rnC8e9ebzYHfRsP8DntNQ0BISraqrrYZxyha1KcCZon1wk4z5wJcKyoRvPGNc614BBE2QNAYa/iFwAtipN1K8CAdo/mC4q1GgBXvErTmLI4J+UQVOD72KlnIbbOXJQIDAQAB";
+	// 签约应用的支付宝公钥
+	public static String QINAYUEZFBGONGYAO = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzZBBhmzi/+uObRVb9KZPuHpHIq7nUkOt6vks/fXDexJ2GprfjA9jbd7XDbnZld8zuqc2LxFamSoxu2Oaqcn9EmxshFMvWf38YYhrjS1LhEroEGRC48BUUhYFV9Rpk5oIBwTwZWXfws3J4DZYayj9gHuGuIt5/68FuhXVFwz8PSrMaaL2ioWok+u/0QUtVSSxY5BJwrCvWtMZ8T/pD4FM4yunkFXLibampkYxXre32+Vv25BeLi9AccuhXVuZ0sjqmTKiKELGO270CCHchnqkl+zbBY6qLyQJwAvH5UQ0H+rggPEf/MMAFg8sSm7PtrlhtnFvJduG4MgyFbi4t33hewIDAQAB";
+	//-------------------------------------------------------------
+	
+	
+	
+	
+	// 日志记录目录
+	public static String log_path = "/log";
+	// RSA2
+	public static String SIGNTYPE = "RSA2";
+	
+	// 商户appid
+	public static String APPLETAPPID = "2019060565464428";
+	// 私钥 pkcs8格式的
+	public static String APPLETRSA_PRIVATE_KEY = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCKRGgO2q8AMU7SAX753do6I8+4gF6A1s++2AMCnjg9rRFMz5mbDAfKFZ/AmpyWtNHZf7BPuPc6uktiMaPZxw+YnK7+GpglTUuKw+KBc0JrNElzs9u/Xzj4bccOCcPV866x5RE/boP3kqZrCLDqb/mJI8ZvY5bLZ5q7/NfSIDEU0QrPJq8/ZX0edFveZnbkPL61YJm/pJYn5F7uuqtkp66T3D5igtG1wMFKv0GBSuYxbQwB+z5hJzY6npgZQBMw3HcPaArkHmEMaEvYkN+wKBsyHy3h4AZmEhH9G+ngEKw4jOVLyqavhGoDyemLMmJMprQHZQxj29HaLFnM2UPZ+e17AgMBAAECggEAVPKCG94u9idVDaDtqgWrNV0bGXeEmBNhvxZngwxB8WKK5m4FKUTS5E00wNg8rDqbUs0oPVKeUe5ysfldeUbbRh+9Q1CDeSdr6e0/E9kETWjqV7OApqqSDc8kJHPLZX85LQJW/mmfmlL2+3tzdhUlciQQng7Jbl5Qqn5E+kvc27RLAG4WldQI1qGsclb5Nl2ji2KdodHwnWVms7eb/i7DKO6blGE87M3cxyuhQAmZNy67TnhBjdKhBWeP3HzE63QpSL4I/eRRtecjHooe8Xz7i6+1XElcajuLsP1cB2cQp0N594z3SoFErhJaF7FPYCUYxqhLvbVjXffllqkCP1hzAQKBgQDJbDz8rVoQkUScnSEF9EAp6a4bRtla7Wqvytu8mRhWykb93cwC28/aQ2SSAmqepskaNwZO5/L28f433VJAp5WVV8CsOLSuWpQsQOeIS9uI7+8esU6bCsZZcYr3WWVXZmNAxdiajHlYrE9bqYsriXjbt2ql8mgweYdPSwHPOiEw8QKBgQCvu1vk5reOqhzBUJxLd6YmkPXvAZ8d1USbS8JZUavrjNb9qeqHWTyUFoJbZMO8k0mlAWjn6CnTzqZyNt0uS0Q05nQJZWPM4CkcdB/5EQJhEYpwQ6Z5BCpd+leKYGZO4WVMdTfKK1SfaO5sCzALd7gJk3fd/Kj67Z6pD3Ts95IFKwKBgQCKB8mXYnhY6CP7q1YJDYO29TNh7+BdhltZEowYp1VdjIqvyAHZZ6b9rLdLs6o7BJLFizWgdyUyA02yHNIUCoPgbt1TaByxatMlrGi+JzXPlpToFJuIdg7NFpkjvjhLd5fGuI4iAufZU2OirgH4GOIgt4W3KPIrXezS8tTPnMdIEQKBgDiuA5u21qmLMK8hYufsdYim5MvsB/hFW1WDf/HzJ7JXwNgcP+rb23AgOndj7sYZ83znEYELHsKUOpdIHtrZp+wwEGkfbKsd+eSVh+J7m/rW/4HqL/2EXG3nWujk4tq6VEPu4smwZCDuZUgv65UnThK4n8bXwWD911jMBXiQ+WX1AoGBAIAESWWIdqj/ik3Dqk+Fnqyy0x/fW2+KKh0B2/g/KRnLfDQNFU5upL9/lDA4X8KwpeDKOpV6w3+fi8nRjwa4f9VX2818Awyt97LLz/z6weVIcNQ7PThXIIvwdRrbjuqwE6LWN7yjEwclNs59sjvvLuCSRyqx0Elf1f64k+aY80/L";
+	// 支付宝公钥
+	public static String APPLETALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApJHzCzT7duTDJHxXRMByycUiWAd1+7UH/EvFFSnKKpVgsx3SdstouTOut7BlyayqIpctToSFkdMT/xc2+3z8bRrOVwPa0dr/+zX2ujlZI71XIfkuGzMo0R7BPuC8sJumAaigZuQxZGzp+1AP3k9SI2puILSaoa/p6ONTR90az9eJoLO7hAfIuvOdol7kaleqJ5osS60hzTOGKCWoBu8It1QvyUMsHjBX2zLNjxdbVVcYKCqwvgaEdbeHrg0IJyUs4EQm7V6RyQYW1LZMb6K7cbhh5s+8I6TuTiVzhkxdjd19IYiehinsTVLa/XWDHj9F10aIvAzYBaj8AmBA8AoMBQIDAQAB";
+
+	// ↓↓↓↓↓↓↓↓↓↓请在这里配置您的基本信息↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+	// 合作身份者ID，签约账号，以2088开头由16位纯数字组成的字符串，查看地址：https://b.alipay.com/order/pidAndKey.htm
+	public static String partner = "2088231129408284";
+
+	// 收款支付宝账号，以2088开头由16位纯数字组成的字符串，一般情况下收款账号就是签约账号
+	public static String seller_id = partner;
+
+	// MD5密钥，安全检验码，由数字和字母组成的32位字符串，查看地址：https://b.alipay.com/order/pidAndKey.htm
+	public static String key = "";
+
+	// ----------------pc端支付宝返回路径---------------------
+
+	// 服务器异步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+	public static String notify_url = "";
+
+	// 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+	public static String return_url = "";
+
+	// 签名方式
+	public static String sign_type = "MD5";
+
+	// 字符编码格式 目前支持 gbk 或 utf-8
+	public static String input_charset = "utf-8";
+
+	// 支付类型 ，无需修改
+	public static String payment_type = "1";
+
+	// ----------------pc端支付宝调用接口---------------------
+	// 调用的接口名，无需修改
+	public static String service = "create_direct_pay_by_user";
+	// ----------------手机端支付宝调用接口---------------------
+	public static String wap_service = "alipay.wap.create.direct.pay.by.user";
+
+	// ↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+	// ↓↓↓↓↓↓↓↓↓↓ 请在这里配置防钓鱼信息，如果没开通防钓鱼功能，为空即可 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+	// 防钓鱼时间戳 若要使用请调用类文件submit中的query_timestamp函数
+	public static String anti_phishing_key = "";
+
+	// 客户端的IP地址 非局域网的外网IP地址，如：221.0.0.1
+	public static String exter_invoke_ip = "";
+
+	// ↑↑↑↑↑↑↑↑↑↑请在这里配置防钓鱼信息，如果没开通防钓鱼功能，为空即可 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+	/**
+	 * 写日志，方便测试（看网站需求，也可以改成把记录存入数据库）
+	 * 
+	 * @param sWord
+	 *            要写入日志里的文本内容
+	 */
+	public static void logResult(String sWord) {
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(log_path + "alipay_log_" + System.currentTimeMillis() + ".txt");
+			writer.write(sWord);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+}

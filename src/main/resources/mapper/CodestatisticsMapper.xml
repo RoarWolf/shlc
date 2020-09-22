@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.CodestatisticsDao">
+
+	<sql id="Codestatistics_List">
+		id,code,merid,areaid,type,ordertotal,wechatorder,alipayorder,wechatretord,alipayretord,moneytotal,wechatmoney,alipaymoney,
+		wechatretmoney,alipayretmoney,incoinsorder,incoinsmoney, consumetime, consumequantity,count_time,paymentmoney,offcardmoney,
+		offconsumetime,offconsumequantity,oncardmoney,onconsumetime,onconsumequantity,windowpulsemoney,pulseconsumetime,pulseconsumequantity,
+		unionpayordernum,unionpaymoney,refunionpaymoney
+	</sql>
+
+	<!-- origin 根据表（商户收益明细表）查询每月收益用于下载 -->
+	<select id="inquireCollectMonth" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT DATE_FORMAT(count_time,'%Y-%m') AS time, SUM(moneytotal) AS moneytotal,SUM(ordertotal) AS ordertotal,
+		       SUM(wechatmoney) AS wechatmoney, SUM(wechatorder) AS wechatorder,SUM(alipaymoney) AS alipaymoney,
+		       SUM(alipayorder) AS alipayorder, SUM(wechatretmoney) AS wechatretmoney, SUM(wechatretord) AS wechatretord,
+		       SUM(alipayretmoney) AS alipayretmoney, SUM(alipayretord) AS alipayretord, SUM(incoinsmoney) AS incoinsmoney,
+		       SUM(incoinsorder) AS incoinsorder, SUM(consumetime) AS consumetime, SUM(consumequantity) AS consumequantity, 
+		       SUM(paymentmoney) AS paymentmoney, SUM(oncardmoney) AS oncardmoney,SUM(windowpulsemoney) AS windowpulsemoney,
+		       u.username AS dealernick,u.realname AS dealerreal,u.phone_num AS dealerphone
+		FROM hd_codestatistics c LEFT JOIN hd_user u ON c.merid = u.id 
+		<where>
+			<if test=" dealer != null and dealer != ''"> AND c.merid = #{dealer}</if>
+			<if test=" type != null and type != ''"> AND c.type = #{type}</if>
+			
+			<if test=" username!=null and username!=''"> and u.realname LIKE '%${username}%'</if>
+			<if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%'</if>
+			<if test=" code!=null and code!=''"> and c.`code` LIKE '%${code}%' </if>
+			
+			<if test=" startTime!=null and startTime!=''"> AND c.count_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND c.count_time &lt;= #{endTime} </if>
+		</where>
+		GROUP BY DATE_FORMAT(c.count_time,'%Y-%m'), c.merid
+		<if test=" paramete!=null and paramete!=''"> ORDER BY ${paramete} </if>
+		<if test="startnumber!=null"> LIMIT #{startnumber},#{pages} </if>
+		<!-- ORDER BY time  DESC -->
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询每日收益 用于下载 -->
+	<select id="inquireCollectDay" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT count_time AS time, moneytotal, ordertotal, wechatmoney, wechatorder, alipaymoney, alipayorder, wechatretmoney, wechatretord, 
+			   alipayretmoney, alipayretord, incoinsmoney, incoinsorder, consumetime, consumequantity, paymentmoney, oncardmoney, windowpulsemoney,
+			   u.username AS dealernick,u.realname AS dealerreal,u.phone_num AS dealerphone
+		FROM hd_codestatistics c LEFT JOIN hd_user u ON c.merid = u.id 
+		<where>
+			<if test=" dealer != null and dealer != ''"> AND c.merid = #{dealer}</if>
+			<if test=" type != null and type != ''"> AND c.type = #{type}</if>
+			<if test=" startTime!=null and startTime!=''"> AND c.count_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND c.count_time &lt;= #{endTime} </if>
+		</where>
+		<!-- GROUP BY count_time -->
+		ORDER BY c.count_time DESC
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询不同商户数量 -->
+	<select id="inquireCollectMerid" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT DISTINCT(merid) FROM hd_codestatistics  WHERE type = 2 
+		<if test="startTime!=null and startTime!=''"> AND count_time &gt;= #{startTime} </if>
+		<if test="endTime!=null and endTime!=''"> AND count_time &lt;= #{endTime} </if> 
+	</select>
+
+	<select id="selectAllByCode" resultType="com.hedong.hedongwx.entity.Codestatistics">
+		select
+		<include refid="Codestatistics_List" />
+		from hd_codestatistics where code = #{code} and merid = #{merid} order by id desc
+	</select>
+	
+	<select id="selectAllByCodeAndLimit" resultType="com.hedong.hedongwx.entity.Codestatistics">
+		select
+		<include refid="Codestatistics_List" />
+		from hd_codestatistics where code = #{code} and merid = #{merid} order by count_time desc
+		<if test="beginnum != null and endnum != null">
+			limit #{beginnum},#{endnum}
+		</if>
+	</select>
+
+	<select id="selectAllByMerid" resultType="com.hedong.hedongwx.entity.Codestatistics">
+		select <include refid="Codestatistics_List" />
+		<!-- moneytotal,count_time -->
+		from hd_codestatistics where type = 2 and merid = #{merid}
+		<if test=" begintime != null and begintime != ''"> AND count_time &gt;= #{begintime} </if>
+		<if test=" endtime != null and endtime != ''"> AND count_time &lt;= #{endtime} </if>
+		order by count_time desc
+	</select>
+	
+	<!-- 根据实体类查询统计信息 -->
+	<select id="selectStatistics" parameterType="com.hedong.hedongwx.entity.Codestatistics" resultType="com.hedong.hedongwx.entity.Codestatistics">
+		select
+		<include refid="Codestatistics_List" />
+		from hd_codestatistics 
+		<where>
+		<if test=" id != null"> AND id = #{id}</if>
+		<if test=" merid != null"> AND merid = #{merid}</if>
+		<if test=" areaid != null"> AND areaid = #{areaid}</if>
+		<if test=" type != null"> AND type = #{type}</if>
+		<if test=" code != null"> AND code = #{code}</if>
+		<if test=" countTime != null"> AND count_time = #{countTime}</if>
+		</where>
+	</select>
+	
+	<select id="selectStatisticsData" parameterType="com.hedong.hedongwx.entity.Codestatistics" resultType="com.hedong.hedongwx.entity.Codestatistics">
+		select
+		<include refid="Codestatistics_List" />
+		from hd_codestatistics 
+		<where>
+		<if test=" id != null"> AND id = #{id}</if>
+		<if test=" merid != null"> AND merid = #{merid}</if>
+		<if test=" areaid != null"> AND areaid = #{areaid}</if>
+		<if test=" type != null"> AND type = #{type}</if>
+		<if test=" code != null"> AND code = #{code}</if>
+		<if test=" countTime != null"> AND count_time = #{countTime}</if>
+		</where>
+	</select>
+	
+	<update id="updatecodestatistics" parameterType="com.hedong.hedongwx.entity.Codestatistics">
+		update hd_codestatistics 
+		<trim prefix="set" suffixOverrides=",">
+		<if test=" code != null"> code = #{code},</if>
+		<if test=" merid != null"> merid = #{merid},</if>
+		<if test=" areaid != null"> areaid = #{areaid},</if>
+		<if test=" type != null"> type = #{type},</if>
+		<if test=" ordertotal != null"> ordertotal = #{ordertotal},</if>
+		<if test=" wechatorder != null"> wechatorder = #{wechatorder},</if>
+		<if test=" alipayorder != null"> alipayorder = #{alipayorder},</if>
+		<if test=" wechatretord != null"> wechatretord = #{wechatretord},</if>
+		<if test=" alipayretord != null"> alipayretord = #{alipayretord},</if>
+		<if test=" moneytotal != null"> moneytotal = #{moneytotal},</if>
+		<if test=" wechatmoney != null"> wechatmoney = #{wechatmoney},</if>
+		<if test=" alipaymoney != null"> alipaymoney = #{alipaymoney},</if>
+		<if test=" wechatretmoney != null"> wechatretmoney = #{wechatretmoney},</if>
+		<if test=" alipayretmoney != null"> alipayretmoney = #{alipayretmoney},</if>
+		<if test=" incoinsorder != null"> incoinsorder = #{incoinsorder},</if>
+		<if test=" incoinsmoney != null"> incoinsmoney = #{incoinsmoney},</if>
+		<if test=" consumetime != null"> consumetime = #{consumetime},</if>
+		<if test=" consumequantity != null"> consumequantity = #{consumequantity},</if>
+	 	<if test=" countTime != null"> count_time = #{countTime},</if> 
+		</trim>
+		WHERE id = #{id}
+	</update>
+	<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<select id="agentmoneycollect" parameterType="com.hedong.hedongwx.entity.Parameters"
+		resultType="java.util.Map">
+		SELECT SUM(moneytotal) AS moneytotal,SUM(ordertotal) AS ordertotal,SUM(wechatmoney) AS wechatmoney,
+			   SUM(wechatorder) AS wechatorder,SUM(alipaymoney) AS alipaymoney,SUM(alipayorder) AS alipayorder,
+			   SUM(wechatretmoney) AS wechatretmoney,SUM(wechatretord) AS wechatretord,SUM(alipayretmoney) AS alipayretmoney,
+			   SUM(alipayretord) AS alipayretord,SUM(incoinsmoney) AS incoinsmoney,SUM(incoinsorder) AS incoinsorder,
+			   SUM(consumetime) AS consumetime, SUM(consumequantity) AS consumequantity, SUM(paymentmoney) AS paymentmoney,
+			   SUM(oncardmoney) AS oncardmoney,SUM(windowpulsemoney) AS windowpulsemoney,SUM(unionpayordernum) AS unionpayordernum,
+			   SUM(unionpaymoney) AS unionpaymoney,SUM(refunionpaymoney) AS refunionpaymoney
+		FROM hd_codestatistics
+		<where> 
+			<if test=" code!=null and code!=''"> AND code = #{code} </if>
+			<if test=" uid!=null and uid!=''"> AND merid = #{uid} </if>
+			<if test=" source!=null and source!=''"> AND areaid = #{source} </if>
+			<if test=" type!=null and type!=''"> AND type = #{type} </if>
+			<if test=" startTime!=null and startTime!=''"> AND count_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND count_time &lt; #{endTime} </if>
+		</where>
+		
+	</select>
+	
+	<select id="agentmoneycollectBycode" parameterType="com.hedong.hedongwx.entity.Parameters"
+		resultType="java.util.Map">
+		SELECT `code`,merid,SUM(moneytotal) AS moneytotal,SUM(ordertotal) AS ordertotal,SUM(wechatmoney) AS wechatmoney,
+			   SUM(wechatorder) AS wechatorder,SUM(alipaymoney) AS alipaymoney,SUM(alipayorder) AS alipayorder,
+			   SUM(wechatretmoney) AS wechatretmoney,SUM(wechatretord) AS wechatretord,SUM(alipayretmoney) AS alipayretmoney,
+			   SUM(alipayretord) AS alipayretord,SUM(incoinsmoney) AS incoinsmoney,SUM(incoinsorder) AS incoinsorder,
+			   SUM(oncardmoney) AS oncardmoney,SUM(windowpulsemoney) AS windowpulsemoney
+		FROM hd_codestatistics
+		<where>
+			<if test=" code!=null and code!=''"> AND code = #{code} </if>
+			<if test=" uid!=null and uid!=''"> AND merid = #{uid} </if>
+			<if test=" source!=null and source!=''"> AND areaid = #{source} </if>
+			<if test=" type!=null and type!=''"> AND type = #{type} </if>
+			<if test=" startTime!=null and startTime!=''"> AND count_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND count_time &lt; #{endTime} </if>
+		</where>
+		GROUP BY `code`
+	</select>
+
+
+	<!-- 实体类插入数据 -->
+	<insert id="insertCodestatis" parameterType="com.hedong.hedongwx.entity.Codestatistics">
+		INSERT IGNORE INTO hd_codestatistics (code, merid, areaid, type, ordertotal, wechatorder,alipayorder, wechatretord, 
+		alipayretord, moneytotal, wechatmoney, alipaymoney, wechatretmoney, alipayretmoney, incoinsorder, incoinsmoney, 
+		count_time, consumetime, consumequantity, paymentmoney,windowpulsemoney,offcardmoney,oncardmoney,unionpayordernum,
+		unionpaymoney,refunionpaymoney)
+		VALUES 
+		(#{code,jdbcType=VARCHAR},#{merid,jdbcType=INTEGER},#{areaid,jdbcType=INTEGER},#{type,jdbcType=INTEGER},#{ordertotal,jdbcType=INTEGER},
+		#{wechatorder,jdbcType=INTEGER},#{alipayorder,jdbcType=INTEGER},#{wechatretord,jdbcType=INTEGER},#{alipayretord,jdbcType=INTEGER},
+		#{moneytotal,jdbcType=DOUBLE},#{wechatmoney,jdbcType=DOUBLE},#{alipaymoney,jdbcType=DOUBLE},#{wechatretmoney,jdbcType=DOUBLE},
+		#{alipayretmoney,jdbcType=DOUBLE},#{incoinsorder,jdbcType=INTEGER},#{incoinsmoney,jdbcType=DOUBLE},#{countTime,jdbcType=DATE},
+		#{consumetime,jdbcType=INTEGER},#{consumequantity,jdbcType=INTEGER},#{paymentmoney,jdbcType=DOUBLE},#{windowpulsemoney,jdbcType=DOUBLE},
+		#{offcardmoney,jdbcType=DOUBLE},#{oncardmoney,jdbcType=DOUBLE},#{unionpayordernum,jdbcType=INTEGER},
+		#{unionpaymoney,jdbcType=DOUBLE},#{refunionpaymoney,jdbcType=DOUBLE})
+	</insert>
+
+	<select id="getcodestatistics" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT c.*,u.username,u.realname,u.phone_num AS phone,a.`name` AS arename,
+		a.address
+		FROM hd_codestatistics c LEFT JOIN hd_user u ON c.merid = u.id LEFT JOIN
+		hd_area a ON c.areaid = a.id
+		<where>
+			<if test=" uid!=null and  uid!=''"> AND c.merid = #{uid}  </if>
+			<if test=" type!=null and  type!=''"> AND c.type = #{type}  </if>
+			<if test=" code!=null and code!=''"> and c.`code` LIKE '%${code}%' </if>
+			<if test=" nickname!=null and nickname!=''"> and u.username LIKE '%${nickname}%'</if>
+			<if test=" username!=null and username!=''"> and u.realname LIKE '%${username}%'</if>
+			<if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%'</if>
+			<if test=" source!=null and source!=''"> and a.`name` LIKE '%${source}%' </if>
+			<if test=" remark!=null and remark!=''"> and a.address LIKE '%${remark}%' </if>
+			<if test=" startTime!=null and startTime!=''"> AND c.count_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND c.count_time &lt;= #{endTime} </if>
+		</where>
+		<if test=" paramete!=null and paramete!=''"> ORDER BY ${paramete} </if>
+		<if test=" sort==1"> ORDER BY c.ordertotal DESC </if>
+		<if test=" sort==2"> ORDER BY c.ordertotal ASC </if>
+		<if test=" rank==1"> ORDER BY c.moneytotal DESC </if>
+		<if test=" rank==2"> ORDER BY c.moneytotal ASC </if>
+		<if test=" rank==3"> ORDER BY c.count_time DESC </if>
+		<if test="startnumber!=null"> LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- origin 根据表（商户收益明细表）查询每月收益信息 -->
+	<select id="inquireCollectMonthInfo" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT DATE_FORMAT(count_time,'%Y-%m') AS count_time, SUM(moneytotal) AS moneytotal,SUM(ordertotal) AS ordertotal,
+		       SUM(wechatmoney) AS wechatmoney, SUM(wechatorder) AS wechatorder,SUM(alipaymoney) AS alipaymoney,
+		       SUM(alipayorder) AS alipayorder, SUM(wechatretmoney) AS wechatretmoney, SUM(wechatretord) AS wechatretord,
+		       SUM(alipayretmoney) AS alipayretmoney, SUM(alipayretord) AS alipayretord, SUM(incoinsmoney) AS incoinsmoney,
+		       SUM(incoinsorder) AS incoinsorder, SUM(consumetime) AS consumetime, SUM(consumequantity) AS consumequantity, 
+		       SUM(paymentmoney) AS paymentmoney, SUM(oncardmoney) AS oncardmoney,SUM(windowpulsemoney) AS windowpulsemoney,
+		       u.username,u.realname,u.phone_num AS phone
+		FROM hd_codestatistics c LEFT JOIN hd_user u ON c.merid = u.id 
+		<where>
+			<if test=" dealer != null and dealer != ''"> AND c.merid = #{dealer}</if>
+			<if test=" type != null and type != ''"> AND c.type = #{type}</if>
+			<if test=" username!=null and username!=''"> and u.realname LIKE '%${username}%'</if>
+			<if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%'</if>
+			<if test=" code!=null and code!=''"> and c.`code` LIKE '%${code}%' </if>
+			<if test=" startTime!=null and startTime!=''"> AND c.count_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND c.count_time &lt;= #{endTime} </if>
+		</where>
+		GROUP BY DATE_FORMAT(count_time,'%Y-%m'), c.merid
+		<if test=" paramete!=null and paramete!=''"> ORDER BY ${paramete} </if>
+		<if test="startnumber!=null"> LIMIT #{startnumber},#{pages} </if>
+	</select>
+	<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+
+	<select id="selectOneByCodeAndTime" resultType="com.hedong.hedongwx.entity.Codestatistics">
+		SELECT moneytotal,incoinsmoney FROM hd_codestatistics where code = #{code} and count_time = #{countTime}
+	</select>
+	
+	<select id="selectMerYestEarn" resultType="com.hedong.hedongwx.entity.Codestatistics">
+	<!-- 	SELECT moneytotal,incoinsmoney FROM hd_codestatistics where merid = #{merid} and type = 2 and count_time = #{countTime} limit 1 -->
+		SELECT <include refid="Codestatistics_List" />  FROM hd_codestatistics where merid = #{merid} and type = 2 and count_time = #{countTime} limit 1
+	</select>
+	<!-- 查询商家的昨日耗电和总耗电 -->
+	<select id="selectMerConsumData" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT * FROM
+		(SELECT SUM(consumequantity) AS totalConsume FROM hd_codestatistics
+		WHERE merid=#{merId}
+		AND type=1) a,
+		(SELECT SUM(consumequantity) AS yesterdayConsume FROM hd_codestatistics
+		WHERE merid=#{merId}
+		AND type=1
+		AND DATEDIFF(NOW(),count_time)=1) b
+	</select>
+	
+	<!-- origin 根据表（汇总表）查询指定时间收益 【1:昨日收益   ①用于推送消息】 -->
+	<select id="inquireMerchEarningDay" resultType="java.util.Map">
+		SELECT c.*, u.username AS dealernick, u.realname AS dealerreal, u.phone_num AS dealerphone, u.openid, u.earnings
+		FROM hd_codestatistics c LEFT JOIN hd_user u ON c.merid = u.id 
+		WHERE c.merid = #{merid} AND c.type = 2 AND c.count_time = #{time}
+	</select>
+	
+	<!-- origin 根据表（汇总表）查询昨日设备收益记录【设备类型为智慧款充电设备】 -->
+	<select id="getCodeEarnings" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT c.*, u.username AS dealnick, u.realname AS dealname, u.phone_num AS phone, e.hardversion, e.aid
+		FROM hd_codestatistics c LEFT JOIN hd_user u ON c.merid = u.id LEFT JOIN
+		hd_equipment e ON c.`code` = e.`code`
+		WHERE c.type = 1 
+		<if test=" uid!=null and  uid!=''"> AND c.merid = #{uid}  </if>
+		<if test=" code!=null and code!=''"> and c.`code` = #{code} </if>
+		<if test=" phone!=null and phone!=''"> and u.phone_num = #{phone} </if>
+		<if test=" remark!=null and remark!=''"> and e.hardversion IN (${remark}) </if>
+		<if test=" startTime!=null and startTime!=''"> AND c.count_time &gt;= #{startTime} </if>
+		<if test=" endTime!=null and endTime!=''"> AND c.count_time &lt;= #{endTime} </if>
+		<if test=" paramete!=null and paramete!=''"> ORDER BY ${paramete} </if>
+		<if test="startnumber!=null"> LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	
+	
+	
+</mapper>

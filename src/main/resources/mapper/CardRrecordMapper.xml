@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.CardRecordDao">
+	
+	<insert id="insertCardRecord">
+    	insert into hd_card_record(uid,cid,cardID,balance,status,applycase,record_time,replyid,reply_time,type,replyinfo,remark,common,transfer) values 
+    	 (#{uid},#{cid},#{cardID},#{balance},#{status},#{applycase},Now(),#{replyid},#{replyTime},#{type},#{replyinfo},#{remark},#{common},#{transfer})
+	</insert> 
+	
+	<select id="submitApply" resultType="com.hedong.hedongwx.entity.CardRecord">
+		SELECT * FROM hd_card_record WHERE uid = #{uid} 
+		<if test="parameter==3"> 
+	       and `status` IN (3)         
+	    </if>
+		<if test="parameter==6"> 
+	       and `status` IN (6)         
+	    </if>
+		<if test="parameter==0"> 
+	       and `status` IN (3,6)         
+	    </if>
+		AND type = 2 ORDER BY  record_time DESC
+	</select>
+	
+	<select id="getRecordList" resultType="com.hedong.hedongwx.entity.CardRecord">
+		SELECT r.*,u.username,u.phone_num FROM hd_card_record r  LEFT JOIN hd_user u ON  r.uid = u.id
+	</select>
+		
+	<select id="cardRecordCardID" parameterType="java.lang.String"  resultType="com.hedong.hedongwx.entity.CardRecord">
+		<!-- select * from hd_card_record where cardID = #{cardID} -->
+		SELECT r.*,u.username,u.phone_num FROM hd_card_record r  LEFT JOIN hd_user u ON  r.uid = u.id where r.cardID = #{cardID}
+	</select>
+	
+	<select id="cardRecordByCardID" resultType="com.hedong.hedongwx.entity.CardRecord">
+		select * from hd_card_record where cardID = #{cardID} and status=#{status} and type=#{type}
+	</select>
+	
+	<select id="selectByCardID"   resultType="com.hedong.hedongwx.entity.CardRecord">
+		select * from hd_card_record where remark=#{remark} and status = #{status} and type=#{type}
+	</select>
+	
+	<select id="selectInfo"   resultType="com.hedong.hedongwx.entity.CardRecord">
+		SELECT r.*,u.username,u.phone_num FROM hd_card_record r  LEFT JOIN hd_user u ON  r.uid = u.id WHERE 1 = 1   
+	    <if test="id!=null and id!=0"> 
+	       and r.id = #{id}        
+	    </if> 
+	    <if test="uid!=null"> 
+	       and r.uid = #{uid}        
+	    </if>  
+	    <if test="cardID!=null and cardID!=''"> 
+	       and r.cardID = #{cardID}        
+	    </if> 
+	    <if test="status!=null and status!=-1"> 
+	    	and r.status = #{status}
+	    </if>
+	    <if test="type!=null"> 
+	    	and r.type = #{type}
+	    </if>   
+	    <if test="remark!=null and remark!=''"> 
+	    	and r.remark = #{remark}
+	    </if>   
+	    <if test="startTime!=null and startTime!=''"> 
+	       and r.record_time &gt;= #{startTime}         
+	    </if>   
+	    <if test="endTime!=null and endTime!=''"> 
+	       and r.record_time  &lt;= #{endTime}         
+	    </if>    
+	    <if test="username!=null and username!=''"> 
+	    	and u.username = #{username}
+	    </if>
+	</select>
+	<select id="selectInfoOne"   resultType="com.hedong.hedongwx.entity.CardRecord">
+		SELECT r.*,u.username,u.phone_num,s.username AS replyname,s.phone_num AS replyphone 
+		FROM hd_card_record r  LEFT JOIN hd_user u ON  r.uid = u.id LEFT JOIN hd_user s ON r.replyid = s.id 
+		WHERE r.id = #{id}    
+	</select>
+	<update id="updatRecord" parameterType="com.hedong.hedongwx.entity.CardRecord" >
+        update hd_card_record
+        <set>
+            <if test="type!=null">
+                type = #{type},
+            </if>
+            <if test="replyid!=null">
+                 replyid = #{replyid},
+            </if>
+            <if test="replyinfo!=null">
+                replyinfo = #{replyinfo},
+            </if>
+            <if test="replyTime!=null">
+                reply_time = Now(),
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+	
+</mapper>

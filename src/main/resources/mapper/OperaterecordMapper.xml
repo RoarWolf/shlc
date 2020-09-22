@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.OperateRecordDao">
+	
+	<!-- sql插入 -->
+	<insert id="insertoperate" parameterType="com.hedong.hedongwx.entity.Operaterecord">
+		INSERT INTO hd_operaterecord (name,opeid,objid,type,source,remark,common,operate_time) VALUES 
+		(#{name},#{opeid},#{objid},#{type},#{source},#{remark},#{common},now())
+	</insert>
+	
+	<!-- 实体类插入 -->
+	<insert id="insertoperatetrim" parameterType="com.hedong.hedongwx.entity.Operaterecord">
+		insert into hd_operaterecord
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null"> name, </if>
+			<if test="opeid != null"> opeid, </if>
+			<if test="objid != null"> objid, </if>
+			<if test="type != null"> type, </if>
+			<if test="source != null"> source, </if>
+			<if test="remark != null"> remark, </if>
+			<if test="common != null"> common, </if>
+			<if test="operateTime != null"> operate_time, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null"> #{name,jdbcType=VARCHAR}, </if>
+			<if test="opeid != null"> #{opeid,jdbcType=TINYINT}, </if>
+			<if test="objid != null"> #{objid,jdbcType=TINYINT}, </if>
+			<if test="type != null"> #{type,jdbcType=TINYINT}, </if>
+			<if test="source != null"> #{source,jdbcType=TINYINT}, </if>
+			<if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+			<if test="common != null"> #{common,jdbcType=VARCHAR}, </if>
+			<if test="operateTime != null"> #{now()}, </if>
+		</trim>
+	</insert>
+	
+	<!-- 条件查询 -->
+	<select id="userOperateRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT o.*,u.username AS openick,u.realname AS opename,h.username AS objnick,h.realname AS objname 
+		FROM hd_operaterecord o LEFT JOIN hd_user u ON o.opeid = u.id LEFT JOIN hd_user h ON o.objid = h.id
+		<where>
+			<if test="uid != null"> AND o.opeid = #{uid} </if>
+		<!-- 	<if test="uid != null"> AND o.objid = #{uid} </if> -->
+			<if test="dealer != null"> AND u.username LIKE '%${dealer}%' </if>
+			<if test="nickname != null"> AND h.username LIKE '%${nickname}%' </if>
+			<if test="realname != null"> AND o.name LIKE '%${realname}%' </if>
+			<if test="type != null"> AND o.type = #{type} </if>
+			<if test="source != null"> AND o.source = #{source} </if>
+			<if test="remark != null"> AND o.remark = #{remark} </if>
+			<if test="number != null"> AND o.common = #{number} </if>
+			<if test="startTime != null"> AND o.operate_time &gt;= #{startTime} </if>
+			<if test="endTime != null"> AND o.operate_time &lt;= #{endTime} </if>
+		</where> 
+		  ORDER BY o.operate_time DESC
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+</mapper>
+
+
+
+

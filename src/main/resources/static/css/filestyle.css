@@ -1,0 +1,29 @@
+@charset "utf-8";
+
+/*页面样式布局，顶部标志，左下侧导航，右下测内容*/
+html,body,.body{width: 100%; height: 100%;}
+.roofmark{height: 9.8%;background-image:url("/images/bg.jpg");}
+.content{height: 90%;border: 1px solid #ccc;}
+.leftnav{width: 8%; height: 100%; float: left; border: 1px solid #ddd;}
+.rightcontent{width: 92%; height: 100%; float: right; border: 1px solid #ccc;}
+.conditionsd{height: 6%;}
+
+/*顶部导航设置*/
+.roofmark .imgmark{width: 75px; height: 75px; margin-left: 20px; margin-top: -1.2%;}
+.roofmark span{float: right; margin: 25px 50px 5px 0; color: #04e818;}
+
+/*左侧导航栏的设置*/
+.contasd ul{padding:0; margin-left:25px;}
+.contasd ul li{list-style:none;}
+
+/*内容部分设置*/
+.table-div{width: 99.5%; height: 91%; margin-right: auto; margin-left: auto;overflow:auto;}
+.table-div table{text-align: center;border: 1px solid #ccc;}
+.table-div table thead tr{font-weight: bolder;}
+
+/*form搜素条件部分设置*/
+/* .conditionsd  */
+.searchdiv ul li{ line-height:17px;display:inline-block; margin-left: 15px;float:left;}
+.searchdiv .labelname{width: 60px; text-align: right;list-style:none;}
+.searchdiv .labeltime{width: 80px; text-align: right;}
+

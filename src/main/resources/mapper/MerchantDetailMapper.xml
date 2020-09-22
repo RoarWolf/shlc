@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.MerchantDetailDao">
+
+	<sql id="MerchantDetail_Column_List">
+		id, merid, ordernum, money, balance, paysource, paytype, status, create_time
+	</sql>
+	
+	<!-- origin 根据表（商户收益明细表）查询不同商户数量 -->
+	<select id="inquireMeridInfo" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT DISTINCT(merid) FROM hd_mer_detail
+		<where>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+	</select>
+	
+	<insert id="insertMerEarningDetail" parameterType="com.hedong.hedongwx.entity.MerchantDetail">
+		insert into hd_mer_detail (merid, ordernum, money, balance, paysource, paytype, status, create_time)
+		values (#{merid}, #{ordernum}, #{money}, #{balance}, #{paysource}, #{paytype}, #{status}, #{createTime})
+	</insert>
+	
+	<select id="selectMerDetailListByMerid" resultType="com.hedong.hedongwx.entity.MerchantDetail">
+		select
+		<include refid="MerchantDetail_Column_List"/>
+		from hd_mer_detail where merid = #{merid} order by id desc
+	</select>
+	
+	<select id="selectMerEarnInfoById" resultType="com.hedong.hedongwx.entity.MerchantDetail">
+		select
+		<include refid="MerchantDetail_Column_List"/>
+		from hd_mer_detail where id = #{id}
+	</select>
+	
+	<select id="selecearningsdetail" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+		<include refid="MerchantDetail_Column_List" />
+		FROM hd_mer_detail 
+		<where> 
+			<if test="dealer != null and dealer != ''"> AND merid = #{dealer} </if>
+			<if test="order != null and order != ''"> AND ordernum LIKE '%${order}%' </if>
+		 	<if test="source != null and source!=''"> AND paysource = #{source} </if>
+			<if test="type != null and type!=''"> AND paytype = #{type} </if>
+			<if test="status !=null and status!=''"> AND status = #{status} </if>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+		 ORDER BY create_time DESC
+		 <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- 商户收益计算 -->
+	<select id="dealerIncomeCount" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT
+			SUM(CASE WHEN paytype = 2 AND `status` = 1 THEN 1 ELSE 0 END) AS wechatnum,		
+			SUM(CASE WHEN paytype = 2 AND `status` = 2 THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN paytype = 3 AND `status` = 1 THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN paytype = 3 AND `status` = 2 THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN paytype = 4 AND `status` = 1 THEN 1 ELSE 0 END) AS unionpaynum,
+			SUM(CASE WHEN paytype = 4 AND `status` = 2 THEN 1 ELSE 0 END) AS refunionpaynum,
+		
+			SUM(CASE WHEN paytype = 2 AND `status` = 1 THEN money ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype = 3 AND `status` = 1 THEN money ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN paytype = 3 AND `status` = 2 THEN money ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN paytype = 4 AND `status` = 1 THEN money ELSE 0 END) AS unionpaymoney,
+			SUM(CASE WHEN paytype = 4 AND `status` = 2 THEN money ELSE 0 END) AS refunionpaymoney,
+		
+			SUM(CASE WHEN paysource = 8 AND paytype = 1 AND `status` = 2 THEN money ELSE 0 END) AS incomepaymentmoney,
+			SUM(CASE WHEN paysource = 8 AND paytype = 2 AND `status` = 2 THEN money ELSE 0 END) AS wechatpaymentmoney
+		FROM  hd_mer_detail
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND merid = #{dealer} </if>
+			<if test="source!=null and source!=''"> AND paysource = #{source} </if>
+			<if test="type!=null and type!=''"> AND paytype = #{type} </if>
+			<if test="status!=null and status!=''"> AND status = #{status} </if>
+			<if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if> 
+		</where>
+		<!-- GROUP BY merid -->
+	</select>
+	
+</mapper>

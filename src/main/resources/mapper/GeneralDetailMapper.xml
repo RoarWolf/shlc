@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.GeneralDetailDao">
+
+	<sql id="GeneralDetail_Column_List">
+		id, uid, merid, ordernum, money, sendmoney, tomoney, balance, topupbalance, givebalance, paysource, remark, create_time
+	</sql>	
+	
+	<insert id="insertGenWalletDetail" parameterType="com.hedong.hedongwx.entity.GeneralDetail">
+		insert into hd_gen_detail (uid, merid, ordernum, money, sendmoney, tomoney, balance, topupbalance, givebalance, paysource, remark, create_time)
+		values (#{uid}, #{merid}, #{ordernum}, #{money}, #{sendmoney}, #{tomoney}, #{balance}, #{topupbalance}, #{givebalance}, #{paysource}, #{remark}, #{createTime})
+	</insert>
+	
+	<insert id="insertGenDetail" parameterType="com.hedong.hedongwx.entity.GeneralDetail">
+		insert into hd_gen_detail (uid, merid, ordernum, money, sendmoney, tomoney, balance, topupbalance, givebalance, paysource, remark, create_time)
+		values (#{uid}, #{merid}, #{ordernum}, #{money}, #{sendmoney}, #{tomoney}, #{balance}, #{topupbalance}, #{givebalance}, #{paysource}, #{remark}, #{createTime})
+	</insert>
+	
+	<select id="selecwalletdetail" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+		<include refid="GeneralDetail_Column_List" />
+		FROM hd_gen_detail 
+		<where>
+			<if test="uid!=null and uid!=''">AND uid = #{uid}</if>
+			<if test="order!=null and order!=''">AND ordernum LIKE '%${order}%' </if>
+			<if test="type!=null and type!=''">AND paysource IN (${source})</if>
+			<if test="startTime!=null and startTime!=''">AND create_time &gt;= #{startTime}</if>
+			<if test="endTime!=null and endTime!=''">AND create_time &lt;= #{endTime}</if>
+		</where>
+		 ORDER BY create_time DESC
+		 <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<select id="selectGenWalletDetailByUid" resultType="com.hedong.hedongwx.entity.GeneralDetail">
+		select
+		<include refid="GeneralDetail_Column_List" />
+		from hd_gen_detail where uid = #{uid} order by id desc
+	</select>
+	
+	<select id="selectGenWalletInfoById" resultType="com.hedong.hedongwx.entity.GeneralDetail">
+		select
+		<include refid="GeneralDetail_Column_List" />
+		from hd_gen_detail where id = #{id}
+	</select>
+	
+	<select id="advanceDetail" parameterType="com.hedong.hedongwx.entity.Parameter" resultType="java.util.Map">
+		SELECT g.*,u.username,u.realname,u.phone_num
+		FROM hd_gen_detail g LEFT JOIN hd_user u ON g.uid = u.id
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND g.merid = #{dealer} </if>
+			<if test="equi!=null and equi!=''"> AND g.uid = #{equi} </if>
+			<if test="ordernum!=null and ordernum!=''"> AND g.ordernum LIKE '%${ordernum}%' </if>
+			<if test="type!=null and type!='' and type!=0 ">AND g.paysource = #{type} </if>
+			<if test="startTime!=null and startTime!=''"> AND g.create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND g.create_time &lt;= #{endTime} </if>
+		</where>
+		 ORDER BY create_time DESC
+		<if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	
+	<select id="selecuserwalletdetail" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT g.*,u.username,u.realname,u.phone_num
+		FROM hd_gen_detail g LEFT JOIN hd_user u ON g.uid = u.id
+		<where>
+			<if test="uid!=null and uid!=''">AND uid = #{uid}</if>
+			<if test="order!=null and order!=''">AND ordernum LIKE '%${order}%' </if>
+			<if test="dealer!=null and dealer!=''">AND u.username LIKE '%${dealer}%' </if>
+			<if test="realname!=null and realname!=''">AND u.realname LIKE '%${realname}%' </if>
+			<if test="mobile!=null and mobile!=''">AND u.phone_num LIKE '%${mobile}%' </if>
+			<if test="type!=null and type!=''">AND paysource IN (${source})</if>
+			<if test="startTime!=null and startTime!=''">AND create_time &gt;= #{startTime}</if>
+			<if test="endTime!=null and endTime!=''">AND create_time &lt;= #{endTime}</if>
+		</where>
+		 ORDER BY create_time DESC
+		 <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+</mapper>

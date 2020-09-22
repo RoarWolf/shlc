@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.RoleDao">
+	
+	<sql id="Role_List">
+		id, rolename, createid, comment, remark, create_time
+	</sql>
+	
+	<sql id="User_Role_List">
+		id, uid, merid, roleid, creat_time
+	</sql>
+	
+	<!--  -->
+	<insert id="insertRole">
+		INSERT INTO hd_user_role ( rolename, createid, comment, remark, creat_time)
+		values (#{rolename}, #{createid}, #{comment}, #{remark}, Now())
+	</insert>
+	
+	<delete id="deleteRoleById">
+		DELETE FROM hd_role  WHERE id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<delete id="deleteRole">
+		DELETE FROM hd_role  WHERE rolename = #{rolename,jdbcType=VARCHAR}
+	</delete>
+	
+	<update id="updateRole" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_role
+		<set>
+		  <if test=" username != null"> AND rolename = #{ username}, </if>
+		  <if test=" dealer != null"> AND createid = #{ dealer}, </if>
+		  <if test=" number != null"> AND comment = #{ number}, </if>
+		  <if test=" remark != null"> AND remark = #{ remark}, </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="updateRoleByParam" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_role SET rolename = #{rolename} WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="selectRole" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT <include refid="Role_List"/> FROM hd_role 
+		<where>
+		  <if test=" rank != null"> AND id = #{rank} </if>
+		  <if test=" username != null"> AND rolename = #{username} </if>
+		  <if test=" dealer != null"> AND createid = #{dealer} </if>
+		  <if test=" number != null"> AND comment = #{number} </if>
+		  <if test=" remark != null"> AND remark = #{remark} </if>
+		</where> 
+	</select>
+	
+	<select id="selectRoleByParam" resultType="java.util.Map">
+		SELECT * FROM hd_role WHERE rolename = #{rolename} 
+	</select>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+
+	<insert id="insertUserRole">
+		INSERT INTO hd_user_role ( merid, uid, roleid, creat_time)
+		values (#{merid}, #{uid}, #{roleid}, Now())
+	</insert>
+	
+	<delete id="deleteUserRoleById">
+		DELETE FROM hd_user_role  WHERE id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<delete id="deleteUserRole">
+		DELETE FROM hd_user_role  WHERE uid = #{member,jdbcType=INTEGER} AND merid = #{merid,jdbcType=INTEGER} AND roleid = #{role,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="selectUserRole" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT u.*,p.creat_time AS dateTime,p.id AS pid,p.uid AS uid,p.merid AS pmerid,p.roleid AS proleid,r.rolename AS rolename
+		FROM hd_user_role p LEFT JOIN hd_user u ON p.uid = u.id LEFT JOIN hd_role r ON p.roleid = r.id
+		<where>
+		  <if test=" rank != null"> AND p.id = #{rank} </if>
+		  <if test=" uid != null"> AND p.uid = #{uid} </if>
+		  <if test=" dealer != null"> AND p.merid = #{dealer} </if>
+		  <if test=" sort != null"> AND p.roleid = #{sort} </if>
+		</where>
+	</select>
+	
+	<select id="selectUserRoleList" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT u.*,p.creat_time AS dateTime,p.id AS pid,p.uid AS uid,p.merid AS pmerid,p.roleid AS proleid,r.rolename AS rolename 
+		FROM hd_user_role p LEFT JOIN hd_user u ON p.uid = u.id LEFT JOIN hd_role r ON p.roleid = r.id
+		<where>
+		  <if test=" rank != null"> AND p.id = #{rank} </if>
+		  <if test=" uid != null"> AND p.uid = #{uid} </if>
+		  <if test=" dealer != null"> AND p.merid = #{dealer} </if>
+		  <if test=" sort != null"> AND p.roleid = #{sort} </if>
+		</where>
+	</select>
+	  
+	<update id="updatePortdate" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_user_role
+		<set>
+		  <if test=" dealer != null"> AND merid = #{ dealer}, </if>
+		  <if test=" uid != null"> AND uid = #{ uid}, </if>
+		  <if test=" sort != null"> AND roleid = #{ sort}, </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="updateUserRoleById" >
+		UPDATE hd_user_role SET roleid = #{role} WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateUserRoleByParam">
+		UPDATE hd_user_role SET roleid = #{role}  WHERE merid = #{merid} AND uid = #{uid}
+	</update>
+	
+</mapper>

@@ -1,0 +1,133 @@
+
+
+.ptb {
+
+}
+.ptb .switchContent h3 {
+	font-weight: 400;
+	font-size: 14px;
+	color: #666;
+	margin: 15px 0 15px 10px;
+}
+.ptb .switchContent li{
+	font-size: 12px;
+}
+.ptb .detail h3{
+	font-weight: 400;
+	font-size: 14px;
+	color: #666;
+	margin: 15px 0 15px 10px;
+}
+.ptb .detail ul {
+	background: transparent;
+}
+.ptb .detail ul li {
+	background-color: #fff;
+	font-size: 12px;
+}
+.ptb .detail ul li a {
+	text-decoration: none;
+}
+.ptb .detail ul li:after{
+	left: 0;
+}
+.ptb .icon-reg {
+	padding:10px 0;
+	background-color: #fff;
+	margin: 0 auto;
+	border-radius: 0 0 8px 8px;
+	border: 1px solid #c8c7cc;
+	border-top: none;
+	overflow: hidden;
+	margin-bottom: 20px;
+	background-color: #f5f7fa;
+	display: none;
+}
+.ptb .icon-reg ol {
+	height: 40px;
+	line-height: 40px;
+	width: 100%;
+	padding: 0 10px;
+	font-size: 12px;
+	color: #555;
+	margin-bottom: 10px;
+	display: flex;
+	justify-content: space-between;
+}
+.ptb .icon-reg ol > .ol-div {
+	width: 50%;
+	border: 1px solid #E6E6E6;
+	border-radius: 5px;
+}
+.ptb .icon-reg ol > .ol-div input{
+	border: none;
+	width: 70%;
+	background: none;
+}
+.ptb .icon-reg .last-ol div{
+	border-radius: 5px;
+	text-align: center;
+	font-size: 14px;
+	color: #22B14C;
+	width: 50%;
+	border: 1px solid #E6E6E6;
+
+}
+.ptb .icon-reg .last-ol div:first-child {
+	border-right: none;
+}
+.radio-but {
+	width: 50%;
+	display: flex;
+	justify-content: space-between;
+}
+
+.ptb .radio-but >div input {
+	left: 0 !important;
+}
+.radio-but >div label {
+	padding-left: 0 !important;
+	margin-left: 35px !important;
+}
+.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before {
+	color: #22B14C;
+}
+.ptb .icon-reg .last-ol div:active {
+	background-color: #22B14C;
+	color: #fff;
+}
+footer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 50px;
+	border-top: 1px solid #ccc;
+	background-color: #f5f7fa;
+	display: flex !important;
+	align-items: center;
+	justify-content: space-around;
+}
+footer div {
+	width: 30%;
+    height: 35px;
+    line-height: 35px;
+    border-radius: 35px;
+    color: #fff;
+    border: 1px solid #4cd964;
+    background-color: #4cd964;
+    font-size: 12px;
+    text-align: center;
+}
+footer div.getDataBut {
+	float: left;
+}
+footer div.setDataBut {
+	float: right;
+}
+footer div:active {
+	background-color: #fff;
+	color: #4cd964;
+}
+
+

@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.InCoinsDao">
+	
+	<!-- 查询不同的脉冲设备记录 -->
+	<select id="distinctcoins"  resultType="java.util.Map">
+		SELECT DISTINCT equipmentnum, merchantid 
+		FROM hd_incoins WHERE `status` = 1
+			<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" type!=null and type!=''"> and handletype = #{type}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and begin_time &lt;= #{endTime}</if> FROM hd_user_equipment
+	</select>
+	
+	<!-- 根据条件汇总脉冲上传记录信息  -->
+	<select id="selectcoinsup" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merchantid AS merid, COUNT(1) AS incoins, SUM(money) AS incoinsmoney 
+		FROM hd_incoins 
+		WHERE handletype = 3 AND `status` = 1
+		<if test=" dealer!=null and dealer!=''"> and merchantid = #{dealer}</if>
+		<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+		<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt;= #{endTime}</if>
+	</select>
+	
+	<sql id="InCoins_Column_List">
+		id,merchantid,uid,ordernum,equipmentnum,port,money,coin_num,status,handletype,recycletype,begin_time,
+		refund_time
+	</sql>
+	
+	<select id="selectCoinsParame"  parameterType="com.hedong.hedongwx.entity.Parameter"  resultType="java.util.Map">
+		SELECT u.username,u.phone_num AS phone,hu.username AS dealer,hu.phone_num AS deaphone,i.id,i.ordernum,i.equipmentnum,
+				i.port,i.money,i.coin_num,i.`status`,i.handletype,i.recycletype,i.begin_time,i.refund_time
+		FROM hd_incoins i LEFT JOIN hd_user u ON i.uid = u.id LEFT JOIN hd_user hu ON i.merchantid = hu.id
+		WHERE i.`status` = 1 
+		 <if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+		 <if test=" phoneNum!=null and  phoneNum!=''"> and u.phone_num LIKE '%${phoneNum}%' </if>
+		 <if test=" dealer!=null and  dealer!=''"> and hu.username LIKE '%${dealer}%' </if>
+		 <if test=" ordernum!=null and  ordernum!=''"> and i.ordernum LIKE '%${ordernum}%' </if>
+		 <if test=" equi!=null and  equi!=''"> and i.equipmentnum LIKE '%${equi}%' </if>
+		<!--  <if test=" parem!=null and parem!=''"> and i.port LIKE '%${port}%' </if> -->
+		 <if test=" status!=null and  status!=''"> and i.handletype in (${status}) </if>
+		 <if test=" type!=null and  type!=''"> and i.handletype = #{type} </if> 
+		 <if test=" startTime!=null and  startTime!=''"> and i.begin_time &gt;= #{startTime} </if>
+		 <if test=" endTime!=null and  endTime!=''"> and i.begin_time &lt;= #{endTime} </if>
+		 order by begin_time desc
+		  <if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	
+	<insert id="insertInCoinsRecord" parameterType="com.hedong.hedongwx.entity.InCoins">
+		insert into hd_incoins(merchantid,uid,ordernum,equipmentnum,port,money,coin_num,status,handletype
+		,recycletype,begin_time)
+		values(#{merchantid},#{uid},#{ordernum},#{equipmentnum},#{port},#{money},#{coinNum},#{status},
+		#{handletype},#{recycletype},now())
+	</insert>
+	
+	<update id="updateInCoinsStatus">
+		update hd_incoins 
+		<set>
+			<if test="handletype != null"> handletype = #{handletype}, </if>
+			refund_time = now()
+		</set>
+		where ordernum = #{ordernum,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateInCoinsStatusAndRecycletype">
+		update hd_incoins 
+		<set>
+			<if test="status != null"> status = #{status}, </if>
+		</set>
+		where ordernum = #{ordernum,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="selectInCoinsRecordByOrdernum" resultType="com.hedong.hedongwx.entity.InCoins">
+		select 
+		<include refid="InCoins_Column_List" />
+		from hd_incoins where ordernum = #{ordernum}
+	</select>
+	
+	<select id="selectInCoinsRecordById" resultType="com.hedong.hedongwx.entity.InCoins">
+		select 
+		<include refid="InCoins_Column_List" />
+		from hd_incoins where id = #{id}
+	</select>
+	
+	<select id="selectInCoinsNoReply" resultType="com.hedong.hedongwx.entity.InCoins">
+		select 
+		<include refid="InCoins_Column_List" />
+		from hd_incoins where status = 1 and handletype in (1,2) and recycletype = 0 and begin_time between date_add(now(), interval - 10 minute) and now()
+	</select>
+	
+	<select id="getInCoinsTodayMoneyByUserid" resultType="java.lang.Double">
+		select sum(money) from hd_incoins where status = 1
+		<if test="equipmentnum != null and equipmentnum != ''">
+			and equipmentnum LIKE '%${equipmentnum}%'
+		</if>
+		<if test="ordernum != null and ordernum != ''">
+			and ordernum LIKE '%${ordernum}%'
+		</if>
+		<if test="begintime != null and begintime != ''">
+			and begin_time &gt;=#{begintime}
+		</if>
+		<if test="endtime != null and endtime != ''">
+			and begin_time &lt;=#{endtime}
+		</if>
+		and (merchantid = #{merchantid} or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid}))) and handletype in (1,2)
+	</select>
+	
+	<select id="selectTotalMoneyByEqunumAndMerid" resultType="java.lang.Double">
+		select sum(money) from hd_incoins where status = 1
+		and merchantid = #{merchantid} and equipmentnum = #{equipmentnum}
+		<if test="type == 1">
+			and handletype in (1,2)
+		</if>
+		<if test="type == 2">
+			and handletype = 3
+		</if>
+	</select>
+	
+	<select id="getInCoinsByParam" resultType="com.hedong.hedongwx.entity.InCoins">
+		select
+		<include refid="InCoins_Column_List" />
+		from hd_incoins where status = 1 and (merchantid = #{merchantid} or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid})))
+		<if test="equipmentnum != null and equipmentnum != ''">
+			and equipmentnum LIKE '%${equipmentnum}%'
+		</if>
+		<if test="ordernum != null and ordernum != ''">
+			and ordernum LIKE '%${ordernum}%'
+		</if>
+		<if test="begintime != null and begintime != ''">
+			and begin_time &gt;=#{begintime}
+		</if>
+		<if test="endtime != null and endtime != ''">
+			and begin_time &lt;=#{endtime}
+		</if>
+		order by id desc
+	</select>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.hedong.hedongwx.entity.InCoins" >
+    update hd_incoins
+    <set >
+      <if test="merchantid != null" >
+        merchantid = #{merchantid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="ordernum != null" >
+        ordernum = #{ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentnum != null" >
+        equipmentnum = #{equipmentnum,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        port = #{port,jdbcType=TINYINT},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="coinNum != null" >
+        coin_num = #{coinNum,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="handletype != null" >
+        handletype = #{handletype,jdbcType=TINYINT},
+      </if>
+      <if test="recycletype != null" >
+        recycletype = #{recycletype,jdbcType=TINYINT},
+      </if>
+      <if test="beginTime != null" >
+        begin_time = #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundTime != null" >
+        refund_time = #{refundTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<!-- 查询商户信息总条数 -->	
+	<select id="selectIncoinsRecordCount"  parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM hd_incoins i 
+		LEFT JOIN hd_user u 
+		ON i.uid = u.id 
+		LEFT JOIN hd_user hu 
+		ON i.merchantid = hu.id
+		<where>
+			<if test=" uid!=null and uid!=''"> AND i.merchantid = #{uid} </if>
+		    <if test=" order!=null and  order!=''"> AND i.ordernum = #{order} </if>
+			<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+			<if test=" phone!=null and  phone!=''"> AND hu.phone_num LIKE '%${phone}%' </if>
+			<if test=" dealer!=null and  dealer!=''"> AND hu.username LIKE '%${dealer}%' </if>
+			<if test=" realname!=null and  realname!=''"> AND hu.realname LIKE '%${realname}%' </if>
+			<if test=" code!=null and  code!=''"> AND i.equipmentnum LIKE '%${code}%' </if>
+			<if test=" remark!=null and remark!=''"> AND i.port LIKE = #{remark} </if>
+			<if test=" status!=null and  status!=''"> AND i.handletype in (${status}) </if>
+			<if test=" type!=null and  type!=''"> AND i.handletype = #{type} </if> 
+			<if test=" paramete!=null and  paramete!=''"> AND i.`status` = #{paramete} </if> 
+			<if test="startTime!=null and startTime!=''"> AND i.begin_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND i.begin_time &lt;= #{endTime} </if>
+		</where> 
+	</select>
+	
+	
+	<!-- 查询商户信息 -->	
+	<select id="selectIncoinsRecord"  parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="java.util.Map">
+		SELECT u.username,u.phone_num AS phone,
+			   hu.username AS dealer,
+			   hu.phone_num AS deaphone,
+			   i.id,i.ordernum,i.equipmentnum,
+			   i.port,i.money,i.coin_num,i.`status`,
+			   i.handletype,i.recycletype,i.begin_time,
+			   i.refund_time
+		FROM hd_incoins i 
+		LEFT JOIN hd_user u 
+		ON i.uid = u.id 
+		LEFT JOIN hd_user hu 
+		ON i.merchantid = hu.id
+		<where>
+			<if test=" uid!=null and uid!=''"> AND i.merchantid = #{uid} </if>
+		    <if test=" order!=null and  order!=''"> AND i.ordernum = #{order} </if>
+			<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+			<if test=" phone!=null and  phone!=''"> AND hu.phone_num LIKE '%${phone}%' </if>
+			<if test=" dealer!=null and  dealer!=''"> AND hu.username LIKE '%${dealer}%' </if>
+			<if test=" realname!=null and  realname!=''"> AND hu.realname LIKE '%${realname}%' </if>
+			<if test=" code!=null and  code!=''"> AND i.equipmentnum LIKE '%${code}%' </if>
+			<if test=" remark!=null and remark!=''"> AND i.port LIKE = #{remark} </if>
+			<if test=" status!=null and  status!=''"> AND i.handletype in (${status}) </if>
+			<if test=" type!=null and  type!=''"> AND i.handletype = #{type} </if> 
+			<if test=" paramete!=null and  paramete!=''"> AND i.`status` = #{paramete} </if> 
+			<if test="startTime!=null and startTime!=''"> AND i.begin_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND i.begin_time &lt;= #{endTime} </if>
+			ORDER BY i.id DESC
+		</where>
+		 <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- 脉冲微信支付宝消费汇总  -->
+	<select id="incoinstatol" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		<!-- SELECT 
+			SUM(CASE handletype 
+					WHEN '1' THEN 1 
+					WHEN '4' THEN 1
+					WHEN '8' THEN 1
+					WHEN '9' THEN 1
+					ELSE 0 END) AS wechatnum,
+			SUM(CASE handletype 
+					WHEN '1' THEN money 
+					WHEN '4' THEN money
+					WHEN '8' THEN money
+					WHEN '9' THEN money
+					ELSE 0 END) AS wechatmoney,
+			SUM(CASE handletype 
+					WHEN '2' THEN 1 
+					WHEN '5' THEN 1
+					ELSE 0 END) AS alipaynum,
+			SUM(CASE handletype 
+					WHEN '2' THEN money 
+					WHEN '5' THEN money
+					ELSE 0 END) AS alipaymoney,										
+			SUM(CASE handletype 
+					WHEN '4' THEN 1
+					WHEN '9' THEN 1
+					ELSE 0 END) AS refwechatnum,
+			SUM(CASE handletype 
+					WHEN '4' THEN money
+					WHEN '9' THEN money
+					ELSE 0 END) AS refwechatmoney,
+			SUM(CASE handletype WHEN '5' THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE handletype WHEN '5' THEN money ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN handletype='3' THEN 1 ELSE 0 END) AS incoins,
+			SUM(CASE WHEN handletype='3' THEN money ELSE 0 END) AS incoinsmoney
+			SUM(CASE WHEN handletype='5' OR handletype='6' THEN 1 ELSE 0 END) AS walletnum,
+			SUM(CASE WHEN handletype='5' OR handletype='6' THEN money ELSE 0 END) AS walletmoney,
+			SUM(CASE WHEN handletype='6' THEN 1 ELSE 0 END) AS refwalletnum,
+			SUM(CASE WHEN handletype='6' THEN money ELSE 0 END) AS refwalletmoney
+		FROM hd_incoins WHERE `status` = 1
+		<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+		<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+		<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if> -->
+		
+		SELECT  a.wechatnum AS wechatnum,
+				a.wechatmoney AS wechatmoney,
+				b.alipaynum AS alipaynum,
+				b.alipaymoney AS alipaymoney,
+				c.refwechatnum AS refwechatnum,
+				c.refwechatmoney AS refwechatmoney,
+				d.refalipaynum AS refalipaynum,
+				d.refalipaymoney AS refalipaymoney,
+				e.incoins AS incoins,
+				e.incoinsmoney AS incoinsmoney,
+				f.walletnum AS walletnum,
+				f.walletmoney AS walletmoney,
+				g.refwalletnum AS refwalletnum,
+				g.refwalletmoney AS refwalletmoney
+		 from 
+		(SELECT count(1) as wechatnum,sum(money) as wechatmoney  from hd_incoins where  handletype in (1,4,8,9) and `status`=1
+		<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) a,
+		(SELECT count(1) as alipaynum,sum(money) as alipaymoney  from hd_incoins where  handletype in (2,5) and `status`=1
+		<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) b,
+		(SELECT count(1) as refwechatnum,sum(money) as refwechatmoney  from hd_incoins where  handletype in (4,9) and `status`=1
+		<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) c,
+		(SELECT count(1) as refalipaynum,sum(money) as refalipaymoney  from hd_incoins where   handletype = 5 and `status`=1
+		<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) d,
+		(SELECT count(1) as incoins,sum(money) as incoinsmoney  from hd_incoins where  handletype = 3 and `status`=1
+		<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) e,
+		(SELECT COUNT(1)  AS walletnum,SUM(money) AS walletmoney FROM hd_incoins where handletype IN(5,6) and `status`=1
+		<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) f,
+		(SELECT COUNT(1) AS refwalletnum,SUM(money) AS refwalletmoney FROM hd_incoins where handletype=6 and `status`=1
+        <if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+        )g
+	</select>
+	
+	<select id="selectsuminfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+			<!-- 
+		SELECT 
+			SUM(CASE WHEN handletype='1' OR handletype='4' THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN handletype='1' OR handletype='4' THEN money ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN handletype='2' OR handletype='5' THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN handletype='2' OR handletype='5' THEN money ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN handletype='3' THEN 1 ELSE 0 END) AS incoins,
+			SUM(CASE WHEN handletype='3' THEN money ELSE 0 END) AS incoinsmoney,
+			SUM(CASE WHEN handletype='5' OR handletype='6' THEN 1 ELSE 0 END) AS walletnum,
+			SUM(CASE WHEN handletype='5' OR handletype='6' THEN money ELSE 0 END) AS walletmoney
+		FROM hd_incoins WHERE `status` = 1 -->
+		SELECT 
+			a.wechatnum AS wechatnum,
+			a.wechatmoney AS wechatmoney,
+		 	b.alipaynum AS alipaynum,
+			b.alipaymoney AS alipaymoney,
+			c.incoins AS incoins,
+		 	c.incoinsmoney AS incoinsmoney,
+			d.walletnum AS walletnum,
+			d.walletmoney AS walletmoney
+		FROM 
+		(SELECT COUNT(1) AS wechatnum,SUM(money) AS wechatmoney FROM hd_incoins WHERE handletype IN(1,4) AND `status`=1
+			<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) a,
+		(SELECT COUNT(1) AS alipaynum,SUM(money) AS alipaymoney FROM hd_incoins WHERE handletype IN(2,5) AND `status`=1
+			<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) b,
+		(SELECT COUNT(1) AS incoins,SUM(money) AS incoinsmoney FROM hd_incoins WHERE handletype =3 AND `status`=1
+			<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) c,
+		(SELECT COUNT(1) AS walletnum,SUM(money) AS walletmoney FROM hd_incoins WHERE handletype IN(5,6) AND `status`=1
+			<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+		) d;
+	</select>
+	
+	<select id="selectsuminforefund" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		<!-- SELECT
+			SUM(CASE WHEN handletype='4' THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN handletype='4' THEN money ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN handletype='5' THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN handletype='5' THEN money ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN handletype='6' THEN 1 ELSE 0 END) AS refwalletnum,
+			SUM(CASE WHEN handletype='6' THEN money ELSE 0 END) AS refwalletmoney
+		FROM hd_incoins WHERE `status` = 1 -->
+		SELECT 
+			a.refwechatnum AS refwechatnum,
+			a.refwechatmoney AS refwechatmoney,
+			b.refalipaynum AS refalipaynum,
+			b.refalipaymoney AS refalipaymoney,
+			c.refwalletnum AS refwalletnum,
+			c.refwalletmoney AS refwalletmoney
+		FROM
+		(SELECT COUNT(1) AS refwechatnum,SUM(money) AS refwechatmoney FROM hd_incoins WHERE handletype = 4 AND `status` =1
+			<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and refund_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and refund_time &lt; #{endTime}</if>
+		) a,
+		(SELECT COUNT(1) AS refalipaynum,SUM(money) AS refalipaymoney FROM hd_incoins WHERE handletype =5 AND `status`=1
+			<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and refund_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and refund_time &lt; #{endTime}</if>
+		) b,
+		(SELECT COUNT(1) AS refwalletnum,SUM(money) AS refwalletmoney FROM hd_incoins WHERE handletype =6 and `status`=1
+			<if test=" uid!=null and uid!=''"> and merchantid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and refund_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and refund_time &lt; #{endTime}</if>
+		) c;
+	</select>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	
+</mapper>

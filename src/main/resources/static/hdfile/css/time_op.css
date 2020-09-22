@@ -1,0 +1,39 @@
+.mbsc-ios .mbsc-fr-overlay {
+    background: rgba(0,0,0,.7);
+    filter: Alpha(Opacity=70);
+    opacity: 0.7;
+}
+.mbsc-material .mbsc-range-btn-sel .mbsc-range-btn {
+    border-color: #006bff;
+    color: #006bff;
+    font-weight: bold
+}
+.mbsc-material .mbsc-fr-w,.mbsc-material .mbsc-cal-sc-c{
+  background: #fff !important
+}
+.mbsc-material.mbsc-range .mbsc-cal-table .mbsc-cal-day-hl .mbsc-cal-day-i .mbsc-cal-day-fg {
+    color: #fff;
+    background:#006bff;
+}
+.mbsc-material .mbsc-fr-btn {
+    color: #006bff;
+}
+.mbsc-material.mbsc-range .mbsc-cal-day-sel .mbsc-cal-day-frame {
+    background: rgba(0,108,255,.1);
+}
+.mbsc-ic-material-keyboard-arrow-right:before,.mbsc-ic-material-keyboard-arrow-left:before,.mbsc-material .mbsc-cal-hl-now .mbsc-cal-today {
+    color: #006bff;
+}
+.mbsc-material .mbsc-fr-w{
+  background: #fff
+}
+.mbsc-material .mbsc-cal-sc .mbsc-cal-sc-sel .mbsc-cal-sc-cell-i {
+    background:#006bff !important;
+    color: #fff
+}
+.mbsc-material .mbsc-range-btn-t {
+    border-bottom: 0.01rem solid #f7f7f7;
+}
+.mbsc-fr-btn0{
+  background: #ff5151;color: #fff!important;border-radius: 0.1rem
+}

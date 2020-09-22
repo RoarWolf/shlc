@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.OfflineCardDao">
+	<sql id="OfflineCard_Column_List">
+		id, merchantid, uid, ordernum, equipmentnum, cardID, balance, chargemoney,
+		accountmoney, discountmoney, paytype, status, handletype, recycletype, begin_time
+	</sql>
+	
+	<select id="selectOrderInfo" parameterType="com.hedong.hedongwx.entity.OfflineCard" resultType="com.hedong.hedongwx.entity.OfflineCard">
+		SELECT o.id,o.ordernum,o.equipmentnum,o.cardID,o.balance,o.chargemoney,o.accountmoney,o.discountmoney,
+		o.handletype,o.recycletype,o.begin_time,o.paytype,u.username,hu.username AS dealer FROM hd_offlinecard o 
+		LEFT JOIN hd_user u ON o.uid = u.id LEFT JOIN hd_user hu ON o.merchantid = hu.id 
+		where 1=1 and (o.status=1 or o.status is null) and o.recycletype is not null 
+		  <if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+		  <if test=" dealer!=null and  dealer!=''"> and hu.username LIKE '%${dealer}%' </if>
+	      <if test=" ordernum!=null and  ordernum!=''"> and o.ordernum LIKE '%${ordernum}%' </if>
+	      <if test=" equipmentnum!=null and equipmentnum!=''"> and o.equipmentnum LIKE '%${equipmentnum}%' </if>
+	      <if test=" cardID!=null and cardID!=''"> and o.cardID LIKE '%${cardID}%' </if>
+	      <if test=" handletype!=null"> and o.handletype = #{handletype}</if>
+	      <if test=" recycletype!=null"> and o.recycletype = #{recycletype}</if>
+	      <if test=" paytype!=null"> and o.paytype = #{paytype}</if>
+	      <if test=" startTime!=null and startTime!=''"> and o.begin_time &gt;= #{startTime} </if>
+	      <if test=" endTimes!=null and endTimes!=''"> and o.begin_time &lt;= #{endTimes}</if>
+	   	  ORDER BY o.begin_time DESC
+	    <if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	<insert id="insertOfflineCard" parameterType="com.hedong.hedongwx.entity.OfflineCard">
+		insert into hd_offlinecard(merchantid, uid, ordernum, equipmentnum, cardID, balance, chargemoney,
+		accountmoney, discountmoney, handletype, recycletype, begin_time,paytype,status) 
+		values(#{merchantid}, #{uid}, #{ordernum}, #{equipmentnum}, #{cardID}, #{balance}, #{chargemoney},
+		#{accountmoney}, #{discountmoney}, #{handletype}, #{recycletype}, now(),#{paytype},#{status})
+	</insert>
+	<update id="updateQuery" parameterType="com.hedong.hedongwx.entity.OfflineCard">
+		update hd_offlinecard
+		<set>
+			<if test="cardID != null">
+                cardID = #{cardID},
+            </if>
+			<if test="balance != null">
+                balance = #{balance},
+            </if>
+			<if test="recycletype != null">
+                recycletype = #{recycletype},
+            </if>
+			<if test="status != null">
+                status = #{status},
+            </if>
+		</set>
+		where ordernum = #{ordernum}
+	</update>
+	<update id="offlineCardRefund">
+		update hd_offlinecard set paytype = #{paytype},refund_time = now() where id = #{id}
+	</update>
+	<select id="selectOfflineCardByOrdernum" resultType="com.hedong.hedongwx.entity.OfflineCard">
+		select
+		<include refid="OfflineCard_Column_List" />
+		from hd_offlinecard where ordernum = #{ordernum}
+	</select>
+	<select id="selectOfflineCardById" resultType="com.hedong.hedongwx.entity.OfflineCard">
+		select
+		<include refid="OfflineCard_Column_List" />
+		from hd_offlinecard where id = #{id}
+	</select>
+	
+	<select id="getOfflineTodayMoneyByUserid" resultType="java.lang.Double">
+		select sum(chargemoney) from hd_offlinecard where status = 1 and handletype = 1
+		<if test="equipmentnum != null and equipmentnum != ''">
+			and equipmentnum LIKE '%${equipmentnum}%'
+		</if>
+		<if test="ordernum != null and ordernum != ''">
+			and ordernum LIKE '%${ordernum}%'
+		</if>
+		<if test="begintime!=null and begintime!=''">
+			and begin_time &gt;=#{begintime}
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			and begin_time &lt;=#{endtime}
+		</if>
+		and (merchantid = #{merchantid} or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid}))) and paytype in (1,2)
+	</select>
+	
+	<select id="selectTotalMoneyByMeridAndEqunum" resultType="java.lang.Double">
+		select sum(chargemoney) from hd_offlinecard where status = 1 and paytype in (1,2) and status = 1
+		and merchantid = #{merchantid} and equipmentnum = #{equipmentnum}
+	</select>
+	
+	<delete id="deleteOfflineCardByOrdernum">
+		delete from hd_offlinecard where ordernum = #{ordernum}
+	</delete>
+	
+	<select id="getOfflineByParma" resultType="com.hedong.hedongwx.entity.OfflineCard">
+		select
+		<include refid="OfflineCard_Column_List" />
+		from hd_offlinecard where status = 1 and (merchantid = #{merchantid} or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid}))) and handletype = 1
+		<if test="equipmentnum != null and equipmentnum != ''">
+			and equipmentnum LIKE '%${equipmentnum}%'
+		</if>
+		<if test="ordernum != null and ordernum != ''">
+			and ordernum LIKE '%${ordernum}%'
+		</if>
+		<if test="begintime != null and begintime != ''">
+			and begin_time &gt;=#{begintime}
+		</if>
+		<if test="endtime != null and endtime != ''">
+			and begin_time &lt;=#{endtime}
+		</if>
+		order by id desc
+	</select>
+	
+	<select id="gainOfflineData" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.OfflineCard">
+		SELECT <include refid="OfflineCard_Column_List" /> FROM hd_offlinecard WHERE
+		cardID = #{cardID} AND handletype = 2 ORDER BY begin_time DESC LIMIT 1
+	</select>
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<!-- 查询商户信息 -->		
+	<select id="selectOfflineRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT o.*,u.username,hu.username AS dealer 
+		FROM hd_offlinecard o LEFT JOIN hd_user u ON o.uid = u.id LEFT JOIN hd_user hu ON o.merchantid = hu.id 
+		WHERE 1=1 AND (o.status=1 or o.status is null)  
+		<!-- WHERE 1=1 and (o.status=1 or o.status is null) and o.recycletype is not null  -->
+		<if test=" uid!=null and uid!=''"> AND o.merchantid = #{uid} </if>
+	    <if test=" order!=null and  order!=''"> AND o.ordernum LIKE '%${order}%' </if>
+		<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+		<if test=" dealer!=null and  dealer!=''"> AND hu.username LIKE '%${dealer}%' </if>
+		<if test=" realname!=null and  realname!=''"> and hu.realname LIKE '%${realname}%' </if>
+			<if test="mobile!=null and mobile!=''"> AND hu.phone_num LIKE '%${mobile}%' </if>
+		<if test=" code!=null and  code!=''"> AND o.equipmentnum LIKE '%${code}%' </if>
+		<if test=" number!=null and  number!=''"> AND o.cardID LIKE '%${number}%' </if>
+		
+		<if test=" type!=null and  type!=''"> AND o.handletype = #{type} </if> 
+		<if test=" sort!=null and  sort!=''"> AND o.recycletype = #{sort} </if> 
+		<if test=" status!=null and status!=''"> AND o.paytype = #{status} </if> 
+		
+	    <if test="startTime!=null and startTime!=''"> AND o.begin_time &gt;= #{startTime} </if>
+		<if test="endTime!=null and endTime!=''"> AND o.begin_time &lt;= #{endTime} </if>
+		ORDER BY o.begin_time DESC	
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- 离线卡微信支付宝消费汇总 -->
+	<select id="offlinecardtotal" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			<!-- SUM(CASE WHEN paytype='5' OR paytype='6' THEN 1 ELSE 0 END) AS walletnum,
+			SUM(CASE WHEN paytype='5' OR paytype='6' THEN chargemoney ELSE 0 END) AS walletmoney,
+			SUM(CASE WHEN paytype='6' THEN 1 ELSE 0 END) AS refwalletnum,
+			SUM(CASE WHEN paytype='6' THEN chargemoney ELSE 0 END) AS refwalletmoney, -->
+			SUM(CASE WHEN paytype='1' OR paytype='3' THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN paytype='1' OR paytype='3' THEN chargemoney ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype='2' OR paytype='4' THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN paytype='2' OR paytype='4' THEN chargemoney ELSE 0 END) AS alipaymoney,
+
+			SUM(CASE WHEN paytype='3' THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN paytype='3' THEN chargemoney ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN paytype='4' THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN paytype='4' THEN chargemoney ELSE 0 END) AS refalipaymoney
+		FROM hd_offlinecard WHERE `status` = 1 AND handletype = 1 
+		<if test=" uid!=null and uid!=''"> and uid = #{uid}</if>
+		<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+		<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+	</select>
+	
+	<select id="selecttotaloff" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN paytype='1' OR paytype='3' THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN paytype='2' OR paytype='4' THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN paytype='5' OR paytype='6' THEN 1 ELSE 0 END) AS walletnum,
+			SUM(CASE WHEN paytype='1' OR paytype='3' THEN chargemoney ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype='2' OR paytype='4' THEN chargemoney ELSE 0 END) AS alipaymoney,
+			SUM(CASE WHEN paytype='5' OR paytype='6' THEN chargemoney ELSE 0 END) AS walletmoney
+		FROM hd_offlinecard WHERE `status` = 1 AND handletype = 1 
+			<if test=" uid!=null and uid!=''"> and uid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begin_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and begin_time &lt; #{endTime}</if>
+	</select>
+	
+	<select id="selecttotaloffrefund" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN paytype='3' THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN paytype='4' THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN paytype='6' THEN 1 ELSE 0 END) AS refwalletnum,
+			SUM(CASE WHEN paytype='3' THEN chargemoney ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN paytype='4' THEN chargemoney ELSE 0 END) AS refalipaymoney,
+			SUM(CASE WHEN paytype='6' THEN chargemoney ELSE 0 END) AS refwalletmoney
+		FROM hd_offlinecard WHERE `status` = 1 AND handletype = 1 
+			<if test=" uid!=null and uid!=''"> and uid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and refund_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and refund_time &lt; #{endTime}</if>
+	</select>
+	
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+
+</mapper>

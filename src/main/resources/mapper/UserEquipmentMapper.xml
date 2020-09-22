@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.UserEquipmentDao">
+	<sql id="UserEquipment_Column_List">
+		user_id, equipment_code
+	</sql>
+	
+	
+	<!-- origin 查询没有绑定设备合伙人信息 -->
+	<select id="inquireAllmeridInfo"  resultType="java.util.Map">
+		SELECT DISTINCT user_id AS merid FROM hd_user_equipment
+		UNION
+		SELECT DISTINCT(partid) AS merid FROM hd_arearelevance WHERE type = 2 AND partid NOT IN (
+			SELECT DISTINCT user_id FROM hd_user_equipment
+		)
+	</select>
+	
+	<select id="selectustoequ" parameterType="java.lang.Integer"  resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) AS onlines,
+			SUM(CASE WHEN state=0 THEN 1 ELSE 0 END) AS disline,
+			SUM(CASE WHEN bindtype=0 THEN 1 ELSE 0 END) AS disbind,
+			SUM(CASE WHEN bindtype=1 THEN 1 ELSE 0 END) AS onbind
+ 		FROM hd_user_equipment ue LEFT JOIN hd_equipment e ON e.`code`=ue.equipment_code 
+ 		<where>
+		  <if test="userId != null"> AND ue.user_id = #{userId,jdbcType=INTEGER} </if>
+		</where>
+	</select>
+	
+	<delete id="deleteUserEquipmentById" parameterType="com.hedong.hedongwx.entity.UserEquipment">
+		delete from
+		hd_user_equipment
+		where user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteUserEquipmentByEquipmentCode">
+		delete from
+		hd_user_equipment
+		where equipment_code = #{equipmentCode,jdbcType=VARCHAR}
+	</delete>
+	<insert id="addUserEquipment" parameterType="com.hedong.hedongwx.entity.UserEquipment">
+		insert into
+		hd_user_equipment (user_id, equipment_code)
+		values
+		(#{userId,jdbcType=INTEGER}, #{equipmentCode,jdbcType=VARCHAR})
+	</insert>
+	<select id="findAllUserEquipment" resultType="com.hedong.hedongwx.entity.UserEquipment">
+		select
+		<include refid="UserEquipment_Column_List" />
+		from hd_user_equipment
+	</select>
+	<select id="getUserEquipmentById" resultType="com.hedong.hedongwx.entity.UserEquipment">
+		select
+		<include refid="UserEquipment_Column_List" />
+		from hd_user_equipment where user_id = #{userId,jdbcType=INTEGER}
+	</select>
+	<select id="getUserEquipmentByCode" resultType="com.hedong.hedongwx.entity.UserEquipment">
+		select
+		<include refid="UserEquipment_Column_List" />
+		from hd_user_equipment where equipment_code = #{equipmentCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="coderelevance"  resultType="java.util.Map">
+		SELECT e.*,ue.user_id AS merid
+		FROM hd_user_equipment ue LEFT JOIN hd_equipment e ON ue.equipment_code = e.`code` 
+	</select>
+	
+	<select id="getDivideintoByCode" resultType="com.hedong.hedongwx.entity.UserEquipment">
+		SELECT ue.user_id, ue.equipment_code,e.hardversion,e.aid,e.hardversionnum,e.softversionnum,e.tempid,e.remark AS equiname,a.manid,a.divideinto 
+		FROM hd_user_equipment ue LEFT JOIN hd_equipment e ON ue.equipment_code = e.`code` LEFT JOIN hd_area a ON e.aid = a.id 
+		WHERE ue.equipment_code = #{code,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getEquipToUserByCode" parameterType="java.lang.String"  resultType="java.util.Map">
+		SELECT q.user_id AS dealid, q.equipment_code AS `code`, e.remark AS devicename, e.tempid, e.hardversion, 
+		e.aid, e.hardversionnum, e.softversionnum, u.username AS dealnick, u.realname AS realname, u.phone_num AS telphone, 
+		a.`name` AS areaname, a.address AS areaaddress,a.manid,a.divideinto 
+		FROM hd_user_equipment q LEFT JOIN hd_equipment e ON q.equipment_code = e.`code` LEFT JOIN hd_area a ON e.aid = a.id LEFT JOIN hd_user u ON q.user_id = u.id
+		WHERE q.equipment_code = #{code,jdbcType=VARCHAR}
+		<!-- SELECT q.user_id, q.equipment_code,e.hardversion,e.aid,e.hardversionnum,e.softversionnum,e.tempid,e.remark AS equiname,a.manid,a.divideinto 
+		FROM hd_user_equipment q LEFT JOIN hd_equipment e ON q.equipment_code = e.`code` LEFT JOIN hd_area a ON e.aid = a.id  -->
+	</select>
+	
+	<!-- 查询绑定设备的用户 -->
+	<select id="distinctuid"  resultType="java.util.Map">
+		SELECT DISTINCT user_id FROM hd_user_equipment
+	</select>
+	
+	<!-- 查询绑定设备的信息中不同合伙人信息 -->
+	<select id="bindingcodepartnerinfo" resultType="java.util.Map">
+		<!-- SELECT DISTINCT a.manid FROM hd_equipment e LEFT JOIN hd_area a ON e.aid = a.id WHERE e.`code` IN (SELECT equipment_code c FROM hd_user_equipment) -->
+		SELECT DISTINCT(a.partid) AS partnider FROM hd_equipment e LEFT JOIN hd_arearelevance a ON e.aid = a.aid 
+		WHERE e.`code` IN (SELECT equipment_code c FROM hd_user_equipment) AND a.type = 2
+	</select>
+	
+	<update id="updateUserEquipment" >
+		UPDATE hd_user_equipment SET user_id = #{dealid} WHERE equipment_code = #{code}
+	</update>
+	
+	<insert id="insertUserRoledate">
+		INSERT INTO hd_user_role (uid, equid, port, creat_time)
+		values (#{uid}, #{uid}, #{port}, Now())
+	</insert>
+	  
+	<update id="updateUserRoleidfo" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_user_role SET uid = #{uid} WHERE equid = #{equid} AND port = #{port}
+	</update>
+	
+	<delete id="deleteUserRoledate" parameterType="int">
+		DELETE FROM hd_user_role  WHERE id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<!-- 根据设备号查询商户是否为特约商户的标识 -->
+	<select id="selectSubMerByCode" resultType="java.lang.Integer">
+		SELECT u.submer FROM hd_user u
+			LEFT JOIN hd_user_equipment ue
+			ON u.id = ue.user_id
+			WHERE ue.equipment_code=#{code}
+	</select>
+	
+</mapper>

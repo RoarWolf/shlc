@@ -1,0 +1,91 @@
+ 
+.register .top {
+    display: flex;
+   justify-content: center;
+    width: 100%;
+    padding: 11vh 0;
+    background-color: #44AF3D;
+    align-items: center;
+}
+.register .top > img {
+    width: 19%;
+    height: 19%;
+}
+
+.register .top > h1 {
+    font-weight: 500;
+    margin-left: 5vw;
+    font-size: 30px;
+    color: #fff;
+}
+.register .content {
+    margin-top: 40px;
+    border: none;
+}
+.register .content .mui-input-group {
+    background-color: transparent;
+    padding: 0 8%;
+    font-size: 14px;
+    color: #666;
+}
+.register .content .mui-input-row label {
+    padding: 13px 15px;
+}
+.register .content .mui-input-group:after {
+    height: 0;
+}
+.register .content .mui-input-group input {
+    font-size: 14px;
+    padding-right: 33px;
+}
+.register .content .mui-input-group:before,
+.register .content .mui-input-group .mui-input-row:after {
+    height: 0;
+}
+.register .content .formdiv > form > .inp {
+    border: 1px solid #ccc;
+    border-radius: 42px;
+    margin-top: 10px;
+    height: 40px;
+    /* margin-bottom: 25px; */
+}
+#getNum {
+    position: relative;
+}
+#getNum b {
+    margin-right: 18px;
+    font-weight: 400;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: #666;
+    font-size: 12px;
+}
+#getNum b.reNum{
+    height: 2em;
+    color: #44AF3D;
+    text-decoration: underline;
+    display: flex;
+    align-items: flex-end;
+}
+#getNum b.reNum:active {
+    text-decoration: none;
+    color: #67C962;
+}
+.register .content  .sbumit-button {
+    margin-top: 20px;
+}
+.register .content  .sbumit-button button {
+    background-color: transparent;
+    border: 1px solid #44AF3D;
+    width: 100%;
+    height: 100%;
+    border-radius: 42px;
+    color: #44AF3D;
+    background-color: #44AF3D;
+    color: #fff;
+}
+.register .content  .sbumit-button button:active {
+    background-color: #4cd964;
+}
+

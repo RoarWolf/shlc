@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.FeescaleDao">
+	
+	<!--计算缴费的总收益 state=1是正常的缴费-->
+	<select id="selectFeescaleTotalEarnings" resultType="java.util.Map">
+		SELECT 
+			SUM(price) AS feescaleEarns,
+			SUM(CASE WHEN paytype=4 THEN price ELSE 0 END) AS wxfeescale,
+			SUM(CASE WHEN paytype!=4 THEN price ELSE 0 END) AS wallentfeescale
+			FROM hd_fluxtoll 
+		WHERE state=1
+	</select>
+	<!-- 更改商家的最大负收入 -->
+	<select id="setMerMaxNegative">
+		UPDATE hd_user 
+		SET maxnegative =#{maxNegative} 
+		WHERE id=#{merid}
+	</select>
+	<!-- 超級管理員更改设备的到期时间 -->
+	<update id="setEquipmentExpire">
+		 UPDATE hd_equipment SET expiration_time=#{expirationTime} 
+		 WHERE `code`=#{code}
+	</update>
+	<!--根据小区的id获取小区下的合伙人及数量 -->
+	<select id="getAllPartner" resultType="java.lang.Integer">
+		SELECT COUNT(1) from hd_arearelevance
+		WHERE aid=#{id}
+		AND type=2
+	</select>
+	
+	<!-- 插入数据收费 -->
+	<insert id="insertFeescal">
+		INSERT INTO hd_feescale(merid,mername,nettype,equipmenttype,feescale)
+		VALUES(#{merid},#{mername},#{netType},#{equipmentType},#{feescale})
+	</insert>
+	<!-- 插入数据前的查询 -->
+	<select id="selectMerFeescaleByid" resultType="java.util.Map">
+		SELECT merid,nettype,equipmenttype,feescale FROM hd_feescale
+		WHERE merid=#{merid}
+		AND nettype=#{netType}
+		AND equipmenttype=#{equipmentType}
+	</select>
+	
+	<!--根据商家的id查询设备类型的收费 -->
+	<select id="getFeescalBymerid" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT nettype,equipmenttype,feescale
+		FROM hd_feescale
+		WHERE merid=#{merid}
+	</select>
+	<!--获取系统的收费标准-->
+	<select id="getSystemFeescale" resultType="java.util.Map">
+	SELECT nettype,equipmenttype,feescale
+		FROM hd_feescale
+		WHERE merid=2
+	</select>
+	<!--超级管理员根据商家的id修改设备类型的收费标准-->
+	<update id="updateFeescaleBymerid">
+		UPDATE hd_feescale
+		SET feescale=#{feescale}
+		WHERE merid=#{merid}
+		AND nettype =#{netType}
+		AND equipmentType =#{equipmentType}
+	</update>
+	<!-- 商家设置是否开启自动续费和开启分摊-->
+	<update id="updateSwitch">
+		UPDATE hd_dealerauthority 
+		<set>
+			<if test="autoPay !=null ">
+				autopay=#{autoPay}
+			</if >
+			<if test="apportion != null">
+				apportion=#{apportion}
+			</if>
+			<if test="autoWithdraw != null">
+				autowithdraw =#{autoWithdraw}
+			</if>
+		</set>
+		  WHERE merid=#{merid}
+	</update> 
+	 
+	<!-- 添加缴费记录 -->
+	<insert id="insertFeescaleRecord" parameterType="com.hedong.hedongwx.entity.FeescaleRecord">
+		INSERT INTO hd_fluxtoll(merid,username,aid,revice_id,merpaymoney,equipmentnum,renewal,ordernum,price,createtime,paytype,note,state)
+		VALUES (#{merId},#{merName},#{aid},#{reviceId},#{merPayMoney},#{equipmentNum},#{renewal},#{orderNum},#{price},#{createTime},#{payType},#{note},#{state})
+	</insert>
+	
+	<!--根据条件查询缴费记录总条数 -->
+	<select id="selectFeescaleRecordCount" parameterType="com.hedong.hedongwx.entity.FeescaleRecord" resultType="java.lang.Integer">
+		SELECT COUNT(1) AS totalCount 
+		FROM hd_fluxtoll a
+		LEFT JOIN hd_user b
+       	ON a.merid=b.id
+		<where>
+			<if test="merId != null">AND a.merid=#{merId}</if>
+			<if test="merName !=null and merName !=''">AND b.username LIKE '%${merName}%'</if>
+			<if test="phone !=null and phone !=''">AND b.phone_num LIKE '%${phone}%'</if>
+			<if test="equipmentNum !=null and equipmentNum !=''">AND a.equipmentnum=#{equipmentNum}</if>
+			<if test="orderNum !=null and orderNum !=''">AND a.ordernum=#{orderNum}</if>
+			<if test="begintime !=null and begintime !=''"> AND a.createtime &gt;= #{begintime} </if>
+			<if test="endtime !=null and endtime != ''"> AND a.createtime &lt;= #{endtime} </if>
+			<if test="payType !=null">AND a.paytype=#{payType}</if>
+			AND state=1
+		</where>
+	</select>
+	<!-- 根据条件查询缴费记录 -->
+	<select id="selectFeescaleRecord" parameterType="com.hedong.hedongwx.entity.FeescaleRecord" resultType="java.util.Map">
+		SELECT b.username,b.phone_num,a.merid,a.merpaymoney,
+    		   a.equipmentnum,a.aid,a.renewal,a.paytype,a.note,
+               a.price,a.renewal,a.ordernum,a.createtime
+        FROM hd_fluxtoll a
+        LEFT JOIN hd_user b
+  		ON a.merid=b.id
+		<where>
+			<if test="merId != null">AND a.merid=#{merId}</if>
+			<if test="merName !=null and merName !=''">AND b.username LIKE '%${merName}%'</if>
+			<if test="phone !=null and phone !=''">AND b.phone_num LIKE '%${phone}%'</if>
+			<if test="equipmentNum !=null and equipmentNum !=''">AND a.equipmentnum=#{equipmentNum}</if>
+			<if test="orderNum !=null and orderNum !=''">AND a.ordernum=#{orderNum}</if>
+			<if test="begintime !=null and begintime !=''"> AND a.createtime &gt;= #{begintime} </if>
+			<if test="endtime !=null and endtime != ''"> AND a.createtime &lt;= #{endtime} </if>
+			<if test="payType !=null">AND a.paytype=#{payType}</if>
+			AND state=1
+		</where>
+		ORDER  BY createtime DESC
+		<if test="startIndex !=null and numPerPage !=null">
+			LIMIT #{startIndex},#{numPerPage}
+		</if>
+	</select>
+	<!-- 根据订单号查询缴费的详情-->
+	<select id="selectFeescaleDetails" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT a.username,d.`name` AS aname,e.username AS revicename,e.id AS reviceid,e.realname,e.phone_num,e.earnings,e.balance,
+			 a.merpaymoney,a.equipmentnum,a.renewal,a.price,a.createtime,b.expiration_time,a.paytype,a.note
+ 		FROM hd_fluxtoll a
+		LEFT JOIN hd_equipment b
+		ON b.`code`=a.equipmentnum
+		LEFT JOIN hd_area d
+		ON d.id = a.aid
+		LEFT JOIN hd_user e
+		ON a.revice_id=e.id
+		WHERE a.ordernum=#{ordernum}
+	</select>
+	
+	<!-- 超級管理員更新系統收費 -->
+	<update id="updateSystemFeescale" parameterType="com.hedong.hedongwx.entity.FeescaleRecord">
+		UPDATE hd_feescale 
+			SET feescale = #{price}
+		WHERE merid=2 
+		AND nettype=#{netType} 
+		AND equipmenttype =#{equipmentType}
+	</update>
+	
+	<!-- 根据订单号将微信订单设置为正常 -->
+	<update id="updateFeescaleRecordStatue" parameterType="java.lang.String">
+		UPDATE hd_fluxtoll SET state=1 WHERE ordernum=#{ordernum,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 根据订单号查询微信缴费的信息 -->
+	<select id="selectWxFeescaleRecord" parameterType="java.lang.String" resultType="java.util.Map">
+		select merid,username,merpaymoney,equipmentnum from hd_fluxtoll WHERE ordernum=#{ordernum,jdbcType=VARCHAR}
+	</select>
+	
+	<!--普通商家手机端查询设备的缴费信息 -->
+	<select id="MerSelectFeescaleRecord" parameterType="com.hedong.hedongwx.entity.FeescaleRecord" resultType="java.util.Map">
+		SELECT ordernum,price,equipmentnum FROM hd_fluxtoll 
+		WHERE merid =#{merId}
+		AND state=1
+	</select>
+	<!-- 商家订单号-->
+	<select id="selectFeescaleRecordNum" parameterType="com.hedong.hedongwx.entity.FeescaleRecord" resultType="java.util.Map">
+		SELECT DISTINCT ordernum,paytype,renewal,createtime FROM hd_fluxtoll 
+		WHERE merid =#{merId}
+		AND state=1
+		ORDER BY createtime DESC
+	</select>
+	
+	
+</mapper>
+

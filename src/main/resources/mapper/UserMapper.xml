@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.UserDao">
+	
+	<!-- ************************************************************************************************  -->
+	<select id="arrearageMoneySum" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT SUM(balance) AS advance FROM hd_user WHERE merid = #{merid} 
+	</select>
+	
+	<select id="inquireClientsNum" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT COUNT(*) AS clientsnum FROM hd_user 
+		<where>
+	      	    <if test="dealer !=null and dealer !=''"> AND merid = #{dealer} </if>
+	      	    <if test="number !=null and number !=''"> AND aid = #{number} </if>
+		    <if test="startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+		    <if test="endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+	</select>
+	
+	<select id="earningsMoney" parameterType="java.lang.Integer" resultType="java.lang.Double">
+		SELECT SUM(earnings) AS sumearnings FROM hd_user WHERE rank IN (0,2) 
+		<if test="uid!=null"> id = #{uid}</if>
+	</select>
+	
+	<select id="selectUserInfos" parameterType="com.hedong.hedongwx.entity.Parameter" resultType="java.util.Map">
+		SELECT  u.*,mu.username AS muusername,mu.realname AS murealname,mu.phone_num AS muphone_num
+		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id  WHERE 1 = 1  
+	    <if test=" status!=null and  status!=''"> and u.id = #{status} </if>
+	    <if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+	    <if test=" realname!=null and  realname!=''"> and u.realname LIKE '%${realname}%' </if>
+	    <if test=" dealer!=null and dealer!=''"> and mu.realname LIKE '%${dealer}%' </if>
+	    <if test=" phoneNum!=null and phoneNum!=''"> and u.phone_num LIKE '%${phoneNum}%' </if>
+	    <if test=" ordernum!=null and ordernum!=''"> and mu.phone_num LIKE '%${ordernum}%' </if>
+	    <if test=" equi!=null and equi!=''"> and u.feerate = #{equi} </if>
+	    <if test=" type!=null and type!=''"> and u.rank in (${type}) </if>
+	    <if test=" parem==0"> ORDER BY u.earnings DESC </if>
+	    <if test=" parem==1"> ORDER BY u.earnings </if>
+	    <if test=" code==0"> ORDER BY u.balance DESC </if>
+	    <if test=" code==1"> ORDER BY u.balance </if>
+	   	  
+	    <if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	
+	<!-- 用户与银行卡关联查询 -->
+	<select id="selectAdminiStrator" parameterType="com.hedong.hedongwx.entity.AdminiStrator" resultType="com.hedong.hedongwx.entity.AdminiStrator">
+		SELECT  u.id,u.username,b.realname,u.phone_num,u.rank,b.bankname,b.bankcardnum,b.type,b.company,b.rate 
+		FROM hd_user u LEFT JOIN hd_user_bankcard b ON u.id = b.user_id 
+		<where> 
+		  <if test=" id>0"> and u.id = #{id} </if>
+	      <if test=" username!=null and  username!=''"> and u.username = #{username} </if>
+	      <if test=" realname!=null and realname!=''"> and u.realname LIKE '%${realname}%' </if>
+	      <if test=" phoneNum!=null and phoneNum!=''"> and u.phone_num LIKE '%${phoneNum}%' </if>
+	      <if test=" rank!=null"> and u.rank = #{rank}</if>
+	      <if test=" bankname!=null and bankname!=''"> and b.bankname LIKE '%${bankname}%'</if>
+	      <if test=" bankcardnum!=null and bankcardnum!=''"> and b.bankcardnum LIKE '%${bankcardnum}%'</if>
+	    </where>
+	   		 ORDER BY u.create_time 
+	    <if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	
+	<!-- ************************************************************************************************  -->
+
+	<sql id="User_Column_List">
+		id, username, realname, openid, unionid, openid_applet, password, phone_num, servephone, rank, earnings,balance,sendmoney,feerate,
+		create_time, update_time,agent_id,merid, aid, payhint,submer
+	</sql>
+
+	<insert id="addUser" parameterType="com.hedong.hedongwx.entity.User">
+		insert into hd_user
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="username != null" >
+	        username,
+	      </if>
+	      <if test="realname != null" >
+	        realname,
+	      </if>
+	      <if test="openid != null" >
+	        openid,
+	      </if>
+	      <if test="unionid != null" >
+	        unionid,
+	      </if>
+	      <if test="openidApplet != null" >
+	        openid_applet,
+	      </if>
+	      <if test="password != null" >
+	        password,
+	      </if>
+	      <if test="phoneNum != null" >
+	        phone_num,
+	      </if>
+	      <if test="rank != null" >
+	        rank,
+	      </if>
+	      <if test="earnings != null" >
+	        earnings,
+	      </if>
+	      <if test="balance != null" >
+	        balance,
+	      </if>
+	      <if test="feerate != null" >
+	        feerate,
+	      </if>
+	      <if test="createTime != null" >
+	        create_time,
+	      </if>
+	      <if test="updateTime != null" >
+	        update_time,
+	      </if>
+	      <if test="merid != null" >
+	        merid,
+	      </if>
+	      <if test="aid != null" >
+	        aid,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="username != null" >
+	        #{username,jdbcType=VARCHAR},
+	      </if>
+	      <if test="realname != null" >
+	        #{realname,jdbcType=VARCHAR},
+	      </if>
+	      <if test="openid != null" >
+	        #{openid,jdbcType=VARCHAR},
+	      </if>
+	      <if test="unionid != null" >
+	        #{unionid,jdbcType=VARCHAR},
+	      </if>
+	      <if test="openidApplet != null" >
+	        #{openidApplet,jdbcType=VARCHAR},
+	      </if>
+	      <if test="password != null" >
+	        #{password,jdbcType=VARCHAR},
+	      </if>
+	      <if test="phoneNum != null" >
+	        #{phoneNum,jdbcType=VARCHAR},
+	      </if>
+	      <if test="rank != null" >
+	        #{rank,jdbcType=INTEGER},
+	      </if>
+	      <if test="earnings != null" >
+	        #{earnings,jdbcType=DOUBLE},
+	      </if>
+	      <if test="balance != null" >
+	        #{balance,jdbcType=DOUBLE},
+	      </if>
+	      <if test="feerate != null" >
+	        #{feerate,jdbcType=INTEGER},
+	      </if>
+	      <if test="createTime != null" >
+	        #{createTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="updateTime != null" >
+	        #{updateTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="merid != null" >
+	        #{merid,jdbcType=INTEGER},
+	      </if>
+	      <if test="aid != null" >
+	        #{aid,jdbcType=INTEGER},
+	      </if>
+	    </trim>
+	</insert>
+	
+	<delete id="deleteUserById" parameterType="java.lang.Integer">
+		delete from hd_user where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<select id="selectUserById" resultType="com.hedong.hedongwx.entity.User"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="getUserByPhoneNumAndPassword" parameterType="java.lang.String"
+		resultType="com.hedong.hedongwx.entity.User">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+		where phone_num = #{phoneNum} and password = #{password}
+	</select>
+	
+	<select id="getUserByPhoneNum" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.User">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+		where phone_num = #{phoneNum}
+	</select>
+
+	<select id="getUserList" resultType="com.hedong.hedongwx.entity.User">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+	</select>
+
+	<select id="getUserListByRank" resultType="com.hedong.hedongwx.entity.User">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+		where rank = #{rank,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getUserByOpenid" resultType="com.hedong.hedongwx.entity.User">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+		where openid = #{openid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getUserByOpenidApplet" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.User">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+		where openid_applet = #{openidApplet,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectrankname"  parameterType="java.lang.String" resultType="java.util.Map">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+		where phone_num = #{phoneNum,jdbcType=VARCHAR}
+		<if test=" rank==0"> and rank = #{rank}</if><!-- 管理员 -->
+		<if test=" rank==2"> and rank in (0,2)</if><!-- 可登录商户 -->
+		<if test=" rank==1"> and rank = #{rank}</if><!-- 可登录普通用户 -->
+	</select>
+	
+ 	<select id="selectAdmin"  parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.User">
+		select
+		<include refid="User_Column_List" />
+		from hd_user
+		where phone_num = #{phoneNum,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="updateUserById" parameterType="com.hedong.hedongwx.entity.User">
+		update hd_user
+		<set>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="realname != null">
+				realname = #{realname,jdbcType=VARCHAR},
+			</if>
+			<if test="openid != null">
+				openid = #{openid,jdbcType=VARCHAR},
+			</if>
+			<if test="unionid != null">
+				unionid = #{unionid,jdbcType=VARCHAR},
+			</if>
+			<if test="openidApplet != null">
+				openid_applet = #{openidApplet,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneNum != null">
+				phone_num = #{phoneNum,jdbcType=VARCHAR},
+			</if>
+			<if test="servephone != null">
+				servephone = #{servephone,jdbcType=VARCHAR},
+			</if>
+			<if test="rank != null">
+				rank = #{rank,jdbcType=INTEGER},
+			</if>
+			<if test="merid != null">
+				merid = #{merid,jdbcType=INTEGER},
+			</if>
+			<if test="aid != null">
+				aid = #{aid,jdbcType=INTEGER},
+			</if>
+			<if test="earnings != null">
+				earnings = #{earnings,jdbcType=DOUBLE},
+			</if>
+			<if test="balance != null">
+				balance = #{balance,jdbcType=DOUBLE},
+			</if>
+			<if test="sendmoney != null">
+				sendmoney = #{sendmoney,jdbcType=DOUBLE},
+			</if>
+			<if test="feerate != null">
+				feerate = #{feerate,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payhint != null">
+				payhint = #{payhint,jdbcType=INTEGER},
+			</if>
+			<if test="subMer != null">
+				submer = #{subMer,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="registerUser" parameterType="com.hedong.hedongwx.entity.User">
+		update hd_user
+		<set>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneNum != null">
+				phone_num = #{phoneNum,jdbcType=VARCHAR},
+			</if>
+			<if test="servephone != null">
+				servephone = #{servephone,jdbcType=VARCHAR},
+			</if>
+			<if test="rank != null">
+				rank = #{rank,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where openid = #{openid,jdbcType=VARCHAR}
+	</update>
+	<update id="updateBalanceByOpenid">
+		update hd_user
+		<set>
+			<if test="balance != null">
+				balance = #{balance,jdbcType=DOUBLE},
+			</if>
+			<if test="sendmoney != null">
+				sendmoney = #{sendmoney,jdbcType=DOUBLE},
+			</if>
+			<if test="earnings != null">
+				earnings = #{earnings,jdbcType=DOUBLE},
+			</if>
+		</set>
+		where openid = #{openid,jdbcType=VARCHAR}
+	</update>
+	<update id="bindUserBelongMerid">
+		update hd_user set merid = #{merid} where id = #{uid}
+	</update>
+	
+	<update id="unbindUserAndAid">
+		update hd_user set aid = 0 where aid = #{aid}
+	</update>
+	
+	
+	
+	<update id="updateUserEarnings">
+		update hd_user set 
+			<if test="edittype == 1">
+				earnings = earnings + #{money} 
+			</if>
+			<if test="edittype == 0">
+				earnings = earnings - #{money} 
+			</if>
+		where id = #{merid}
+	</update>
+	
+	<select id="selectMerAmountByMerid" resultType="com.hedong.hedongwx.entity.MerAmount">
+		select * from hd_meramount where merid = #{merid}
+	</select>
+	
+	<insert id="insertMerAmount" parameterType="com.hedong.hedongwx.entity.MerAmount">
+		insert into hd_meramount (merid,total_online_earn,now_online_earn,total_coins_earn,
+		now_coins_earn) values (#{merid},#{totalOnlineEarn},#{nowOnlineEarn},#{totalCoinsEarn},
+		#{nowCoinsEarn})
+	</insert>
+	
+	<update id="updateMerAmount">
+		update hd_meramount set 
+			<if test="edittype == 1">
+				total_online_earn = total_online_earn + #{money},
+				now_online_earn = now_online_earn + #{money} 
+			</if>
+			<if test="edittype == 0">
+				total_online_earn = total_online_earn - #{money},
+				now_online_earn = now_online_earn - #{money} 
+			</if>
+		where merid = #{merid}
+	</update>
+	
+	<update id="everydayResetNowEarn">
+		update hd_meramount set now_online_earn = 0,now_coins_earn = 0
+	</update>
+	
+	<!-- ORIGIN 查询当日线上收益金额   -->
+	<select id="amountStatisticsInfo"  parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT SUM(total_online_earn) AS totalonlineearn,SUM(total_coins_earn) AS totalcoinsearn,
+			 SUM(now_online_earn) AS nowonlineearn,SUM(now_coins_earn) AS nowcoinsearn
+		FROM hd_meramount
+		<where>
+			<if test="merid !=null and merid !='' "> merid = #{merid,jdbcType=INTEGER}</if>
+		</where>
+	</select>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<!-- 查询商户信息 -->
+	<select id="selectDealerUserInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  u.*, mu.username AS muusername, mu.realname AS murealname, mu.phone_num AS muphone_num, au.id AS agentid, au.username AS agentname
+		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id LEFT JOIN hd_user au ON u.agent_id=au.id WHERE 1 = 1  and u.rank in (0,2,3)  
+	    <if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+	    <if test=" realname!=null and  realname!=''"> and u.realname LIKE '%${realname}%' </if>
+	    <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+	    <if test=" uid!=null and uid!=''"> and u.id = #{uid} </if>
+	    <if test=" paramete !=null and paramete !=''"> ${paramete} </if>
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- 查询普通用户信息 -->
+	<select id="selectGeneralUserInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  u.*,mu.id AS merid,mu.username AS muusername,mu.realname AS murealname,mu.phone_num AS muphone_num,a.`name` AS arename, p.id AS montid, p.uid AS montuid
+		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id LEFT JOIN hd_area a ON u.aid = a.id LEFT JOIN hd_packagemonth p ON u.id = p.uid 
+	    <where>
+		    <if test=" order!=null and order!=''"> and u.id = #{order} </if>
+		    <if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
+		    <if test=" username!=null and  username!=''"> and u.realname LIKE '%${username}%' </if>
+		    <if test=" phone!=null and  phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+		    <if test=" uid!=null and uid!=''"> and u.merid = #{uid} </if>
+			<if test=" rank!=null and rank!=''"> and u.rank in (#{rank}) </if>
+		    <if test=" source!=null and  source!=''"> and a.`name` LIKE '%${source}%' </if>
+		    <if test=" dealer!=null and dealer!=''"> and mu.realname LIKE '%${dealer}%' </if>
+		    <if test=" mobile!=null and mobile!=''"> and mu.phone_num LIKE '%${mobile}%' </if>
+		    <if test=" startTime!=null and startTime!=''"> AND u.create_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND u.create_time &lt;= #{endTime} </if>
+			<if test=" sort!=null and sort!=''"> AND ${sort} </if>
+	    </where>
+	    <if test=" paramete!=null and paramete!=''"> ${paramete} </if>
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<select id="getUserByUnionid" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.User">
+		SELECT 
+		 <include refid="User_Column_List" />
+		FROM hd_user
+		WHERE unionid = #{unionid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectPartner" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.User">
+		SELECT <include refid="User_Column_List" /> 
+		FROM hd_user WHERE id IN (SELECT manid FROM hd_area WHERE merid = #{merid,jdbcType=INTEGER})
+	</select>
+	
+	<!-- @origin 查询商户/小区下普通用户信息 -->
+	<select id="selectmemberinfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  u.*,a.`name` AS arename,a.address,a.manid 
+		FROM hd_user u LEFT JOIN hd_area a ON u.aid = a.id 
+		<where>		
+			<if test=" code!=null and code!=''"> and u.id LIKE '%${code}%' </if>
+			<if test=" uid!=null and uid!=''"> and u.merid = #{uid} </if>
+			<if test=" type!=null and type!=''"> and u.aid = #{type} </if>
+		    <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+			<if test=" state!=null and state!=''"> and a.merid = #{state} </if>
+		    <if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
+		    <if test=" username!=null and  username!=''"> and u.realname LIKE '%${username}%' </if>
+		    <if test=" source!=null and  source!=''"> and a.`name` LIKE '%${source}%' </if>
+			<if test=" rank!=null and rank!=''"> and u.rank in (#{rank}) </if>
+		    <if test="startTime!=null and startTime!=''"> AND u.create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND u.create_time &lt;= #{endTime} </if>
+		</where>
+	    <if test=" sort==0"> ORDER BY u.balance DESC </if>
+	    <if test=" sort==1"> ORDER BY u.balance </if>
+	    
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<select id="selectmemberbalance" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT SUM(balance) AS balance, SUM(sendmoney) AS sendmoney FROM hd_user u LEFT JOIN hd_area a ON u.aid = a.id 
+		<where>		
+			<if test=" code!=null and code!=''"> and u.id LIKE '%${code}%' </if>
+			<if test=" uid!=null and uid!=''"> and u.merid = #{uid} </if>
+			<if test=" type!=null and type!=''"> and u.aid = #{type} </if>
+		    <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+			<if test=" state!=null and state!=''"> and a.merid = #{state} </if>
+		    <if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
+		    <if test=" username!=null and  username!=''"> and u.realname LIKE '%${username}%' </if>
+		    <if test=" source!=null and  source!=''"> and a.`name` LIKE '%${source}%' </if>
+			<if test=" rank!=null and rank!=''"> and u.rank in (#{rank}) </if>
+		    <if test="startTime!=null and startTime!=''"> AND u.create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND u.create_time &lt;= #{endTime} </if>
+		</where>
+	</select>
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+
+	<insert id="insertUserRole">
+		INSERT INTO hd_user_role ( merid, uid, roleid, creat_time)
+		values (#{merid}, #{uid}, #{roleid}, Now())
+	</insert>
+	
+	<delete id="deleteUserRoleById" parameterType="int">
+		DELETE FROM hd_user_role  WHERE id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<delete id="deleteUserRole" parameterType="int">
+		DELETE FROM hd_user_role  WHERE uid = #{member,jdbcType=INTEGER} AND merid = #{merid,jdbcType=INTEGER} AND roleid = #{role,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="selectUserRole" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT u.*,p.creat_time AS dateTime,p.id AS pid,p.uid AS uid,p.merid AS pmerid,p.roleid AS proleid,r.rolename AS rolename
+		FROM hd_user_role p LEFT JOIN hd_user u ON p.uid = u.id LEFT JOIN hd_role r ON p.roleid = r.id
+		<where>
+		  <if test=" rank != null"> AND p.id = #{rank} </if>
+		  <if test=" uid != null"> AND p.uid = #{uid} </if>
+		  <if test=" dealer != null"> AND p.merid = #{dealer} </if>
+		  <if test=" sort != null"> AND p.roleid = #{sort} </if>
+		</where>
+	</select>
+	
+	<select id="selectUserRoleList" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT u.*,p.creat_time AS dateTime,p.id AS pid,p.uid AS uid,p.merid AS pmerid,p.roleid AS proleid,r.rolename AS rolename 
+		FROM hd_user_role p LEFT JOIN hd_user u ON p.uid = u.id LEFT JOIN hd_role r ON p.roleid = r.id
+		<where>
+		  <if test=" rank != null"> AND p.id = #{rank} </if>
+		  <if test=" uid != null"> AND p.uid = #{uid} </if>
+		  <if test=" dealer != null"> AND p.merid = #{dealer} </if>
+		  <if test=" sort != null"> AND p.roleid = #{sort} </if>
+		</where>
+	</select>
+	  
+	<update id="updatePortdate" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_user_role
+		<set>
+		  <if test=" dealer != null"> AND merid = #{ dealer,jdbcType=INTEGER}, </if>
+		  <if test=" uid != null"> AND uid = #{ uid,jdbcType=INTEGER}, </if>
+		  <if test=" sort != null"> AND roleid = #{ sort,jdbcType=INTEGER}, </if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateUserRoleById" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_user_role SET roleid = #{role} WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateUserRoleByParam" parameterType="com.hedong.hedongwx.entity.Parameters">
+		UPDATE hd_user_role SET roleid = #{role}  WHERE merid = #{merid} AND uid = #{uid}
+	</update>
+	
+	<!-- 查询绑定的设备的商户信息 -->
+	<select id="inquireValidDealer" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  u.*,mu.username AS muusername,mu.realname AS murealname,mu.phone_num AS muphone_num
+		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id
+		LEFT JOIN hd_dealerauthority d
+	  	ON u.id=d.merid  
+		WHERE u.rank in (0,2,3)  AND u.id IN (SELECT DISTINCT user_id FROM hd_user_equipment)
+		<if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+	    <if test=" realname!=null and  realname!=''"> and u.realname LIKE '%${realname}%' </if>
+	    <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+	    <if test=" uid!=null and uid!=''"> and u.id = #{uid} </if>
+	    <if test="subMer != null">and u.submer=#{subMer}</if>
+	    <if test=" autoWithdraw !=null">and d.autowithdraw=${autoWithdraw}</if>
+	    <if test=" paramete !=null and paramete !=''"> ${paramete} </if>
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- 查询绑定的设备的商户信息 -->
+	<select id="inquireDisvalidDealer" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  u.*,mu.username AS muusername,mu.realname AS murealname,mu.phone_num AS muphone_num
+		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id  
+		WHERE u.rank in (0,2,3)  AND u.id NOT IN (SELECT DISTINCT user_id FROM hd_user_equipment)
+		<if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+	    <if test=" realname!=null and  realname!=''"> and u.realname LIKE '%${realname}%' </if>
+	    <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+	    <if test=" uid!=null and uid!=''"> and u.id = #{uid} </if>
+	    <if test=" paramete !=null and paramete !=''"> ${paramete} </if>
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	
+	<!-- 超级管理员查看所有代理商 ZZ-->
+	<select id="selectAgents" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT id,username,realname,phone_num,rank,earnings,balance,sendmoney,feerate,create_time,update_time,
+				agent_id,merid,aid,payhint
+		FROM hd_user
+		WHERE rank=3 
+		<if test=" uid!=null and uid!=''"> and id = #{uid} </if>
+		<if test=" username!=null and  username!=''"> and username LIKE '%${username}%' </if>
+	    <if test=" realname!=null and  realname!=''"> and realname LIKE '%${realname}%' </if>
+	    <if test=" phone!=null and phone!=''"> and phone_num LIKE '%${phone}%' </if>
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	<!-- 分页代理商总数 ZZ -->
+	<select id="selectAgentsCount" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM hd_user
+		WHERE rank=3 
+		<if test=" uid!=null and uid!=''"> and id = #{uid} </if>
+		<if test=" username!=null and  username!=''"> and username LIKE '%${username}%' </if>
+	    <if test=" realname!=null and  realname!=''"> and realname LIKE '%${realname}%' </if>
+	    <if test=" phone!=null and phone!=''"> and phone_num LIKE '%${phone}%' </if>
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!--超级管理员查询一个代理商下的商户ZZ-->
+	<select id="selectMerByAgentId" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT id,username,realname,phone_num,rank,earnings,balance,sendmoney,feerate,create_time,update_time,
+				agent_id,merid,aid,payhint
+		FROM hd_user u
+		WHERE u.agent_id=#{uid}
+		AND u.rank IN(0,2)
+		<if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+	    <if test=" realname!=null and  realname!=''"> and u.realname LIKE '%${realname}%' </if>
+	    <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+	    <if test=" paramete !=null and paramete !=''"> ${paramete} </if>
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<!-- 绑定商家到代理商 -->
+	<update id="bindAgent">
+		update hd_user set agent_id = #{agentId} where id = #{merId}
+	</update>
+	<!-- 将商家解除绑定 -->
+	<update id="removeBindAgent">
+		update hd_user set agent_id =0 where id= #{merId}
+	</update>
+	
+	<!-- 查询代理商下的有效的商家 -->
+	<select id="selectValidMerByAgentId" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT id,username,realname,phone_num,rank,earnings,balance,sendmoney,feerate,create_time,update_time,
+				agent_id,merid,aid,payhint
+		FROM hd_user
+		WHERE id IN (SELECT DISTINCT user_id FROM hd_user_equipment
+		WHERE user_id IN(SELECT id FROM hd_user
+		WHERE agent_id=#{uid}))
+		AND rank=2
+	</select>
+	
+	<!-- 查询商家设备表中商家的id -->
+	<select id="selectValidMerId" resultType="java.util.Map">
+		SELECT DISTINCT ue.user_id as uId,u.openid as openId from hd_user_equipment ue
+		left join hd_user u
+		on u.id = ue.user_id
+	</select>
+	<!-- 添加配置子商户信息 -->
+	<insert id="addSubMer" parameterType="com.hedong.hedongwx.entity.User">
+		INSERT INTO hd_submer
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+		 	<if test="id != null">
+		 		uid,	
+		 	</if>
+		 	<if test="subAppId != null">
+		 		sub_appid,	
+		 	</if>
+		 	<if test="subMchId != null">
+		 		sub_mchid,	
+		 	</if>
+		 	<if test="appSecret != null">
+		 		appsecret,	
+		 	</if>
+		 	<if test="keyWord != null">
+		 		keyword,	
+		 	</if>
+		 	<if test="teYue != null">
+		 		teyue,	
+		 	</if>
+		 	<if test="type != null">
+		 		type,	
+		 	</if>
+		 	<if test="smallAppId != null">
+		 		smallapp_id,	
+		 	</if>
+		 	<if test="smallAppSecret != null">
+		 		smallapp_secret,	
+		 	</if>
+		 	<if test="createTime != null">
+		 		createtime,	
+		 	</if>
+		 </trim>
+		  <trim prefix="values (" suffix=")" suffixOverrides="," >
+		  	<if test="id != null">
+		 		#{id,jdbcType=INTEGER},	
+		 	</if>
+		 	<if test="subAppId != null">
+		 		#{subAppId,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="subMchId != null">
+		 		#{subMchId,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="appSecret != null">
+		 		#{appSecret,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="keyWord != null">
+		 		#{keyWord,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="teYue != null">
+		 		#{teYue,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="type != null">
+		 		#{type,jdbcType=INTEGER},	
+		 	</if>
+		 	<if test="smallAppId != null">
+		 		#{smallAppId,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="smallAppSecret != null">
+		 		#{smallAppSecret,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="createTime != null">
+		 		#{createTime,jdbcType=TIMESTAMP},	
+		 	</if>
+		  </trim>
+	</insert>
+	<!-- 修改子商户的配置信息 -->
+	<update id="updateSubMerById" parameterType="com.hedong.hedongwx.entity.User">
+		update hd_submer 
+		<set>
+		 	<if test="subAppId != null">
+		 		sub_appid=#{subAppId,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="subMchId != null">
+		 		sub_mchid=#{subMchId,jdbcType=VARCHAR},	
+		 	</if>
+		 	<if test="type != null">
+		 	type=#{type,jdbcType=INTEGER},	
+		 	</if>
+		 		appsecret=#{appSecret,jdbcType=VARCHAR},	
+		 		keyword=#{keyWord,jdbcType=VARCHAR},	
+		 		teyue=#{teYue,jdbcType=VARCHAR},	
+		 		smallapp_id=#{smallAppId,jdbcType=VARCHAR},	
+		 		smallapp_secret=#{smallAppSecret,jdbcType=VARCHAR},	
+		</set>
+			WHERE sub_mchid=#{subMchId,jdbcType=VARCHAR}
+	</update>
+	<!-- 根据条件查询子商户的信息 -->
+	<select id="selectSubMerByMchid" parameterType="com.hedong.hedongwx.entity.User" resultType="java.util.Map">
+			SELECT id,uid,teyue,sub_appid AS subappid,sub_mchid AS submchid,appsecret,keyword,type,smallapp_id AS smallappid,smallapp_secret AS smallappsecret FROM hd_submer
+		<where>
+			<if test="id != null"> uid=#{id,jdbcType=INTEGER}</if>
+			<if test="subMchId != null and subMchId !=''" > sub_mchid=#{subMchId,jdbcType=VARCHAR}</if>
+		</where>
+	</select>	
+	<!-- 根据微信商户号删除商户的配置信息 -->
+	<delete id="delSubMerByMchid" parameterType="com.hedong.hedongwx.entity.User">
+		DELETE FROM hd_submer WHERE sub_mchid=#{subMchId,jdbcType=VARCHAR}
+	</delete>
+	
+	<!-- 根据设备号查询商户微信配置信息 -->
+	<select id="selectConfigDataByCode" resultType="java.util.Map">
+		SELECT s.appsecret,s.id,s.keyword,s.smallapp_id,s.smallapp_secret,
+			 s.sub_appid AS subappid,s.sub_mchid AS submchid,s.teyue,s.uid
+			FROM hd_submer s
+			LEFT JOIN hd_user_equipment ue
+			ON s.uid = ue.user_id
+			WHERE ue.equipment_code=#{code}
+	</select>
+	
+	<!-- 根据商家的id查询微信特约商户的配置信息 -->
+	<select id="selectSubMerConfigById" resultType="java.util.Map">
+		SELECT sub_appid AS subappid,sub_mchid AS submchid FROM hd_submer
+				WHERE uid=#{merId}
+	</select>
+	
+	<!-- addSubUser -->
+	<insert id="addSubUser" parameterType="com.hedong.hedongwx.entity.User">
+		INSERT INTO hd_subuser(uid,sub_openid,createtime)VALUES(#{id},#{openid},NOW())
+	</insert>
+	
+	<!-- 根据特约商户openid关联查询 -->
+	<select id="selectSubUserByOpenid" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.User">
+		SELECT u.id,u.username,u.realname,
+      		   su.sub_openid AS openid,
+			   u.phone_num,
+			   u.servephone,
+			   u.rank,u.earnings,
+			   u.balance,u.sendmoney,
+			   u.feerate,
+			   u.create_time,u.update_time,
+			   u.agent_id,u.merid,
+			   u.aid,u.payhint,u.submer
+		FROM hd_user u
+		LEFT JOIN hd_subuser su
+		ON u.id=su.uid
+		WHERE su.sub_openid=#{subOpenid}
+	</select>
+	
+	<!--查询所有开启自动提现收益大于5小于1万的商家-->
+	<select id="selectOnAutoWithdrawMer" resultType="com.hedong.hedongwx.entity.User">
+		SELECT
+			u.id,u.username,u.realname,u.openid ,
+	      	u.phone_num,u.servephone,u.rank,u.earnings,	   
+			u.balance,u.sendmoney,u.feerate,  
+			u.create_time,u.update_time,u.agent_id,u.merid,	  
+			u.aid,u.payhint,u.submer
+		from hd_user u
+		LEFT JOIN hd_dealerauthority d
+		ON u.id=d.merid
+		WHERE u.rank=2
+		AND u.earnings &gt; 5
+		AND d.autowithdraw=1
+		AND u.realname is not NULL
+	</select>	
+	
+	<!--查询当前商户下所有子账户-->
+	<select id="selectUserByRankMid" resultType="com.hedong.hedongwx.entity.User">
+		select phone_num,username from hd_user where rank = #{rank} and merid = #{merid}
+	</select>
+	
+	<!-- 查询子账户信息 -->
+	<select id="inquireBypassAccount" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  u.*,mu.username AS muusername,mu.realname AS murealname,mu.phone_num AS muphonenum
+		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id
+		<where>
+			<if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+		    <if test=" realname!=null and  realname!=''"> and u.realname LIKE '%${realname}%' </if>
+		    <if test=" phone!=null and phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+		    <if test=" uid!=null and uid!=''"> and u.merid = #{uid} </if>
+			<if test=" dealer and dealer!=''"> and mu.username LIKE '%${dealer}%' </if>
+		    <if test=" mobile!=null and mobile!=''"> and mu.phone_num LIKE '%${mobile}%' </if>
+		    <if test=" rank !=null and rank !=''"> and u.rank in (${rank}) </if>
+		    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+		</where> 
+	</select>
+	
+	<!-- 根据设备号查询用户信息 -->
+	<select id="selectUserByCode" parameterType="java.lang.String" resultType="java.util.Map">
+			SELECT u.phone_num AS phonenum,u.id,u.servephone,u.submer,
+				e.expiration_time AS expirationtime,e.bindtype,
+				e.tempid,e.hardversion,e.aid,e.remark,e.state
+			FROM hd_user u
+			LEFT JOIN hd_user_equipment ue
+			ON u.id = ue.user_id
+			LEFT JOIN hd_equipment e
+			ON ue.equipment_code=e.`code`
+			WHERE ue.equipment_code=#{code}
+			LIMIT 1
+	</select>
+	
+	
+		
+</mapper>

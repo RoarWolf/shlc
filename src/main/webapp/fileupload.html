@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>下载设备日志</title>
+<link href="/layui/css/layui.css" rel="stylesheet" />
+<script src="/js/jquery.js"></script>
+<script src="/js/layer.js"></script>
+<script src="/laydate1/laydate.js"></script>
+<script src="/layui/layui.js"></script>
+<style>
+	body {
+		background: #efefef;
+	}
+	.layui-card {
+		background: #fefefe;
+		position: absolute;
+		left: 50%;
+		top: 30px;
+		transform: translateX(-50%);
+		box-shadow: 0 0 9px #afaeae;
+	}
+	.layui-input-inline {
+	 	display: block;
+	 	margin-bottom: 10px;
+	}
+	.layui-input-inline i {
+		top: 31px !important;
+	}
+	.layui-input-inline label {
+		float: left;
+		width: 60px;
+	}
+	.layui-input-inline input {
+		overflow:hidden;
+	}
+	.down_btn {
+		text-align: center;
+	}
+	.down_btn button {
+		width: 86%;
+		border-radius:38px;
+	}
+</style>
+</head>
+<body>
+	<div class="layui-card layui-col-xs10 layui-col-sm6 layui-col-md4 layui-col-lg3">
+	  <div class="layui-card-header">下载设备日志</div>
+	  <div class="layui-card-body">
+		<div class="layui-input-inline">
+			<label for="deviceid">设备号</label>
+	        <input type="text" id="deviceid" autocomplete="off" class="layui-input" placeholder="请输入设备号"/>
+	        <i class="layui-icon layui-icon-search" style="position: absolute;top:8px;right: 8px;"></i>
+	    </div> 
+	    <div class="layui-input-inline">
+	    	<label for="wolftime">选择日期</label>
+	        <input type="text" id="wolftime" class="layui-input"/>
+	    </div>  
+	    <div class="down_btn">
+	    	<button id="downloadTemplate" class="layui-btn">下载</button>
+	    </div>
+	  </div>
+	</div>
+    
+    <script>
+		//执行一个laydate实例
+		laydate.render({
+		  elem: '#wolftime' //指定元素
+		});
+	</script>
+</body>
+</html>
+<script>
+$(function() {
+	$("#downloadTemplate").click(function() {
+		var deviceid = $("#deviceid").val();
+		var wolftime = $("#wolftime").val()
+		if (deviceid == null || deviceid == "") {
+			layer.alert('请输入设备号', {
+			  icon: 2,
+			  skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+			})
+		} else if (wolftime == null || wolftime == "") {
+			layer.alert('请选择下载日期', {
+			  icon: 2,
+			  skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+			})
+		} else {
+			if (deviceid.length < 6) {
+				var temp = 6 - deviceid.length;
+				var wolftemp = "";
+				for (var int = 0; int < temp; int++) {
+					wolftemp += "0";
+				}
+				deviceid = wolftemp + deviceid;
+			}
+		    layer.confirm('确定要下载选中的记录？', {
+		        btn : [ '确定', '取消' ]
+		    }, function(index){
+		    	window.open("/fileDispose/download?fileFullName="+"device" + deviceid + "-" + wolftime + ".log")
+		    	layer.close(layer.index);
+		    }, function(){
+		    	layer.msg("取消下载", {icon: 9});
+		    })
+		}
+	})
+})
+</script>

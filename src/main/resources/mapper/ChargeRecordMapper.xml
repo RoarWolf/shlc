@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.ChargeRecordDao">
+	<insert id="insertCeShiBatch" parameterType="java.util.Map">  
+         insert ignore into article_orderfeesbatch   
+         <foreach collection="params.keys" item="key" open="(" close=")" separator="," >  
+            ${key}  
+         </foreach>  
+         values   
+         <foreach collection="params.keys"  item="key" open="(" close=")" separator=",">  
+            #{params[${key}]}  
+         </foreach>  
+   </insert>  
+	
+	<insert id="insertCeShiDataBatch">
+	    INSERT ignore INTO article_ordercharge (createtime,ordernum,dealid,tourid,ordermoney,remark,comment) 
+	    VALUES (#{createtime}, #{ordernum}, #{dealid}, #{tourid}, #{ordermoney}, #{remark}, #{comment})
+	</insert>
+	
+	<select id="chargeRecordRele" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		SELECT * FROM hd_chargerecord WHERE status != 0 AND (id = #{id} OR ifcontinue = #{id})
+		<!-- 
+		SELECT * FROM hd_chargerecord WHERE `status` != 0 AND id = #{id}
+		UNION
+		SELECT * FROM hd_chargerecord WHERE `status` != 0 AND ifcontinue = #{id}
+		 -->
+	</select>
+	
+	<select id="selecwalletdetail" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT * FROM hd_chargerecord WHERE `status`=1 AND paytype=0 AND uid = #{uid} ORDER BY begintime DESC
+	</select>
+	
+	<select id="selectOrderInfo" parameterType="com.hedong.hedongwx.entity.ChargeRecord" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		SELECT c.*,u.username,hu.username AS dealer FROM hd_chargerecord c
+		LEFT JOIN hd_user u ON c.uid = u.id LEFT JOIN hd_user hu ON c.merchantid = hu.id 
+		<where>
+		  <if test=" uid!=null"> and c.uid = #{uid} </if>
+		  <if test=" ordernum!=null and  ordernum!=''"> and c.ordernum = #{ordernum} </if>
+		  <if test=" username!=null and  username!=''"> and u.username LIKE '%${username}%' </if>
+		  <if test=" dealer!=null and  dealer!=''"> and hu.username LIKE '%${dealer}%' </if>
+	      <if test=" equipmentnum!=null and equipmentnum!=''"> and c.equipmentnum LIKE '%${equipmentnum}%' </if>
+	      <if test=" number!=null and number!=''"> and c.number = #{number} </if>         
+	      <if test=" paytype!=null"> and c.paytype = #{paytype}</if>
+	      <if test=" begintimes!=null and begintimes!=''"> and c.begintime &gt;=#{begintimes} </if>
+	      <if test=" endtimes!=null and endtimes!=''"> and c.begintime &lt;=#{endtimes}</if>
+	      AND c.`status` = 1
+	   	  ORDER BY c.id DESC
+	      <if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+		</where>
+	</select>
+	
+	<select id="chargeRecordByUid" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from hd_chargerecord where status = 1 and uid=#{uid} order by begintime desc
+	</select>
+	
+	<select id="chargeRecordList" parameterType="com.hedong.hedongwx.entity.ChargeRecord"  resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		SELECT * FROM hd_chargerecord where 1 = 1  
+		<if test="uid!=null and  uid!=''"> 
+	       and uid = #{uid}        
+	    </if> 
+	    <if test="ordernum!=null and  ordernum!=''"> 
+	       and ordernum = #{ordernum}        
+	    </if>
+	    <if test="paytype!=null and paytype!=''"> 
+	       and paytype = #{paytype}        
+	    </if>
+	    <if test="durationtime!=null and durationtime!=''"> 
+	       and durationtime = #{durationtime}        
+	    </if>
+	    <if test="quantity!=null and quantity!=''"> 
+	       and quantity = #{quantity}        
+	    </if>
+	    <if test="resultinfo!=null and resultinfo!=''"> 
+	       and resultinfo = #{resultinfo}        
+	    </if>
+	    <if test="expenditure!=null and expenditure!=''"> 
+	       and expenditure = #{expenditure}        
+	    </if>
+	    <if test="equipmentnum!=null and equipmentnum!=''"> 
+	       and equipmentnum = #{equipmentnum}        
+	    </if>
+	    <if test="port!=null and port!=''"> 
+	       and port = #{port}        
+	    </if>
+	    <if test="begintime!=null and endTime!=null"> 
+	       and begintime &gt;= #{begintime}  and endtime  &lt;= #{endtime}         
+	    </if>  
+	</select>	
+	
+	<select id="getChargeRecordListByUseridAndTime" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from hd_chargerecord where (merchantid=#{merchantid} or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid})))
+		<if test="begintime != null and begintime != ''">
+			and begintime &gt;=#{begintime}
+		</if>
+		<if test="endtime != null and endtime != ''">
+			and begintime &lt;=#{endtime}
+		</if>
+		and status = 1
+		order by id desc
+	</select>
+	
+	<select id="getTodayChargeRecordListByUserid" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from hd_chargerecord where (merchantid = #{merchantid} or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid}))) and to_days(begintime) = to_days(now()) and status = 1 and number != 1
+	</select>
+	
+	<select id="getTodayMoneyByUserid" resultType="java.lang.Double">
+		select sum(expenditure) from hd_chargerecord where (merchantid = #{merchantid} or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid})))
+		<if test="begintime!=null and begintime!=''">
+			and begintime &gt;=#{begintime}
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			and begintime &lt;=#{endtime}
+		</if>
+		and number != 1 and paytype != 1 and status = 1
+	</select>
+	
+	<select id="getChargeRecordListByTimeAndUid" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from
+		hd_chargerecord where 1=1
+		<if test="merchantid!=null and merchantid!=''">
+			and (merchantid = #{merchantid}
+			or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid})))
+		</if>
+		<if test="begintime!=null and begintime!=''">
+			and begintime &gt;=#{begintime}
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			and begintime &lt;=#{endtime}
+		</if>
+		and status = 1 and number != 1
+	</select>
+	
+	<select id="queryChargingByUid" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from hd_chargerecord where paytype in (1,2,7) and status = 1 and uid = #{uid} and ifcontinue is null and endtime is null
+	</select>
+	<select id="queryChargedByUid" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from hd_chargerecord where paytype in (1,2,7) and status = 1 and uid = #{uid} and endtime is not null order by begintime desc limit 10
+	</select>
+	
+	<select id="getTotalMoneyByTimeAndEquipmentnumMerchantid" resultType="java.lang.Double">
+		select sum(expenditure) from
+		hd_chargerecord 
+		<where>
+			<if test="ordernum != null and ordernum != ''">
+			and ordernum = #{ordernum}
+		</if>
+		<if test="merchantid!=null">
+			and (merchantid = #{merchantid}
+			or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid})))
+		</if>
+		<if test="begintime!=null and begintime!=''">
+			and begintime &gt;=#{begintime}
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			and begintime &lt;=#{endtime}
+		</if>
+		<if test="equipmentnum!=null and equipmentnum!=''">
+			and equipmentnum = #{equipmentnum}
+		</if>
+		and status = 1 and number != 1 and paytype != 1
+		</where>
+	</select>
+	
+	<select id="getChargeRecordListByTimeAndEquipmentnumMerchantid" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from
+		hd_chargerecord where (merchantid = #{merchantid} or equipmentnum in (SELECT code from hd_equipment where aid in (SELECT id from hd_area where manid = #{merchantid})))
+		<if test="ordernum != null and ordernum != ''">
+			and ordernum = #{ordernum}
+		</if>
+		<if test="begintime != null and begintime != ''">
+			and begintime &gt;=#{begintime}
+		</if>
+		<if test="endtime != null and endtime != ''">
+			and begintime &lt;=#{endtime}
+		</if>
+		<if test="equipmentnum != null and equipmentnum != ''">
+			and equipmentnum LIKE '%${equipmentnum}%'
+		</if>
+		and status = 1 order by id desc
+	</select>
+	
+	<select id="getChargeRecordListByEquipmentnum" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from
+		hd_chargerecord where equipmentnum = #{equipmentnum, jdbcType=VARCHAR} and status = 1
+	</select>
+	
+	<select id="chargeRecordOne" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		SELECT * FROM hd_chargerecord WHERE id = #{id}
+	</select>
+	
+	<select id="chargeRecordOneContinueEnd" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		SELECT * FROM hd_chargerecord WHERE id = #{id} or ifcontinue = #{id} order by id desc limit 1
+	</select>
+	
+	<select id="selectChargeEndUidByCodeAndPort" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		SELECT id,uid,begintime,ifcontinue,durationtime,number,endtime,paytype FROM hd_chargerecord WHERE equipmentnum = #{equipmentnum} and port = #{port} and status = 1 order by id desc limit 1
+	</select>
+	
+	<insert id="insetRecord" parameterType="com.hedong.hedongwx.entity.ChargeRecord">
+		INSERT INTO hd_chargerecord (merchantid,uid,ordernum,number,paytype,status,equipmentnum,port,expenditure,
+		durationtime,quantity,begintime,endtime,ifcontinue,resultinfo) VALUES 
+		(#{merchantid},#{uid},#{ordernum},0,#{paytype},#{status},#{equipmentnum},#{port},#{expenditure},
+		#{durationtime},#{quantity},#{begintime},#{endtime},#{ifcontinue},#{resultinfo});
+	</insert>
+	
+	<select id="getOrderByOrdernum" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		SELECT * FROM hd_chargerecord WHERE ordernum = #{ordernum}
+	</select>
+	
+	<select id="getChargingTotalMoney" resultType="java.lang.Double">
+		select sum(expenditure) from hd_chargerecord where id = #{id} or ifcontinue = #{id} and status = 1
+	</select>
+	
+	<select id="findUserLatelyfourRecord" resultType="java.lang.String">
+		select equipmentnum from hd_chargerecord where uid = #{uid} order by id desc limit 4
+	</select>
+	
+	<select id="getChargeRecordById" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from hd_chargerecord where id = #{id}
+	</select>
+	
+	<select id="selectChargeAndContinueById" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select * from hd_chargerecord where id = #{id} or ifcontinue = #{id} order by id desc
+	</select>
+	
+	<update id="updateChargeEndtimeById">
+		update hd_chargerecord set endtime = now(),resultinfo=4 where id = #{id} or ifcontinue = #{id}
+	</update>
+	
+	<update id="updateNumberById">
+		update hd_chargerecord
+	    <set >
+	      <if test="ordernum != null" >
+	        ordernum = #{ordernum,jdbcType=VARCHAR},
+	      </if>
+	      <if test="number != null" >
+	        number = #{number,jdbcType=INTEGER},
+	      </if>
+	      <if test="durationtime != null" >
+	        durationtime = #{durationtime,jdbcType=VARCHAR},
+	      </if>
+	      <if test="expenditure != null" >
+	        expenditure = #{expenditure,jdbcType=DOUBLE},
+	      </if>
+	      <if test="refundMoney != null" >
+	        refund_money = #{refundMoney,jdbcType=DOUBLE},
+	      </if>
+	      <if test="endTime != null" >
+	        endtime = #{endTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="refundTime != null" >
+	        refund_time = #{refundTime,jdbcType=TIMESTAMP},
+	      </if>
+	    </set>
+    	where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateByOrdernum" parameterType="java.util.Map">
+        UPDATE hd_chargerecord SET
+        <foreach item="value" index="key" collection="params" separator=",">
+          <if test="key != 'ordernum'">
+              ${key} = #{params[${key}]}
+          </if>
+        </foreach>
+        WHERE
+        <foreach item="value" index="key" collection="params" separator=",">
+            <if test="key == 'ordernum'">
+                ordernum = #{params[${key}]}
+            </if>
+        </foreach>
+	</update>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<!-- 查询商户信息 -->
+	<select id="selectChargeRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT c.*,u.username,hu.username AS dealer FROM hd_chargerecord c
+		LEFT JOIN hd_user u 
+		ON c.uid = u.id 
+		LEFT JOIN hd_user hu 
+		ON c.merchantid = hu.id 
+		<where>
+			<if test=" paramete!=null and  paramete!=''"> AND c.id = #{paramete} </if>
+		    <if test=" order!=null and  order!=''"> and c.ordernum = #{order} </if>
+		    <if test=" uid!=null and  uid!=''"> AND c.merchantid = #{uid} </if>
+		    <if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
+			<if test=" dealer!=null and  dealer!=''"> and hu.username LIKE '%${dealer}%' </if>
+			<if test=" realname!=null and  realname!=''"> and hu.realname LIKE '%${realname}%' </if>
+			<if test=" phone!=null and  phone!=''"> and hu.phone_num LIKE '%${phone}%' </if>
+		    <if test=" code!=null and code!=''"> and c.equipmentnum LIKE '%${code}%' </if>
+		    <if test=" state!=null and state!=''"> and c.port = #{state} </if>
+		    <if test=" type!=null and type!='' and type!=0"> and c.paytype = #{type} </if>
+		    <if test=" number!=null and number!=''"> AND c.number = #{number} </if>
+		    <if test=" statement!=null and  statement!=''"> AND c.resultinfo = #{statement} </if>
+		    <if test=" startTime!=null and startTime!=''"> AND c.begintime &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND c.begintime &lt;= #{endTime} </if>
+			AND status = 1
+	    	ORDER BY c.id DESC
+		</where> 
+		<if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	    
+	</select>
+	
+	<!-- 充电记录微信支付宝消费汇总 -->
+	<select id="chargetotal" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN paytype='2' OR paytype='4' THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN paytype='2' OR paytype='4' THEN expenditure ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype='3' THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN paytype='3' THEN expenditure ELSE 0 END) AS alipaymoney,
+			
+			SUM(CASE WHEN number='1' AND (paytype='2' OR paytype='4') THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN number='1' AND (paytype='2' OR paytype='4') THEN expenditure ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN number='1' AND paytype='3' THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN number='1' AND paytype='3' THEN expenditure ELSE 0 END) AS refalipaymoney
+		FROM hd_chargerecord WHERE `status` = 1
+		<if test=" uid!=null and uid!=''"> and uid = #{uid}</if>
+		<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+		<if test=" startTime!=null and startTime!=''"> and begintime &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and begintime &lt; #{endTime}</if>
+	</select>
+	
+	<select id="selectcollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN paytype='1' THEN 1 ELSE 0 END) AS walletnum,
+			SUM(CASE WHEN paytype='2' THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN paytype='3' THEN 1 ELSE 0 END) AS alipaynum,
+			SUM(CASE WHEN paytype='1' THEN expenditure ELSE 0 END) AS walletmoney,
+			SUM(CASE WHEN paytype='2' THEN expenditure ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype='3' THEN expenditure ELSE 0 END) AS alipaymoney
+		FROM hd_chargerecord WHERE `status` = 1
+			<if test=" uid!=null and uid!=''"> and uid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and begintime &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and begintime &lt; #{endTime}</if>
+	</select>
+	
+	<select id="selectcollectrefund" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN number='1' AND paytype='1' THEN 1 ELSE 0 END) AS refwalletnum,
+			SUM(CASE WHEN number='1' AND paytype='2' THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN number='1' AND paytype='3' THEN 1 ELSE 0 END) AS refalipaynum,
+			SUM(CASE WHEN number='1' AND paytype='1' THEN expenditure ELSE 0 END) AS refwalletmoney,
+			SUM(CASE WHEN number='1' AND paytype='2' THEN expenditure ELSE 0 END) AS refwechatmoney,
+			SUM(CASE WHEN number='1' AND paytype='3' THEN expenditure ELSE 0 END) AS refalipaymoney
+		FROM hd_chargerecord WHERE `status` = 1
+			<if test=" uid!=null and uid!=''"> and uid = #{uid}</if>
+			<if test=" code!=null and code!=''"> and equipmentnum = #{code}</if>
+			<if test=" startTime!=null and startTime!=''"> and refund_time &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and refund_time &lt; #{endTime}</if>
+	</select>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+
+	<select id="selectEquipmentTotalMoneyByMerid" resultType="java.lang.Double">
+		select sum(expenditure) from hd_chargerecord 
+		where merchantid = #{merchantid} and equipmentnum = #{equipmentnum}
+		and number != 1 and paytype in (2,3) and status = 1
+	</select>
+	
+	<select id="selectChargeNoReply" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select id,merchantid,ordernum,equipmentnum,port,expenditure,begintime,uid,paytype,number,durationtime,quantity
+		from hd_chargerecord where status = 1 and number = 0 and resultinfo is null and begintime between date_add(now(), interval - 10 minute) and now()
+	</select>
+	<!--根据商家设备id插叙一天设备总消耗-->
+	<select id="selectConsumeQuantity" resultType="java.lang.Integer">
+		select SUM(consume_quantity) FROM hd_chargerecord
+         WHERE equipmentnum=#{equipmentnum}
+         AND ifcontinue is null
+         AND begintime &gt;=#{begintime} 
+         AND begintime &lt;=#{endtime}
+	</select> 
+
+	<!--查询所有的总耗电量-->
+	<select id="totalConsumeQuantity" resultType="java.lang.Integer">
+		SELECT SUM(consume_quantity) from hd_chargerecord
+           WHERE merchantid=#{merchantid}
+           AND ifcontinue is NULL
+	</select>
+	<!--查询一天的总消耗-->
+	<select id="todayConsumeQuantity" resultType="java.lang.Integer">
+		SELECT SUM(consume_quantity) FROM hd_chargerecord WHERE merchantid=#{merchantid}
+		AND begintime BETWEEN #{begintime} AND #{endtime} AND ifcontinue is null
+	</select>
+	
+	<!--查询昨天的总消耗电量 -->
+	<select id="yesterdayConsumeQuantity" resultType="java.lang.Integer">
+		SELECT SUM(consume_quantity) FROM hd_chargerecord 
+         WHERE merchantid=#{merchantid}
+         AND TO_DAYS(#{begintime}) - TO_DAYS(begintime) = 1 
+         AND ifcontinue is null
+	</select>
+	
+	<!-- 根据时间查询商家设备一段时间的总消耗-->
+	<select id="selectConsumeByTime" resultType="java.util.Map">
+	SELECT DATE_FORMAT(begintime,'%Y-%m-%d') begintime ,SUM(consume_quantity) AS consumeQuantity FROM hd_chargerecord
+		WHERE merchantid =#{merchantid}
+		AND ifcontinue is NULL
+		AND begintime&gt;=#{begintime} 
+		AND begintime&lt;=#{endtime}
+		GROUP BY DATE_FORMAT(begintime,'%Y-%m-%d')
+	</select>
+	
+	<!-- 根据设备统计商家设备在一段时间的总消耗 -->
+	<select id="selectEveryConsumeQuantity" resultType="java.util.Map">
+		select equipmentnum,SUM(consume_quantity) AS consumeQuantity,SUM(consume_time) AS consumetime
+			from hd_chargerecord
+			WHERE merchantid=#{merchantid}
+			AND ifcontinue is null
+			AND begintime &gt;=#{begintime} 
+			AND begintime &lt;=#{endtime}
+			GROUP BY equipmentnum
+	</select>
+	
+	
+	<!-- 根据设备统计商家设备在一段时间的总消耗 -->
+	<select id="selectCodeConsumeQuantity"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT SUM(consume_quantity) AS consumeQuantity,SUM(consume_time) AS consumetime
+		FROM hd_chargerecord 
+		WHERE ifcontinue is null 
+		<if test=" dealer != null and dealer != ''"> AND merchantid = #{dealer}</if>
+		<if test="code != null and code != ''"> AND equipmentnum =#{code} </if>
+		<if test=" startTime!=null and startTime!=''"> AND begintime &gt;= #{startTime} </if>
+		<if test=" endTime!=null and endTime!=''"> AND begintime &lt;= #{endTime} </if>
+	</select>
+	
+	<!--根据小区统计商家设备在一段时间的总消耗-->
+	<select id="selectConsumeByArea" resultType="java.util.Map">
+		SELECT a.`name` AS name,SUM(c.consume_quantity) AS consumeQuantity FROM hd_area a
+          LEFT JOIN hd_equipment b
+            ON a.id=b.aid 
+            LEFT JOIN hd_chargerecord c
+   			ON c.equipmentnum=b.`code`
+			WHERE a.merid=#{merchantid}
+			AND c.ifcontinue IS NULL
+			AND c.begintime &gt;=#{begintime} 
+			AND c.begintime &lt;=#{endtime}
+			GROUP BY a.`name`
+	</select>
+	
+	<!-- 汇总商家昨天的消耗电量和时间 -->
+	<select id="codeStatisticMer" resultType="java.util.Map">
+		select SUM(consume_quantity) as consumequantity,
+		   	   SUM(consume_time) AS consumetime
+			from hd_chargerecord
+			WHERE merchantid=#{merchantid}
+			AND begintime BETWEEN #{begintime} AND #{endtime}
+     		AND ifcontinue is null
+	</select>
+	
+	<select id="seleCardAndPulseCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN paytype='5' THEN expenditure ELSE 0 END) AS windowpulsemoney,
+			SUM(CASE WHEN paytype='6' THEN expenditure ELSE 0 END) AS offcardmoney,
+			SUM(CASE WHEN paytype='7' THEN expenditure ELSE 0 END) AS oncardmoney
+		FROM hd_chargerecord
+		<where>
+			<if test=" dealer != null and dealer != ''"> and merchantid = #{dealer}</if>
+			<if test=" startTime != null and startTime != ''"> and begintime &gt;= #{startTime}</if>
+			<if test=" endTime != null and endTime != ''"> and begintime &lt;= #{endTime}</if>
+		</where>
+	</select>
+	
+	<!-- origin 根据表（充电记录表）查询充电设备上传的窗口投币、离线刷卡消费、在线刷卡消费的信息 -->
+	<select id="inquireInfoCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT merchantid AS merid, SUM(consume_quantity) as consumequantity, SUM(consume_time) AS consumetime 
+		FROM hd_chargerecord WHERE ifcontinue IS NULL
+		<if test=" dealer != null and dealer != ''"> AND merchantid = #{dealer}</if>
+		<if test=" code!=null and code!=''"> AND equipmentnum = #{code} </if>
+		<if test=" startTime != null and startTime != ''"> AND begintime &gt;= #{startTime}</if>
+		<if test=" endTime != null and endTime != ''"> AND begintime &lt;= #{endTime}</if>
+		GROUP BY merchantid
+	</select>
+	
+	<!-- origin 根据表（充电记录表）查询充电设备上传的窗口投币、离线刷卡消费、在线刷卡消费的信息 -->
+	<select id="chargeInfoCollect" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+  			   SUM(consume_quantity) as consumequantity, 
+  			   SUM(consume_time) AS consumetime,
+			   SUM(CASE WHEN paytype = 5 THEN expenditure ELSE 0 END) AS windowpulsemoney,
+			   SUM(CASE WHEN paytype = 6 THEN expenditure ELSE 0 END) AS offcardmoney,
+			   SUM(CASE WHEN paytype = 7 THEN expenditure ELSE 0 END) AS oncardmoney
+		FROM hd_chargerecord
+		<where>
+			<if test=" dealer != null and dealer != ''"> AND merchantid = #{dealer}</if>
+			<if test=" code!=null and code!=''"> AND equipmentnum = #{code} </if>
+			<if test=" startTime != null and startTime != ''"> AND begintime &gt;= #{startTime}</if>
+			<if test=" endTime != null and endTime != ''"> AND begintime &lt;= #{endTime}</if>
+		</where>
+	</select>
+	
+	<select id="select24HoursUnfinshByCode" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.ChargeRecord">
+		select id from hd_chargerecord where equipmentnum = #{code} and status = 1 and number = 0 and begintime >=(NOW() - interval 24 hour) and endtime is null and ifcontinue is null
+	</select>
+	
+	<!-- 根据充电订单号查询一条充电预订单 -->
+	<select id="selectRecordByOrderNum" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT id,equipmentnum,`port`,`status`,merchantid,expenditure,uid,durationtime,quantity
+		FROM hd_chargerecord
+		WHERE ordernum =#{orderNum}
+		AND `status`=0
+		LIMIT 1
+	</select>
+	
+	<!-- 根据订单号将预订单更改为正常的订单 -->
+	<update id="updateRecoderStatus" parameterType="java.lang.String">
+		UPDATE hd_chargerecord 
+		SET `status`=1,begintime=NOW()
+		WHERE ordernum = #{orderNum}
+	</update>
+	
+	<!-- 根据充电订单ID查询一条成功付款的订单(订单号,商家ID,交易金额) -->
+	<select id="selectOneRecode" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT 
+			merchantid,ordernum,expenditure
+		FROM 
+			hd_chargerecord
+		WHERE 
+			id = #{orderId}
+		LIMIT 1
+	</select>
+	<!-- 根据充电单号更改充电信息 -->
+	<update id="updateChargeRecode" parameterType="com.hedong.hedongwx.entity.ChargeRecord">
+		UPDATE 
+			hd_chargerecord
+		<set>
+			<if test="number != null">number = #{number},</if>
+		</set> 
+		WHERE 
+			ordernum = #{ordernum}
+	</update>
+	
+	
+	<!-- origin 根据表（充电记录表）查询充电设备上传的窗口投币、离线刷卡消费、在线刷卡消费的信息 -->
+	<select id="chargeRecordCompute" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			   SUM(CASE WHEN paytype = 5 THEN 1 ELSE 0 END) AS windowpulsenum,
+			   SUM(CASE WHEN paytype = 6 THEN 1 ELSE 0 END) AS offcardnum,
+			   SUM(CASE WHEN paytype = 7 THEN 1 ELSE 0 END) AS oncardnum,
+			   SUM(CASE WHEN paytype = 5 THEN expenditure ELSE 0 END) AS windowpulsemoney,
+			   SUM(CASE WHEN paytype = 6 THEN expenditure ELSE 0 END) AS offcardmoney,
+			   SUM(CASE WHEN paytype = 7 THEN expenditure ELSE 0 END) AS oncardmoney
+		FROM hd_chargerecord
+		<where>
+			<if test=" dealer != null and dealer != ''"> AND merchantid = #{dealer}</if>
+			<if test=" startTime != null and startTime != ''"> AND begintime &gt;= #{startTime}</if>
+			<if test=" endTime != null and endTime != ''"> AND begintime &lt;= #{endTime}</if>
+		</where>
+	</select>
+	
+	<!-- 查询充电记录信息满足条件的总条数 -->
+	<select id="selectChargeRecordNumber" parameterType="com.hedong.hedongwx.entity.Parameters" 
+			resultType="java.lang.Integer">
+		SELECT COUNT(*) 
+		FROM hd_chargerecord c
+		LEFT JOIN hd_user m
+		ON c.merchantid=m.id
+		LEFT JOIN hd_user u
+		ON c.uid=u.id
+		<where>
+			<if test="beginTime!=null and stopTime!= null">
+				AND c.begintime BETWEEN #{beginTime} AND #{stopTime}
+				AND status = 1
+			</if>
+			<if test="order!=null and order!=''">AND c.ordernum=#{order}</if>
+			<if test="nickname!=null and nickname!=''">AND u.username LIKE '${nickname}%'</if>
+			<if test="dealer!=null and dealer!=''">AND m.username LIKE '${dealer}%'</if>
+			<if test="realname!=null and realname!=''"> and m.realname LIKE '${realname}%'</if>
+			<if test="phone!=null and phone!=''">AND m.phone_num LIKE '${phone}%'</if>
+		    <if test="code!=null and code!=''">AND c.equipmentnum LIKE '${code}%'</if>
+		    <if test="payType!=null and payType!=0">AND c.paytype=#{payType}</if>
+		    <if test="resultInfo!=null">AND c.resultinfo=#{resultInfo}</if>
+		    <if test="orderStatus!=null"> AND c.number=#{orderStatus}</if>
+		</where>
+	</select>
+	
+	<!-- 查询充电记录信息 -->
+	<select id="selectChargeRecords" parameterType="com.hedong.hedongwx.entity.Parameters" 
+	        resultType="java.util.Map">
+		SELECT c.ordernum,c.equipmentnum,c.port,c.uid,
+	           c.expenditure,c.paytype,c.number,c.merchantid,
+			   c.consume_quantity,c.consume_time,
+			   c.ifcontinue,c.begintime,c.endtime,
+			   c.resultinfo,c.refund_time,
+			   u.username,m.username AS dealer
+		FROM hd_chargerecord c
+		LEFT JOIN hd_user m
+		ON c.merchantid=m.id
+		LEFT JOIN hd_user u
+		ON c.uid=u.id
+		<where>
+			<if test="beginTime != null and stopTime != null">
+				AND c.begintime BETWEEN #{beginTime} AND #{stopTime}
+				AND status = 1
+			</if>
+			<if test="order!=null and order!=''">AND c.ordernum=#{order}</if>
+			<if test="nickname!=null and nickname!=''">AND u.username LIKE '${nickname}%'</if>
+			<if test="dealer!=null and dealer!=''">AND m.username LIKE '${dealer}%'</if>
+			<if test="realname!=null and realname!=''">AND m.realname LIKE '${realname}%'</if>
+			<if test="phone!=null and phone!=''">AND m.phone_num LIKE '${phone}%'</if>
+		    <if test="code!=null and code!=''">AND c.equipmentnum LIKE '${code}%'</if>
+		    <if test="payType!=null and payType!=0">AND c.paytype=#{payType}</if>
+		    <if test="resultInfo!=null">AND c.resultinfo=#{resultInfo}</if>
+		    <if test="orderStatus!=null"> AND c.number=#{orderStatus}</if>
+	    		ORDER BY c.id DESC
+		</where>
+		LIMIT #{startnumber},#{pages}
+	</select>
+</mapper>
+
+
+
+
+

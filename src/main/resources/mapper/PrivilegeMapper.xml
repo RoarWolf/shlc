@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.PrivilegeDao">
+
+	<sql id="User_Column_List">
+		id,name,explain,parent_id
+	</sql>
+	
+	<!-- 查询用户拥有的所有权限 -->
+	<select id="selectUserPrivilege" resultType="com.hedong.hedongwx.entity.Privilege">
+		SELECT `name`,`explain` from hd_privilege where id in (SELECT pid from hd_user_privilege where uid = #{uid})
+	</select>
+	
+	<!-- 查询权限列表 -->
+	<select id="selectAllPrivilege" resultType="com.hedong.hedongwx.entity.Privilege">
+		SELECT id,`name`,`explain` from hd_privilege
+		<where>
+	      	<if test="id !=null"> and id = #{id} </if>
+	      	<if test="parentId !=null"> and parent_id = #{parentId} </if>
+		</where>
+	</select>
+	
+	<insert id="insertUserPrivliege">
+		insert into hd_user_privilege (uid,pid) values (#{uid},#{pid})
+	</insert>
+	
+	<delete id="deleteUserPrivliege">
+		delete from hd_user_privilege
+		<where>
+	      	<if test="uid !=null"> and uid = #{uid} </if>
+	      	<if test="pid !=null"> and pid = #{pid} </if>
+		</where>
+	</delete>
+	
+</mapper>
+
+

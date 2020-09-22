@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.CardDao">
+	
+	
+	<insert id="insertParam" parameterType="com.hedong.hedongwx.entity.Card">
+		insert into hd_card(uid,card_num,cardID,card_money,type,status,creation_time) values 
+    	(#{uid},#{cardNum},#{cardID},#{cardMoney},#{type},#{status},Now())
+	</insert>
+	
+	<!-- 删除卡片（根据ID、物理删除） -->
+	<delete id="deleteCard" parameterType="java.lang.Integer">
+        delete from hd_card where id = #{id}
+    </delete>
+	
+	<update id="setupdateCard">
+		update hd_card set	uid = #{uid} where cardID = #{cardID}
+	</update>
+		
+	<update id="updateCard">
+		update hd_card set	status = #{status} where id = #{id}
+	</update>
+	
+	<update id="updateCardByCardnum" parameterType="com.hedong.hedongwx.entity.Card">
+		update hd_card set card_money = #{cardMoney} where cardID = #{cardID}
+	</update>
+	
+	<update id="updateRemark">
+		update hd_card set remark = #{remark} where id = #{id}
+	</update>
+		
+	<update id="updateState">
+	    update hd_card
+        <set>
+            <if test="cardNum!= null">
+                card_num = #{cardNum},
+            </if>
+            <if test="cardMoney!= null">
+                card_money = #{cardMoney},
+            </if>
+            <if test="type!= null">
+                type = #{type},
+            </if>
+            <if test="status!= null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+	</update>
+		
+	<update id="checkCard" parameterType="com.hedong.hedongwx.entity.Card">
+	    update hd_card
+        <set>
+            <if test="cardMoney!= null">
+                card_money = #{cardMoney},
+            </if>
+            <if test="status!= null">
+                status = #{status},
+            </if>
+        </set>
+        where cardID = #{cardID}
+	</update>
+		
+	<select id="getList" resultType="com.hedong.hedongwx.entity.Card">
+		select * from hd_card
+	</select>
+	
+	<select id="getCardParamList" parameterType="Map" resultType="com.hedong.hedongwx.entity.Card">
+		SELECT * FROM hd_card WHERE 1 = 1   
+	    <if test="number!=null and  number!=''"> 
+	       and card_num = #{number}        
+	    </if> 
+	    <if test="cardID!=null and  cardID!=''"> 
+	       and cardID = #{cardID}        
+	    </if> 
+	    <if test="status!=null and status!=''"> 
+	       and status = #{status}        
+	    </if>   
+	    <if test="startTime!=null and endTime!=null"> 
+	       and creation_time &gt;= #{startTime}  and creation_time  &lt;= #{endTime}         
+	    </if> 
+	</select>  
+	
+    <select id="getCardByCardnum" resultType="com.hedong.hedongwx.entity.Card">
+    	select * from hd_card where cardID = #{cardID}
+    </select>
+    	
+	<select id="getCardParamId" parameterType="java.lang.Integer"  resultType="com.hedong.hedongwx.entity.Card">
+		select * from hd_card where id = #{id}
+	</select>	 
+	
+	<select id="getCardListBy" parameterType="java.lang.Integer"  resultType="com.hedong.hedongwx.entity.Card">
+		select * from hd_card where uid = #{uid}
+	</select>	
+	
+	<select id="getCardListByStatus" parameterType="java.lang.Integer"  resultType="com.hedong.hedongwx.entity.Card">
+		select * from hd_card where uid = #{uid} and status = #{status}
+	</select>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+
+	<!-- 查询在线卡信息 -->
+	<select id="selectOnlinecard" parameterType="com.hedong.hedongwx.entity.Parameters"  resultType="com.hedong.hedongwx.entity.Card">
+		SELECT o.*,u.username AS nickname,u.realname AS username,u.phone_num AS phone,hu.username AS dealer,hu.realname,hu.phone_num AS mobile 
+		FROM hd_onlinecard o LEFT JOIN hd_user u ON o.uid = u.id LEFT JOIN hd_user hu ON o.merid = hu.id
+		<where>
+			<if test=" uid!=null and uid!=''"> AND o.merid = #{uid} </if>
+			<if test=" sort!=null and sort!=''"> AND o.uid = #{sort} </if>
+			<if test=" code!=null and  code!=''"> AND o.cardID LIKE '%${code}%' </if>
+			<if test=" type!=null and  type!=''"> AND o.type = #{type} </if> 
+			<if test=" status!=null and  status!=''"> AND o.status = #{status} </if>
+			<if test=" remark!=null and remark!=''"> AND o.remark LIKE '%${remark}%' </if>
+			<if test="startTime!=null and startTime!=''"> AND o.create_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND o.create_time &lt;= #{endTime} </if>
+			<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+			<if test=" phone!=null and  phone!=''"> AND u.phone_num LIKE '%${phone}%' </if>
+			<if test=" dealer!=null and  dealer!=''"> AND hu.username LIKE '%${dealer}%' </if>
+		</where>
+			ORDER BY o.create_time DESC	
+		    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+		
+</mapper>

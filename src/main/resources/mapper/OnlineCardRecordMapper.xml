@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.OnlineCardRecordDao">
+
+	<sql id="OnlineCardRecord_Column_List">
+		id, merid, operid, uid, ordernum, cardID, code, balance,
+		money, sendmoney, accountmoney, topupbalance, givebalance, type, status, flag, create_time
+	</sql>
+	
+	<select id="selectCardRecord" resultType="com.hedong.hedongwx.entity.OnlineCardRecord">
+		select
+		<include refid="OnlineCardRecord_Column_List" />
+		from hd_onlinecard_record 
+		<where>
+			<if test="id != null" > AND id = #{id}</if>
+			<if test="uid != null" > AND uid = #{uid}</if>
+			<if test="merid != null" > AND merid = #{merid}</if>
+			<if test="operid != null" > AND operid = #{operid}</if>
+			<if test="ordernum != null" > AND ordernum = #{ordernum}</if>
+			<if test="cardID != null" > AND cardID = #{cardID}</if>
+			<if test="code != null" > AND code = #{code}</if>
+			<!-- <if test="type != null" > AND type IN (${type})</if> -->
+			<if test="type != null" > AND type = #{type}</if>
+			<if test="status != null" > AND status = #{status}</if>
+			<if test="flag != null" > AND flag = #{flag}</if>
+		</where>
+		ORDER BY create_time DESC
+	</select>
+
+	<select id="selectOnlineCardRecordListByCardID" resultType="com.hedong.hedongwx.entity.OnlineCardRecord">
+		select
+		<include refid="OnlineCardRecord_Column_List" />
+		from hd_onlinecard_record where cardID = #{cardID} and status != 0 order by create_time desc
+	</select>
+	
+	<select id="selectOnlineCard" resultType="com.hedong.hedongwx.entity.OnlineCardRecord">
+		select
+		<include refid="OnlineCardRecord_Column_List" />
+		from hd_onlinecard_record WHERE id = #{id}
+	</select>
+	
+	<select id="selectRecordByOrdernum" resultType="com.hedong.hedongwx.entity.OnlineCardRecord">
+		select
+		<include refid="OnlineCardRecord_Column_List" />
+		from hd_onlinecard_record where 1=1
+		<if test="ordernum != null"> AND ordernum = #{ordernum} </if>
+		<if test="type != null"> AND type = #{type} </if>
+		<if test="flag != null"> AND flag = #{flag} </if>
+	</select>
+
+	<insert id="insertOnlineCardRecord" parameterType="com.hedong.hedongwx.entity.OnlineCardRecord">
+		insert into hd_onlinecard_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uid != null"> 	 uid, </if>
+			<if test="merid != null"> 	 merid, </if>
+			<if test="operid != null"> 	 operid, </if>
+			<if test="ordernum != null"> ordernum, </if>
+			<if test="cardID != null">	 cardID, </if>
+			<if test="code != null"> 	 code, </if>
+			<if test="balance != null">  balance, </if>
+			<if test="money != null"> 	 money, </if>
+			<if test="sendmoney != null"> sendmoney, </if>
+			<if test="accountmoney != null"> accountmoney, </if>
+			<if test="topupbalance != null"> topupbalance, </if>
+			<if test="givebalance != null"> givebalance, </if>
+			<if test="type != null"> 	type, </if>
+			<if test="status != null">  status, </if>
+			<if test="flag != null"> 	flag, </if>
+			<if test="createTime != null"> create_time, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uid != null"> 	#{uid,jdbcType=INTEGER}, </if>
+			<if test="merid != null"> 	#{merid,jdbcType=INTEGER}, </if>
+			<if test="operid != null">  #{operid,jdbcType=INTEGER}, </if>
+			<if test="ordernum != null">#{ordernum,jdbcType=VARCHAR}, </if>
+			<if test="cardID != null">  #{cardID,jdbcType=VARCHAR}, </if>
+			<if test="code != null"> 	#{code,jdbcType=VARCHAR}, </if>
+			<if test="balance != null"> #{balance,jdbcType=DOUBLE}, </if>
+			<if test="money != null"> 	#{money,jdbcType=DOUBLE}, </if>
+			<if test="sendmoney != null"> #{sendmoney,jdbcType=DOUBLE}, </if>
+			<if test="accountmoney != null"> #{accountmoney,jdbcType=DOUBLE}, </if>
+			<if test="topupbalance != null"> #{topupbalance,jdbcType=DOUBLE}, </if>
+			<if test="givebalance != null"> #{givebalance,jdbcType=DOUBLE}, </if>
+			<if test="type != null"> 	#{type,jdbcType=INTEGER}, </if>
+			<if test="status != null">  #{status,jdbcType=INTEGER}, </if>
+			<if test="flag != null"> 	#{flag,jdbcType=INTEGER}, </if>
+			<if test="createTime != null"> #{createTime,jdbcType=TIMESTAMP}, </if>
+		</trim>
+	</insert>
+	
+	<update id="updateonlinestatus">
+	    update hd_onlinecard_record
+	    <set>
+			<if test="status != null"> status = #{status}, </if>
+		</set>
+	   	where ordernum = #{ordernum}
+  	</update>
+	
+	<update id="updateRecord" parameterType="com.hedong.hedongwx.entity.OnlineCardRecord" >
+    update hd_onlinecard_record
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="merid != null" >
+        merid = #{merid,jdbcType=INTEGER},
+      </if>
+      <if test="ordernum != null" >
+        ordernum = #{ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="cardID != null" >
+        cardID = #{cardID,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=DOUBLE},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="accountmoney != null" >
+        accountmoney = #{accountmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="topupbalance != null" >
+        topupbalance = #{topupbalance,jdbcType=DOUBLE},
+      </if>
+      <if test="givebalance != null" >
+        givebalance = #{givebalance,jdbcType=DOUBLE},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	
+	<!-- 查询在线卡操作记录信息 -->
+	<select id="selectOnlineOperation" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT o.*,u.username AS nickname,u.realname AS username,u.phone_num AS phone,hu.username AS dealer,hu.realname,
+		       hu.phone_num AS mobile,du.username AS operanick,du.realname AS operaname,du.phone_num AS operaphone
+		FROM hd_onlinecard_record o LEFT JOIN hd_user u ON o.uid = u.id LEFT JOIN hd_user hu ON o.merid = hu.id LEFT JOIN hd_user du ON o.operid = du.id
+		WHERE type = 4
+		<if test=" uid!=null and uid!=''"> AND o.merid = #{uid} </if>
+		<if test=" order!=null and  order!=''"> AND o.ordernum LIKE '%${order}%' </if>
+		<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+		<if test=" dealer!=null and  dealer!=''"> AND hu.username LIKE '%${dealer}%' </if>
+		<if test=" phone!=null and  phone!=''"> AND hu.phone_num LIKE '%${phone}%' </if>
+		<if test=" rank!=null and rank!=''"> AND o.id = #{rank} </if>
+		<if test=" number!=null and  number!=''"> AND o.cardID LIKE '%${number}%' </if>
+		<if test=" code!=null and  code!=''"> AND o.code LIKE '%${code}%' </if>
+		<if test=" status!=null and  status!=''"> AND o.status = #{status} </if>
+		<if test="startTime!=null and startTime!=''"> AND o.create_time &gt;= #{startTime} </if>
+		<if test="endTime!=null and endTime!=''"> AND o.create_time &lt;= #{endTime} </if>
+		ORDER BY o.create_time DESC
+		<if test="startnumber!=null"> LIMIT #{startnumber},#{pages} </if>
+	</select>
+
+	<!-- 查询在线卡消费记录信息 -->
+	<select id="selectOonlineConsume" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT o.*,u.username AS nickname,u.realname AS username,u.phone_num AS phone,hu.username AS dealer,hu.realname,
+		       hu.phone_num AS mobile,du.username AS operanick,du.realname AS operaname,du.phone_num AS operaphone
+		FROM hd_onlinecard_record o LEFT JOIN hd_user u ON o.uid = u.id LEFT JOIN hd_user hu ON o.merid = hu.id LEFT JOIN hd_user du ON o.operid = du.id
+		WHERE o.`status`=1 
+		<!-- WHERE o.`status`!=1 AND type != 4 -->
+		<if test=" uid!=null and uid!=''"> AND o.merid = #{uid} </if>
+		<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+		<if test=" number!=null and  number!=''"> AND o.cardID LIKE '%${number}%' </if>
+		<if test=" dealer!=null and  dealer!=''"> AND hu.username LIKE '%${dealer}%' </if>
+		<if test=" realname!=null and  realname!=''"> AND hu.realname LIKE '%${realname}%' </if>
+		<if test=" phone!=null and  phone!=''"> AND hu.phone_num LIKE '%${phone}%' </if>
+		<if test=" rank!=null and rank!=''"> AND o.id = #{rank} </if>
+		<if test=" order!=null and  order!=''"> AND o.ordernum LIKE '%${order}%' </if>
+		<if test=" code!=null and  code!=''"> AND o.code LIKE '%${code}%' </if>
+		<if test=" type!=null and  type!=''"> AND o.type = #{type} </if>
+		<if test=" status!=null and  status!=''"> AND o.uid = #{status} </if>
+		<if test="startTime!=null and startTime!=''"> AND o.create_time &gt;= #{startTime} </if>
+		<if test="endTime!=null and endTime!=''"> AND o.create_time &lt;= #{endTime} </if>
+		ORDER BY o.create_time DESC
+		<if test="startnumber!=null"> LIMIT #{startnumber},#{pages} </if>
+	</select>
+
+	<!-- 在线卡微信支付宝消费汇总 -->
+	<select id="onlinecardtotal" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN type='3' THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN type='5' THEN 1 ELSE 0 END) AS retuwechatnum,
+			SUM(CASE WHEN type='3' THEN money ELSE 0 END) AS walletnum,
+			SUM(CASE WHEN type='5' THEN money ELSE 0 END) AS retuwechatmoney
+		FROM hd_onlinecard_record WHERE `status` = 1 
+		<if test=" uid!=null and uid!=''"> and merid = #{uid}</if>
+		<if test=" startTime!=null and startTime!=''"> and create_time &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and create_time &lt; #{endTime}</if>
+	</select>
+  
+  <!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+
+
+
+
+</mapper>

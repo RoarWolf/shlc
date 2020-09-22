@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.MoneyDao">
+	<select id="selectwalletinfo" parameterType="com.hedong.hedongwx.entity.Parameter" resultType="java.util.Map">
+		SELECT m.*,u.username,u.realname,u.phone_num AS uphonenum 
+		FROM hd_moneyrecord m LEFT JOIN hd_user u ON m.uid = u.id
+		WHERE m.`status` = 1 
+		<if test=" username!=null and username!=''"> AND u.username LIKE '%${username}%'</if>
+		<if test=" phoneNum!=null and phoneNum!=''"> AND u.phone_num LIKE '%${phoneNum}%'</if>
+		<if test=" realname!=null and realname!=''"> AND u.realname LIKE '%${realname}%'</if>
+		<if test=" ordernum!=null and ordernum!=''"> AND m.ordernum LIKE '%${ordernum}%'</if>
+		<if test=" status!=null and status!=''"> AND m.remark LIKE '%${status}%'</if>
+		<if test=" type!=null and type!=''"> AND m.paytype IN (${type})</if>
+		
+		<if test=" startTime!=null and startTime!=''"> and m.paytime &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and m.paytime &lt;= #{endTime}</if>
+		ORDER BY m.paytime DESC
+		<if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+		
+	</select>
+	
+	<select id="payMoneyRecord" parameterType="com.hedong.hedongwx.entity.Money"  resultType="com.hedong.hedongwx.entity.Money">
+		SELECT * FROM hd_moneyrecord 
+		<where>
+			<if test="uid!=null and  uid!=''"> and uid = #{uid} </if> 
+		    <if test="ordernum!=null and  ordernum!=''"> and ordernum = #{ordernum}</if>
+		    <if test="paytype!=null and paytype!=''"> and paytype = #{paytype} </if>
+			<if test="status!=null "> and status = #{status} </if> 
+		    <if test="resultinfo!=null and resultinfo!=''"> and resultinfo = #{resultinfo}</if>
+		    <if test="expenditure!=null and expenditure!=''"> and expenditure = #{expenditure} </if>
+		    <if test="paytime!=null and paytime!=''">and paytime &gt;= #{paytime}  </if>  
+		</where>
+	    ORDER BY paytime DESC	
+	</select>	
+	
+	<select id="payMoneyinfo" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.Money">
+		SELECT * FROM hd_moneyrecord WHERE id = #{id} ORDER BY paytime DESC	
+	</select>
+
+	<select id="queryMoneyByOrdernum" resultType="com.hedong.hedongwx.entity.Money">
+		SELECT * FROM hd_moneyrecord WHERE ordernum = #{ordernum}
+	</select>
+	
+	<select id="MoneyRecordByid" resultType="com.hedong.hedongwx.entity.Money">
+		SELECT * FROM hd_moneyrecord WHERE `status` = 1 AND uid = #{uid}  ORDER BY paytime DESC	
+	</select>
+	
+	<insert id="insertWalletRecord" parameterType="com.hedong.hedongwx.entity.Money">
+	  INSERT INTO hd_moneyrecord
+	    <trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="uid != null"> uid, </if>
+	      <if test="merid != null"> merid, </if>
+	      <if test="ordernum != null">  ordernum, </if>
+	      <if test="paysource != null"> paysource, </if>
+	      <if test="paytype != null"> paytype, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="money != null"> money, </if>
+	      <if test="tomoney != null"> tomoney,  </if>
+	      <if test="sendmoney != null"> sendmoney, </if>
+	      <if test="balance != null"> balance, </if>
+	      <if test="topupbalance != null"> topupbalance, </if>
+	      <if test="givebalance != null"> givebalance, </if>
+	      <if test="paytime != null"> paytime, </if>
+	      <if test="remark != null"> remark, </if>
+	    </trim>
+	    <trim prefix=" VALUES (" suffix=")" suffixOverrides=",">
+	      <if test="uid != null">  #{uid,jdbcType=INTEGER}, </if>
+	      <if test="merid != null">  #{merid,jdbcType=INTEGER}, </if>
+	      <if test="ordernum != null">  #{ordernum,jdbcType=VARCHAR}, </if>
+	      <if test="paysource != null">  #{paysource,jdbcType=INTEGER}, </if>
+	      <if test="paytype != null">  #{paytype,jdbcType=INTEGER}, </if>
+	      <if test="status != null">  #{status,jdbcType=INTEGER}, </if>
+	      <if test="money != null">  #{money,jdbcType=DOUBLE}, </if>
+	      <if test="tomoney != null">  #{tomoney,jdbcType=DOUBLE}, </if>
+	      <if test="sendmoney != null">  #{sendmoney,jdbcType=DOUBLE}, </if>
+	      <if test="balance != null">  #{balance,jdbcType=DOUBLE}, </if>
+	      <if test="topupbalance != null">  #{topupbalance,jdbcType=DOUBLE}, </if>
+	      <if test="givebalance != null">  #{givebalance,jdbcType=DOUBLE}, </if>
+	      <if test="paytime != null"> #{paytime,jdbcType=DATE}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<insert id="payMoneys" parameterType="com.hedong.hedongwx.entity.Money" >
+		INSERT INTO hd_moneyrecord (uid,ordernum,paytype,status,money,sendmoney,tomoney,balance,topupbalance,givebalance,paytime,remark) VALUES 
+		(#{uid},#{ordernum},#{paytype},#{status},#{money},#{sendmoney},#{tomoney},#{balance},#{topupbalance},#{givebalance},now(),#{remark});
+	</insert>
+	
+   <update id="updateMoneyByOrder">
+		update hd_moneyrecord 
+		<set>
+			<if test="paytype != null"> paytype = #{paytype}, </if>
+		</set>
+		where ordernum = #{ordernum,jdbcType=VARCHAR}
+	</update>
+   
+   <update id="updateMoney" parameterType="com.hedong.hedongwx.entity.Money">
+		update hd_moneyrecord
+		<set>
+			<if test="status != null"> status = #{status,jdbcType=INTEGER}, </if>
+			<if test="balance != null"> balance = #{balance,jdbcType=DOUBLE}, </if>
+			<if test="paytype != null"> paytype = #{paytype,jdbcType=INTEGER}, </if>
+			<if test="money != null"> money = #{money,jdbcType=DOUBLE}, </if>
+			<if test="tomoney != null"> tomoney = #{tomoney,jdbcType=DOUBLE}, </if>
+			<if test="topupbalance != null"> topupbalance = #{topupbalance,jdbcType=DOUBLE}, </if>
+			<if test="givebalance != null"> givebalance = #{givebalance,jdbcType=DOUBLE}, </if>
+			<if test="remark != null"> remark = #{remark,jdbcType=VARCHAR}, </if>
+		</set>
+		where id = #{id}
+   </update>
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->	
+	
+	<select id="selectWalletRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		<!-- SELECT m.*,u.username,u.realname,u.phone_num AS uphonenum 
+		FROM hd_moneyrecord m LEFT JOIN hd_user u ON m.uid = u.id
+		WHERE m.`status` = 1 -->
+		SELECT m.*,u.username,u.realname,u.phone_num AS uphonenum, mu.id AS dealid, mu.username AS dealernick,mu.realname AS dealer,mu.phone_num AS mobile
+		FROM hd_moneyrecord m LEFT JOIN hd_user u ON m.uid = u.id LEFT JOIN hd_user mu ON u.merid = mu.id
+		WHERE m.`status` = 1
+		<if test=" paramete!=null and paramete!=''"> AND m.uid = #{paramete} </if>
+		<if test=" uid!=null and uid!=''"> AND u.merid = #{uid} </if>
+	    <if test=" order!=null and  order!=''"> AND m.ordernum LIKE '%${order}%' </if>
+		<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+		<if test=" username!=null and  username!=''"> AND u.realname LIKE '%${username}%' </if>
+		
+		<if test="dealer!=null and dealer!=''">AND mu.username LIKE '%${dealer}%' </if>
+		<if test="realname!=null and realname!=''">AND mu.realname LIKE '%${realname}%' </if>
+		<if test="mobile!=null and mobile!=''">AND mu.phone_num LIKE '%${mobile}%' </if>
+			
+		<if test=" remark!=null and  remark!=''"> AND m.remark LIKE '%${remark}%' </if>
+		<if test=" type!=null and  type!=''"> AND m.paytype IN (${type}) </if> 
+		<if test="startTime!=null and startTime!=''"> AND m.paytime &gt;= #{startTime} </if>
+		<if test="endTime!=null and endTime!=''"> AND m.paytime &lt;= #{endTime} </if>
+		ORDER BY m.paytime DESC	
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>	
+	
+	<!-- 微信支付宝消费汇总 -->
+	<select id="moneytotal" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN paytype='0' THEN 1 ELSE 0 END) AS wechatnum,
+			SUM(CASE WHEN paytype='0' THEN money ELSE 0 END) AS wechatmoney,
+			SUM(CASE WHEN paytype='2' THEN 1 ELSE 0 END) AS refwechatnum,
+			SUM(CASE WHEN paytype='2' THEN money ELSE 0 END) AS refwechatmoney
+		FROM hd_moneyrecord WHERE `status` = 1
+			<if test=" uid!=null and uid!=''"> and uid = #{uid}</if>
+			<if test=" startTime!=null and startTime!=''"> and paytime &gt;= #{startTime}</if>
+			<if test=" endTime!=null and endTime!=''"> and paytime &lt; #{endTime}</if>
+	</select>
+	
+	<select id="selectmoneytotalrefund" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN paytype='2' THEN 1 ELSE 0 END) AS refwalletnum,
+			SUM(CASE WHEN paytype='2' THEN money ELSE 0 END) AS refwalletmoney,
+			SUM(CASE WHEN paytype='3' THEN 1 ELSE 0 END) AS refchargenum,
+			SUM(CASE WHEN paytype='3' THEN money ELSE 0 END) AS refchargewalmoney,
+			SUM(CASE WHEN paytype='4' THEN 1 ELSE 0 END) AS refofflinenum,
+			SUM(CASE WHEN paytype='4' THEN money ELSE 0 END) AS refofflinewalmoney,
+			SUM(CASE WHEN paytype='5' THEN 1 ELSE 0 END) AS refincoinsnum,
+			SUM(CASE WHEN paytype='5' THEN money ELSE 0 END) AS refincoinswalmoney
+		FROM hd_moneyrecord WHERE `status` = 1
+		<if test=" uid!=null and uid!=''"> and uid = #{uid}</if>
+		<if test=" startTime!=null and startTime!=''"> and paytime &gt;= #{startTime}</if>
+		<if test=" endTime!=null and endTime!=''"> and paytime &lt; #{endTime}</if>
+	</select>
+
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->	
+	<!-- ZZ根据钱包充值的订单号查询商家的id -->
+	<select id="selectMerByMoneyOrdernum" resultType="java.lang.Integer">
+		SELECT  merid FROM hd_traderecord WHERE ordernum = #{moneyOrder}
+	</select>
+
+</mapper>

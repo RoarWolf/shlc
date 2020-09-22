@@ -1,0 +1,588 @@
+
+
+
+.tem {
+  padding: 0.77294686rem;
+  color: #666;
+}
+.tem .mui-bar-tab {
+  border-top: 0.03864734rem solid #ccc;
+  box-shadow: none;
+}
+.tem .mui-bar-tab div {
+  width: 100%;
+  height: 100%;
+  /*text-align: center;*/
+  display: flex;
+  justify-content: space-around;
+}
+.tem .mui-bar-tab div button {
+  margin-left: 0.23188406rem;
+  width: 30%;
+  height: 1.352657rem;
+  border-radius: 1.352657rem;
+}
+.tem .list-div {
+  border: 0.03864734rem solid #ccc;
+  border-radius: 0.30917874rem;
+  overflow: hidden;
+  margin-bottom: 1.15942029rem;
+  box-shadow: 0.15458937rem 0.19323671rem 0.34782609rem #888888;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  /* Firefox */
+  -webkit-box-sizing: border-box;
+  /* Safari */
+}
+.tem .list-div .sysTemTitle {
+	text-align: center;
+    font-size: 14px;
+    background: #f5f7fa;
+    margin: 0px;
+    padding-top: 15px;
+}
+.tem .list-div > li .title {
+  font-size: 0.46376812rem;
+  width: 100%;
+  background: #f5f7fa;
+  /*#F8F8F8*/
+  margin: 0;
+  /*padding: 11px 15px;*/
+  padding: 3.5% 3.5%;
+}
+.tem .list-div .temGradName {
+  font-size: 0.5410628rem;
+  width: 100%;
+  background: #f5f7fa;
+  /*#F8F8F8*/
+  margin: 0;
+  /*padding: 11px 15px;*/
+  padding: 3.5% 3.5% 0;
+  text-align: center;
+}
+.tem .list-div > li .title > p {
+  float: left;
+  margin-bottom: 0;
+  padding: 0.11594203rem 0 0.11594203rem 0;
+  color: #666;
+  font-size: 0.46376812rem;
+}
+.tem .list-div > li .title > p button{
+    margin-right: 0.19323671rem;
+    padding: 0.11594203rem 0.23188406rem;
+    font-size: 0.46376812rem;
+    float: right;
+    background: transparent;
+    border: none;
+    outline: none;
+    text-decoration: underline;
+    color: #0984B5;
+ }
+.tem .list-div > li .title {
+  overflow: hidden;
+}
+.tem .list-div > li .title > div {
+  float: left;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+.span-red {
+  color: #F56C6C !important;
+}
+.span-green {
+  color: #31f5ae !important;
+}
+.tem .list-div > li .title > p:nth-child(2n-1) {
+  width: 55%;
+}
+.tem .list-div > li .title > p:nth-child(2n) {
+  min-width: 45%;
+}
+.tem1 .tem .list-div > li .title > p:nth-child(4) {
+  width: 100%;
+}
+.tem .list-div > li .title > p > span {
+  margin-left: 0.19323671rem;
+  color: #999;
+  font-size: 0.46376812rem;
+}
+.tem .list-div > li .title > div > button {
+  margin-right: 0.19323671rem;
+  padding: 0.11594203rem 0.23188406rem;
+  font-size: 0.46376812rem;
+}
+.tem .mui-table-view-cell {
+  padding: 3.5% 3.5%;
+}
+.tem .mui-table-view-cell.mui-active {
+  background-color: transparent;
+}
+.tem .list-div .mui-table-view-cell > p {
+  float: left;
+}
+.tem .list-div .mui-table-view-cell > p:nth-child(2n-1) {
+  width: 55%;
+}
+.tem .list-div .mui-table-view-cell > p:nth-child(2n) {
+  width: 45%;
+}
+.tem .list-div .mui-table-view-cell > p > span {
+  margin-left: 0.19323671rem;
+  font-size: 0.46376812rem;
+}
+.tem .list-div .mui-table-view-cell.bottom {
+  position: relative;
+  padding: 0;
+  height: 1.73913043rem;
+}
+.tem .list-div .mui-table-view-cell.bottom button { 
+  float: right; 
+  width: 20%;
+  border-radius: 0.19323671rem;
+}
+.tem1 .list-div .mui-table-view-cell.bottom button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 50%;
+}
+.tem .list-div .mui-table-view-cell > div {
+  text-align: center;
+  float: left;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.tem .list-div .mui-table-view-cell > div button {
+  /*display: inline-block;*/
+  margin-top: 0.19323671rem;
+  margin-right: 0.19323671rem;
+  padding: 0.11594203rem 0.23188406rem;
+  font-size: 0.46376812rem;
+}
+.tem-mask1,
+.tem-mask2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 8;
+  display: none;
+}
+.list-center1,
+.list-center2 {
+  z-index: 9;
+  width: 80vw;
+  background-color: #fff;
+  border-radius: 0.38647343rem;
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 0.9961rem);
+  transform: translate(-50%, -50%);
+}
+.list-center1,
+.list-center2 {
+  padding: 0.57971014rem;
+}
+.list-center1 h3,
+.list-center2 h3 {
+  margin: 0 auto;
+  font-size: 0.57971014rem;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 0.57971014rem;
+  padding-bottom: 0.57971014rem;
+  border-bottom: 0.03864734rem solid #DCDFE6;
+}
+.list-center1 form,
+.list-center2 form {
+  font-size: 0.5410628rem;
+  color: #666;
+  padding-top: 0.38647343rem;
+}
+.list-center1 form .inp,
+.list-center2 form .inp {
+  margin-bottom: 0.57971014rem;
+}
+.list-center1 form input,
+.list-center2 form input {
+  margin-top: 0.19323671rem;
+  height: 1.27536232rem;
+  border-radius: 0.23188406rem;
+  width: 80%;
+  margin-bottom: 0;
+  font-size: 0.46376812rem;
+}
+.list-center1 form input::-webkit-input-placeholder,
+.list-center2 form input::-webkit-input-placeholder {
+  color: #c0c0c0;
+  font-size: 0.46376812rem;
+}
+/* 婵犵數鍋犻幓顏嗙礊閿熻姤绻涙径瀣鐎殿噮鍋婅棟婵犳洜锟藉it闂傚倷绀侀幉锟犲礉閺囥垹绠犻煫鍥ㄧ♁閸嬪鏌熼幆鏉啃撻柛搴＄Ч閺屾盯寮撮妸銉ヮ潾闂侀潧鐗嗛…鐑藉箖瀹勬壋鏋庨煫鍥ㄦ礀椤ｅ搫鈹戦悙鍙夊珔闁瑰嚖鎷� */
+.list-center1 form input:-moz-placeholder,
+.list-center2 form input:-moz-placeholder {
+  color: #c0c0c0;
+  font-size: 0.46376812rem;
+}
+/* Firefox闂傚倷鑳剁划顖炪�冮崨瀛樺亱濠电姴鍋婇懓鍧楁煥閻曞倹瀚�4-18 */
+.list-center1 form input::-moz-placeholder,
+.list-center2 form input::-moz-placeholder {
+  color: #c0c0c0;
+  font-size: 0.46376812rem;
+}
+/* Firefox闂傚倷鑳剁划顖炪�冮崨瀛樺亱濠电姴鍋婇懓鍧楁煥閻曞倹瀚�19+ */
+.list-center1 form input:-ms-input-placeholder,
+.list-center2 form input:-ms-input-placeholder {
+  color: #c0c0c0;
+  font-size: 0.46376812rem;
+}
+/* IE濠电姷鏁搁崑鐐差焽濞嗘垶宕叉俊銈呮嫅缂嶆牜锟藉箍鍎遍ˇ顖炴⒒椤栫偞鐓ラ柣鏇炲�圭�氾拷 */
+.list-center1 form .inp,
+.list-center2 form .inp {
+  position: relative;
+}
+.list-center1 form .btn,
+.list-center2 form .btn {
+  position: absolute;
+  right: 0.57971014rem;
+  bottom: 0.19323671rem;
+  color: #4cd964;
+}
+.list-center1 .bottom,
+.list-center2 .bottom {
+  width: 100%;
+  margin: 0.77294686rem 0 0 0;
+  display: flex;
+  justify-content: flex-end;
+}
+.list-center1 .bottom .mui-btn-success,
+.list-center2 .bottom .mui-btn-success {
+  font-size: 0.5410628rem;
+  padding: 0.11594203rem 0.23188406rem;
+  margin-right: 0.19323671rem;
+}
+.list-center1 .close,
+.list-center2 .close {
+  position: absolute;
+  top: 0.38647343rem;
+  right: 0.38647343rem;
+  color: #666;
+}
+.list-center2 form .inp.radio-inp {
+  display: flex;
+  /*justify-content: space-between;*/
+}
+.list-center2 form .inp.radio-inp h5 {
+  color: #666;
+  margin-right: 0.69565217rem;
+}
+.list-center2 form .inp.radio-inp label {
+  display: flex;
+  align-items: center;
+  font-size: 0.46376812rem;
+  color: #666;
+}
+.list-center2 form .chargeInfoTe {
+	overflow: hidden;
+}
+.list-center2 form .chargeInfoTe h5 {
+	float: left;
+	color: #666;
+}
+.list-center2 form .chargeInfoTe button {
+	float: left;
+	margin-right: 0.19323671rem;
+    padding: 0.11594203rem 0.23188406rem;
+    font-size: 0.46376812rem;
+    margin-left: 0.8rem;
+}
+
+.list-center2 form .inp input[name="isRef"],
+.list-center2 form .inp input[name="isWalletPay"],
+.list-center2 form .inp input[name="isMonthly"], 
+.list-center2 form .inp input[name="isIfalipay"],
+.list-center2 form .inp input[name="isGrad"] {
+  width: 0.69565217rem;
+  height: 0.69565217rem;
+  margin: 0;
+  margin-left: 0.38647343rem;
+}
+ol {
+  font-size: 0.46376812rem;
+}
+ol.ol-red {
+  color: #FF0000;
+}
+ol span {
+  font-weight: 600;
+  color: #333;
+}
+#popover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: none;
+}
+#popover ul li label {
+  display: flex;
+  align-items: center;
+}
+#popover ul {
+  overflow: hidden;
+  width: 50%;
+  z-index: 12;
+  background-color: #fff;
+  border-radius: 0.38647343rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.5410628rem;
+}
+#popover ul input {
+  width: 0.69565217rem;
+  height: 0.69565217rem;
+  margin-right: 0.38647343rem;
+}
+#popover label {
+  color: #666;
+}
+#popover .lastButton button:first-child {
+  float: left;
+  position: initial;
+  -webkit-transform: none;
+  transform: none;
+  padding: 0.15458937rem 0.23188406rem;
+  font-size: 0.46376812rem;
+  margin-left: 15%;
+}
+#popover .lastButton button:last-child {
+  float: right;
+  position: initial;
+  -webkit-transform: none;
+  transform: none;
+  padding: 0.15458937rem 0.23188406rem;
+  font-size: 0.46376812rem;
+  margin-right: 15%;
+}
+.tem .list-div .mui-table-view-cell.bottom .isChecked {
+  width: 2.70531401rem;
+  position: absolute;
+  top: 50%;
+  left: 0.57971014rem;
+  transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+}
+.tem .list-div .mui-table-view-cell.bottom .isChecked button {
+  position: initial;
+  width: auto;
+  padding: 0.15458937rem 0.30917874rem;
+}
+/*闂傚倷绶￠崑鍕囬锟介幊娆撳箣閿曪拷閻淇婇姘变虎妞ゃ儻鎷�*/
+.list-div.borShadow {
+  border: 0.07729469rem solid #ed1c24ab ab !important;
+  box-shadow: 0.15458937rem 0.19323671rem 0.34782609rem #F3686D !important;
+}
+.list-div.borShadow .bottom p {
+  display: block !important;
+}
+.list-div .mui-table-view .mui-table-view-cell.bottom p,
+.list-div .mui-table-view-cell.bottom p {
+  position: absolute;
+  width: auto !important;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  color: #ED1C24;
+  display: none;
+}
+.list-div .mui-table-view-cell .selectTem.active,
+.list-div .mui-table-view-cell .defaultTem.active {
+  background-color: #BFBFBF ;
+  border: none ;
+}
+.tem .mui-bar-tab a {
+  display: block;
+  width: 30%;
+}
+.tem .mui-bar-tab a button {
+  width: 100% ;
+  height: 1.352657rem;
+  border-radius: 1.352657rem;
+}
+.tem .list-div .addMonthlyTem {
+  /*婵烇綀顕ф慨鐐哄礌閸涱喗绠戞俊顖楀墲濠拷*/
+  background-color: #fff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.73913043rem;
+  /* right: auto !important!;
+    position: static !important; */
+}
+.tem .list-div .addMonthlyTem button {
+  border-radius: 0.19323671rem;
+  position: static;
+  top: auto;
+  right: auto;
+  -webkit-transform: none;
+  transform: none;
+  padding: 0.15458937rem 0.30917874rem;
+  font-size: 0.46376812rem;
+}
+.tem .list-div > .list-div {
+  /*box-shadow: none;*/
+  box-shadow: 0.07729469rem 0 0.19323671rem #888888;
+}
+.tem .list-div > .list-div:nth-child(3) {
+  margin-bottom: 0;
+}
+
+p{
+  font-size: 0.541rem;
+}
+.mui-h5, h5 {
+  font-size: 0.541rem;
+}
+.mui-bar .mui-btn {
+	top: 0.27rem;
+	padding: 0.2319rem 0.4637rem 0.27rem;
+}
+.mui-bar-tab {
+	height: 1.932rem;
+}
+.chargeTextMask {
+	position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 102;
+    display: none;
+}
+.chargeTextMask .ctm {
+	overflow: hidden;
+    width: 80%;
+    z-index: 12;
+    background-color: #fff;
+    border-radius: 0.38647343rem;
+    position: absolute;
+    left: 50%;
+   	top: calc(50% - 0.9961rem);
+    transform: translate(-50%, -50%);
+    font-size: 0.5410628rem;
+    padding: 0.57971014rem;
+}
+.chargeTextMask .ctm h3{
+	font-size: 0.57971014rem;
+	text-align: center;
+	font-weight: 600;
+    text-align: center;
+    margin-top: 0.57971014rem;
+    padding-bottom: 0.57971014rem;
+    border-bottom: 0.03864734rem solid #dedede;
+}
+.chargeTextMask .ctm .areaText {
+	padding: 0.65rem 0 0;
+}
+.chargeTextMask .ctm .areaText textarea {
+	padding: 0.5rem;
+	height: 6rem;
+	color: #333;
+	margin: 0;
+	font-size: 0.46376812rem;
+	border: 0.03864734rem solid #ddd;
+}
+.chargeTextMask .ctm .tipDiv {
+	padding: 0.5rem 0;
+	color: #999;
+	font-size: 0.46376812rem;
+}
+.chargeTextMask .ctm .tipDiv p {
+	margin-bottom: 0;
+	color: #8f8f94;
+}
+.chargeTextMask .ctm .bottom{
+	display: flex;
+	justify-content: flex-end;
+	padding-top: 0.5rem;
+	border-top: 0.03864734rem solid #dedede;
+}
+.chargeTextMask .ctm .bottom button {
+	font-size: 0.5410628rem;
+    padding: 0.15rem 0.23188406rem;
+}
+.chargeTextMask .ctm .bottom .closeText {
+	margin-right: 0.19323671rem;
+}
+.chargeTextMask .ctm .selectText {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 0.3rem;
+}
+.chargeTextMask .ctm .selectText button {
+	margin-right: 0.19323671rem;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.46376812rem;
+    margin-left: 0.8rem;
+}
+
+
+@media screen and (max-height: 600px) {
+  .list-center1 form,
+  .list-center2 form {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .list-center1 form input,
+  .list-center2 form input {
+    width: 95%;
+  }
+  .list-center1 form .inp,
+  .list-center2 form .inp {
+    width: 50%;
+    margin-bottom: 0.19323671rem;
+  }
+  .list-center1 form .inp.radio-inp,
+  .list-center2 form .inp.radio-inp,
+  .list-center1 form .inp.ol,
+  .list-center2 form .inp.ol {
+    width: 100%;
+  }
+  .list-center1 .bottom,
+  .list-center2 .bottom {
+    margin-top: 0.19323671rem;
+  }
+  .list-center1 form .btn,
+   .list-center2 form .btn {
+   	bottom: 0;
+   }
+   .chargeTextMask .ctm .areaText {
+   	padding: 0;
+   }
+   .chargeTextMask .ctm .selectText {
+   	margin-top: 0;
+   }
+   .chargeTextMask .ctm .tipDiv {
+   	padding: 0;
+   }
+}
+
+

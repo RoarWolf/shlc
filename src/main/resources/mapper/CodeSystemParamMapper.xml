@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.CodeSystemParamDao">
+	<sql id="Base_Column_List" >
+	  code, coin_min, card_min, coin_elec, card_elec, cst, power_max1, power_max2, power_max3, 
+	  power_max4, power_tim2, power_tim3, power_tim4, sp_rec_mon, sp_full_empty, full_power_min, 
+	  full_charge_time, elec_time_first, elec_pri, hot_doorsill, smoke_doorsill, power_total, 
+	  update_time
+	</sql>
+	<insert id="insertCodeSystemParam" parameterType="com.hedong.hedongwx.entity.CodeSystemParam" >
+	   insert into hd_codesystemparam
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="code != null" >
+	        code,
+	      </if>
+	      <if test="coinMin != null" >
+	        coin_min,
+	      </if>
+	      <if test="cardMin != null" >
+	        card_min,
+	      </if>
+	      <if test="coinElec != null" >
+	        coin_elec,
+	      </if>
+	      <if test="cardElec != null" >
+	        card_elec,
+	      </if>
+	      <if test="cst != null" >
+	        cst,
+	      </if>
+	      <if test="powerMax1 != null" >
+	        power_max1,
+	      </if>
+	      <if test="powerMax2 != null" >
+	        power_max2,
+	      </if>
+	      <if test="powerMax3 != null" >
+	        power_max3,
+	      </if>
+	      <if test="powerMax4 != null" >
+	        power_max4,
+	      </if>
+	      <if test="powerTim2 != null" >
+	        power_tim2,
+	      </if>
+	      <if test="powerTim3 != null" >
+	        power_tim3,
+	      </if>
+	      <if test="powerTim4 != null" >
+	        power_tim4,
+	      </if>
+	      <if test="spRecMon != null" >
+	        sp_rec_mon,
+	      </if>
+	      <if test="spFullEmpty != null" >
+	        sp_full_empty,
+	      </if>
+	      <if test="fullPowerMin != null" >
+	        full_power_min,
+	      </if>
+	      <if test="fullChargeTime != null" >
+	        full_charge_time,
+	      </if>
+	      <if test="elecTimeFirst != null" >
+	        elec_time_first,
+	      </if>
+	      <if test="elecPri != null" >
+	        elec_pri,
+	      </if>
+	      
+	      <if test="hotDoorsill != null" > hot_doorsill, </if>
+	      <if test="smokeDoorsill != null" > smoke_doorsill, </if>
+	      <if test="powerTotal != null" > power_total, </if>
+	      
+	      <if test="updateTime != null" >
+	        update_time,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="code != null" >
+	        #{code,jdbcType=VARCHAR},
+	      </if>
+	      <if test="coinMin != null" >
+	        #{coinMin,jdbcType=INTEGER},
+	      </if>
+	      <if test="cardMin != null" >
+	        #{cardMin,jdbcType=INTEGER},
+	      </if>
+	      <if test="coinElec != null" >
+	        #{coinElec,jdbcType=DOUBLE},
+	      </if>
+	      <if test="cardElec != null" >
+	        #{cardElec,jdbcType=DOUBLE},
+	      </if>
+	      <if test="cst != null" >
+	        #{cst,jdbcType=DOUBLE},
+	      </if>
+	      <if test="powerMax1 != null" >
+	        #{powerMax1,jdbcType=INTEGER},
+	      </if>
+	      <if test="powerMax2 != null" >
+	        #{powerMax2,jdbcType=INTEGER},
+	      </if>
+	      <if test="powerMax3 != null" >
+	        #{powerMax3,jdbcType=INTEGER},
+	      </if>
+	      <if test="powerMax4 != null" >
+	        #{powerMax4,jdbcType=INTEGER},
+	      </if>
+	      <if test="powerTim2 != null" >
+	        #{powerTim2,jdbcType=INTEGER},
+	      </if>
+	      <if test="powerTim3 != null" >
+	        #{powerTim3,jdbcType=INTEGER},
+	      </if>
+	      <if test="powerTim4 != null" >
+	        #{powerTim4,jdbcType=INTEGER},
+	      </if>
+	      <if test="spRecMon != null" >
+	        #{spRecMon,jdbcType=INTEGER},
+	      </if>
+	      <if test="spFullEmpty != null" >
+	        #{spFullEmpty,jdbcType=INTEGER},
+	      </if>
+	      <if test="fullPowerMin != null" >
+	        #{fullPowerMin,jdbcType=INTEGER},
+	      </if>
+	      <if test="fullChargeTime != null" >
+	        #{fullChargeTime,jdbcType=INTEGER},
+	      </if>
+	      <if test="elecTimeFirst != null" >
+	        #{elecTimeFirst,jdbcType=INTEGER},
+	      </if>
+	      <if test="elecPri != null" >
+	        #{elecPri,jdbcType=INTEGER},
+	      </if>
+	      
+	      <if test="hotDoorsill != null" >  #{hotDoorsill,jdbcType=INTEGER}, </if>
+	      <if test="smokeDoorsill != null" >  #{smokeDoorsill,jdbcType=INTEGER}, </if>
+	      <if test="powerTotal != null" >  #{powerTotal,jdbcType=INTEGER}, </if>
+	      
+	      <if test="updateTime != null" >
+	        #{updateTime,jdbcType=TIMESTAMP},
+	      </if>
+	    </trim>
+  	</insert>
+	<select id="selectCodeSystemParamByCode" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.CodeSystemParam">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from hd_codesystemparam
+	    where code = #{code,jdbcType=VARCHAR}
+  	</select>
+	  <update id="updateCodeSystemParam" parameterType="com.hedong.hedongwx.entity.CodeSystemParam" >
+	    update hd_codesystemparam
+	    <set >
+	      <if test="coinMin != null" >
+	        coin_min = #{coinMin},
+	      </if>
+	      <if test="cardMin != null" >
+	        card_min = #{cardMin},
+	      </if>
+	      <if test="coinElec != null" >
+	        coin_elec = #{coinElec},
+	      </if>
+	      <if test="cardElec != null" >
+	        card_elec = #{cardElec},
+	      </if>
+	      <if test="cst != null" >
+	        cst = #{cst},
+	      </if>
+	      <if test="powerMax1 != null" >
+	        power_max1 = #{powerMax1},
+	      </if>
+	      <if test="powerMax2 != null" >
+	        power_max2 = #{powerMax2},
+	      </if>
+	      <if test="powerMax3 != null" >
+	        power_max3 = #{powerMax3},
+	      </if>
+	      <if test="powerMax4 != null" >
+	        power_max4 = #{powerMax4},
+	      </if>
+	      <if test="powerTim2 != null" >
+	        power_tim2 = #{powerTim2},
+	      </if>
+	      <if test="powerTim3 != null" >
+	        power_tim3 = #{powerTim3},
+	      </if>
+	      <if test="powerTim4 != null" >
+	        power_tim4 = #{powerTim4},
+	      </if>
+	      <if test="spRecMon != null" >
+	        sp_rec_mon = #{spRecMon},
+	      </if>
+	      <if test="spFullEmpty != null" >
+	        sp_full_empty = #{spFullEmpty},
+	      </if>
+	      <if test="fullPowerMin != null" >
+	        full_power_min = #{fullPowerMin},
+	      </if>
+	      <if test="fullChargeTime != null" >
+	        full_charge_time = #{fullChargeTime},
+	      </if>
+	      <if test="elecTimeFirst != null" >
+	        elec_time_first = #{elecTimeFirst},
+	      </if>
+	      <if test="elecPri != null" >
+	        elec_pri = #{elecPri},
+	      </if>
+	      
+	      <if test="hotDoorsill != null" >  hot_doorsill  = #{hotDoorsill}, </if>
+	      <if test="smokeDoorsill != null" > smoke_doorsill = #{smokeDoorsill}, </if>
+	      <if test="powerTotal != null" > power_total = #{powerTotal}, </if>
+	      
+	      update_time = now()
+	    </set>
+	    where code = #{code,jdbcType=VARCHAR}
+	  </update>
+</mapper>
+
+

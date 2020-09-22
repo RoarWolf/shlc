@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.AllPortRecordDao">
+
+	<sql id="PortRecord_Column_List">
+		id, equipmentnum, port, status, time, power, elec, surp, record_time
+	</sql>
+	
+	<select id="getAllPortRecordByEquipmentnumAndPort" resultType="com.hedong.hedongwx.entity.AllPortRecord">
+		select
+		<include refid="PortRecord_Column_List" />
+		from hd_allportRecord 
+		where equipmentnum = #{equipmentnum} and port = #{port}
+	</select>
+	
+	<select id="queryAllLog" parameterType="com.hedong.hedongwx.entity.AllPortRecord" resultType="com.hedong.hedongwx.entity.AllPortRecord">
+		SELECT  <include refid="PortRecord_Column_List" />
+		FROM hd_allportRecord 
+		<where> 
+		  <if test=" id!=null"> and u.id = #{id} </if>
+	      <if test=" equipmentnum!=null and equipmentnum!='kong'"> and equipmentnum LIKE '%${equipmentnum}%' </if>
+	      <if test=" equipmentnum=='kong'"> and equipmentnum = '' </if>
+	      <if test=" port!=null"> and port = #{port} </if>
+	      <if test=" status!=null "> and status = #{status} </if>
+	      <if test=" power!=null"> and power &lt;= #{power} </if>
+	      <if test=" elec!=null"> and elec &lt;= #{elec} </if>
+	      <if test=" time!=null and time!=''"> and  time &lt;= #{time} </if>
+	      <if test=" startTime!=null and startTime!=''"> and  record_time &gt;=#{startTime} </if>
+	      <if test=" endTime!=null and endTime!=''"> and  record_time &lt;=#{endTime} </if>
+	    </where>
+	   		 ORDER BY record_time DESC
+	    <if test="startIndex!=null">  LIMIT #{startIndex},#{numPerPage} </if>
+	</select>
+	
+	<delete id="delSevenBeforeLog">
+		delete from hd_allportRecord where record_time &lt;#{recordTime}
+	</delete>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	<!-- 查询设备日志信息 -->
+	<select id="selectEquipmentLog" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+	    SELECT  a.*,ue.user_id AS ueid 
+		FROM hd_allportRecord a LEFT JOIN hd_user_equipment ue ON a.equipmentnum = ue.equipment_code
+		<where> 
+			<if test=" uid!=null and uid!=''"> AND ue.user_id = #{uid} </if>
+			<if test=" code!=null and  code!=''"> AND a.equipmentnum LIKE '%${code}%' </if>
+			<if test=" order!=null and  order!=''"> AND a.port LIKE '%${order}%' </if>
+	        <if test=" statement!=null and statement!=''"> AND  a.time &lt;= #{statement} </if>
+	        <if test=" number!=null and number!=''"> AND  a.power &lt;= #{number} </if>
+	        <if test=" remark!=null and remark!=''"> AND a.elec &lt;= #{remark} </if>
+	        <if test=" status!=null and status!=''"> AND a.status = #{status} </if>
+	     	<if test="startTime!=null and startTime!=''"> AND a.record_time &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND a.record_time &lt;= #{endTime} </if>
+	    </where>
+	   		 ORDER BY a.record_time DESC
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+<!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
+	
+</mapper>

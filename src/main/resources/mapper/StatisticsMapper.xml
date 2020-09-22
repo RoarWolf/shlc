@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.StatisticsDao">
+	
+	<insert id="insertStatis" parameterType="com.hedong.hedongwx.entity.Statistics">
+		INSERT INTO hd_statistics (ordertotal,wecorder,aliorder,wecretord,aliretord,incoinsorder,moneytotal,wecmoney,alimoney,wecretmoney,aliretmoney,incoinsmoney,count_time)
+		  values (#{ordertotal},#{wecorder},#{aliorder},#{wecretord},#{aliretord},#{incoinsorder},#{moneytotal},#{wecmoney},#{alimoney},#{wecretmoney},#{aliretmoney},#{incoinsmoney},#{countTime})
+	</insert>
+	
+	<insert id="insertStatismap" parameterType="java.util.Map">
+		INSERT INTO hd_statistics 
+	      <foreach collection="params.keys" item="key" open="(" close=")" separator="," >  
+	         ${key}  
+	      </foreach>  
+	      values   
+	      <foreach collection="params.keys"  item="key" open="(" close=")" separator=",">  
+	         #{params[${key}]}  
+	      </foreach>  
+	</insert>
+	
+	<select  id="selectInfo"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT id,ordertotal,wecorder,aliorder,wecretord,aliretord,moneytotal,wecmoney,alimoney,wecretmoney,aliretmoney,incoinsorder,incoinsmoney,count_time 
+		FROM hd_statistics where 1 = 1 
+	     <if test=" startTime!=null and startTime!=''"> and count_time &gt;= #{startTime} </if>
+	     <if test=" endTime!=null and endTime!=''"> and count_time &lt;= #{endTime} </if>
+	     <if test=" paramete!=null and paramete!=''"> ORDER BY ${paramete} </if>
+	     <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<select id="selectInfototal"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT SUM(ordertotal) AS tordertotal,SUM(wecorder) AS twecorder,SUM(aliorder) AS taliorder,SUM(wecretord) AS twecretord,SUM(aliretord) AS taliretord,
+		SUM(moneytotal) AS tmoneytotal,SUM(wecmoney) AS twecmoney,SUM(alimoney) AS talimoney,SUM(wecretmoney) AS twecretmoney,SUM(aliretmoney) AS taliretmoney,
+		SUM(incoinsorder) AS tincoinsorder,SUM(incoinsmoney) AS tincoinsmoney 
+		FROM hd_statistics
+		<where>
+	     <if test=" startTime!=null and startTime!=''"> and count_time &gt;= #{startTime} </if>
+	     <if test=" endTime!=null and endTime!=''"> and count_time &lt;= #{endTime} </if>
+		</where>
+	</select>
+
+	<!-- collectinfo
+ -->
+</mapper>

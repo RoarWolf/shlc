@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.RealchargerecordDao">
+	
+	<sql id="RealRecord_Column_List">
+		id, chargeid, uid, merid, code, port, type, chargetime, surpluselec, power, port_v, port_a, money, createtime
+	</sql>
+	
+	<insert id="insertRealRecord" parameterType="com.hedong.hedongwx.entity.Realchargerecord">
+		INSERT INTO hd_realchargerecord (chargeid,uid,merid,code,port,type,chargetime,surpluselec,power,createtime)
+		VALUES(#{chargeid},#{uid},#{merid},#{code},#{port},#{type},#{chargetime},#{surpluselec},#{power},now());
+	</insert>
+	
+	<select id="realChargeRecordList" resultType="com.hedong.hedongwx.entity.Realchargerecord">
+		SELECT <include refid="RealRecord_Column_List"/> 
+		FROM hd_realchargerecord 
+		<where>
+			<if test=" orderId!=null "> AND chargeid = #{orderId,jdbcType=INTEGER}</if>
+			<if test=" code!=null and code!=''"> AND code = #{code,jdbcType=VARCHAR}</if>
+			<if test=" type!=null "> AND type = #{type,jdbcType=INTEGER}</if>
+		</where>
+			<!--  ORDER BY createtime DESC  -->
+			<if test=" startnum != null and equnum != null"> limit #{startnum},#{equnum}</if>
+	</select>
+	
+	<select id="functionRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT MAX(power) AS maxpower,AVG(power) AS avgpower,MIN(power) AS minpower FROM hd_realchargerecord 
+		<where>
+			<if test=" order!=null and order!=''"> AND chargeid = #{order}</if>
+		</where>
+	</select>
+	
+	<!-- origin 查询商户明细数据重复插入的数据信息 -->
+	<select id="selectRepetitionData" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT * FROM hd_realchargerecord 
+		<where>
+			<if test="dealer!=null and dealer!=''"> AND merid = #{dealer} </if>
+			<if test="source!=null and source!=''"> AND paysource = #{source} </if>
+			<if test="type!=null and type!=''"> AND paytype = #{type} </if>
+			<if test="status!=null and status!=''"> AND status = #{status} </if>
+			<if test="startTime!=null and startTime!=''"> AND createtime &gt;= #{startTime} </if>
+			<if test="endTime!=null and endTime!=''"> AND createtime &lt;= #{endTime} </if> 
+		</where>
+		 group by chargeid having count(chargeid) &lt; 3;
+	</select>
+	
+	<select id="selectMaxPowerByChargeid" resultType="java.lang.Integer">
+		select MAX(power) from hd_realchargerecord where chargeid = #{chargeid}
+	</select>
+	
+	<delete id="delectRealChargeByTime">
+		delete from hd_realchargerecord where createtime &lt; #{createtime}
+	</delete>
+	
+	
+	
+	
+	
+
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.CardOrderDao">
+
+
+	<select id="cardOrderRecord"  resultType="com.hedong.hedongwx.entity.CardOrder">
+		SELECT  NULL AS ordernum,uid,cardID,NULL AS type,`status`,common AS expenditure,balance,record_time AS begintime  FROM hd_card_record  WHERE uid = #{uid} AND `status` IN(3,6) 
+		UNION 
+		SELECT  ordernum,uid,cardID,type,`status`,expenditure,balance,begintime  FROM hd_card_order  WHERE uid = #{uid}
+<!-- 		SELECT  NULL AS ordernum,uid,cardID,NULL AS type,`status`,NULL AS expenditure,balance,record_time AS begintime  FROM hd_card_record  WHERE uid = #{uid} AND `status` IN(3,6) ORDER BY record_time DESC LIMIT 0,10
+		UNION 
+		SELECT  ordernum,uid,cardID,type,`status`,expenditure,balance,begintime  FROM hd_card_order  WHERE uid = #{uid} ORDER BY begintime DESC LIMIT 0,10  -->
+	</select>
+
+
+	<insert id="payMoneys" parameterType="com.hedong.hedongwx.entity.CardOrder" >
+		INSERT INTO hd_card_order (ordernum,cardID,type,status,expenditure,begintime) VALUES 
+		(#{ordernum},#{cardID},#{type},#{status},#{expenditure},Now());
+	</insert>
+	
+	<update id="updateMoney" parameterType="com.hedong.hedongwx.entity.CardOrder">
+		update hd_card_order
+		<set>
+			<if test="uid != null">
+				uid = #{uid,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="balance != null">
+				balance = #{balance,jdbcType=DOUBLE},
+			</if>
+		</set>
+		where id = #{id}
+   </update>
+   
+   	<select id="queryMoneyByOrdernum" resultType="com.hedong.hedongwx.entity.CardOrder">
+		SELECT * FROM hd_card_order WHERE ordernum = #{ordernum}
+	</select>
+	
+	<select id="selectOrderByCardID" resultType="com.hedong.hedongwx.entity.CardOrder">
+		SELECT * FROM hd_card_order WHERE cardID = #{cardID} order by id desc
+	</select>
+</mapper>

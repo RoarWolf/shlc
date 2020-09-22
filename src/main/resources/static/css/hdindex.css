@@ -1,0 +1,51 @@
+html,body {
+    width: 100%;
+    height: 100%;
+}
+.recHistory .bottom {
+    margin-top: 44px;
+}
+.recHistory .bottom .mui-table-view-cell {
+    font-size: 14px;
+    color: #666;
+    position: relative;
+}
+.recHistory .bottom .mui-table-view-cell li {
+    line-height: 1.8em;
+}
+.recHistory .bottom .mui-table-view-cell li .num{
+    color: #ff5053;
+}
+.recHistory .bottom .mui-table-view-cell li.time{
+    color: #bbb;
+}
+.recHistory .bottom .mui-table-view-cell .cardHis {
+
+}
+.recHistory .bottom .mui-table-view-cell .cardHis>div {
+    display: flex;
+}
+.recHistory .bottom .mui-table-view-cell .cardHis>div .recType {
+    margin-left: 15%;
+}
+.cardHis>div li:last-child {
+    margin-left: 13%;
+}
+.recHistory .bottom .mui-table-view-cell .cardHis button {
+    position: absolute;
+    padding: 3px 5px;
+    font-size: 12px;
+    border-radius: 5px;
+    right: 5%;
+    top: 40px;
+}
+.recHistory .bottom .mui-table-view-cell .cardHis>div li.green {
+    color: #44AF3D;
+}
+.recHistory .bottom .mui-table-view-cell .cardHis>div li.blue {
+    color: #007AAE;
+}
+
+.recHistory .bottom .mui-table-view-cell .cardHis>div li.purple {
+    color: #A349A4;
+}
