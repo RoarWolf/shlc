@@ -33,8 +33,8 @@
 	
 	<select id="selectGenWalletDetailByUid" resultType="com.hedong.hedongwx.entity.GeneralDetail">
 		select
-		<include refid="GeneralDetail_Column_List" />
-		from hd_gen_detail where uid = #{uid} order by id desc
+		id,money,ordernum,paysource,create_time
+		from hd_gen_detail where uid = #{uid} order by id desc limit #{startnum}, 10
 	</select>
 	
 	<select id="selectGenWalletInfoById" resultType="com.hedong.hedongwx.entity.GeneralDetail">

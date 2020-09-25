@@ -95,6 +95,14 @@ public class UserServiceImpl implements UserService {
 	public int addUser(User user) {
 		return userDao.addUser(user);
 	}
+	
+	@Transactional
+	@Override
+	public int addUserInfo(String openid) {
+		User user = new User();
+		user.setOpenid(openid);
+		return userDao.addUser(user);
+	}
 
 	@Transactional
 	@Override

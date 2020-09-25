@@ -1268,16 +1268,16 @@ public class HelloController {
 		return "computer/login";
 	}
 	
-	@RequestMapping("/onLogin")
-	@ResponseBody
-	public JSONObject onLogin(String code) {
-		JSONObject weChatToken = null;
-		try {
-			weChatToken = WeixinUtil.smallWeChatToken(code);
-		} catch (Exception e) {
-		}
-		return weChatToken;
-	}
+//	@RequestMapping("/onLogin")
+//	@ResponseBody
+//	public JSONObject onLogin(String code) {
+//		JSONObject weChatToken = null;
+//		try {
+//			weChatToken = WeixinUtil.smallWeChatToken(code);
+//		} catch (Exception e) {
+//		}
+//		return weChatToken;
+//	}
 	
 	@RequestMapping("/bluetooth1")
 	public String bluetooth1(Model model) {

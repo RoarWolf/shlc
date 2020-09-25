@@ -2,6 +2,7 @@ package com.hedong.hedongwx.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.dao.GeneralDetailDao;
 import com.hedong.hedongwx.entity.GeneralDetail;
 import com.hedong.hedongwx.entity.Parameter;
@@ -62,8 +64,20 @@ public class GeneralDetailServiceImpl implements GeneralDetailService {
 	}
 
 	@Override
-	public List<GeneralDetail> selectGenWalletDetailByUid(Integer uid) {
-		return generalDetailDao.selectGenWalletDetailByUid(uid);
+	public Map<String, Object> selectGenWalletDetailByUid(Integer uid, Integer startnum) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			List<GeneralDetail> walletDetail = generalDetailDao.selectGenWalletDetailByUid(uid, startnum * 10);
+			map.put("walletRecord", walletDetail);
+			map.put("startnum", startnum++);
+			if (walletDetail.size() > 0) {
+				return CommUtil.responseBuildInfo(1000, "获取成功", map);
+			} else {
+				return CommUtil.responseBuild(1000, "获取成功", null);
+			}
+		} catch (Exception e) {
+			return CommUtil.responseBuild(1002, "系统异常", null);
+		}
 	}
 
 	@Override

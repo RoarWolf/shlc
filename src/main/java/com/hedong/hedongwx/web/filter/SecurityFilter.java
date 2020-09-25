@@ -232,6 +232,8 @@ public class SecurityFilter implements Filter {
 			return true;
 		}else if (url.indexOf("/druid") != -1) {
 			return true;
+		}else if (url.indexOf("/applet") != -1) {
+			return true;
 		}else {
 			return false;
 		}

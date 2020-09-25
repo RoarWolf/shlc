@@ -1952,18 +1952,6 @@ public class GeneralController {
 		return "general/paywin";
 	}
 	
-	@RequestMapping("/genWalDetail")
-	public String genWalDetail(Integer uid,Model model) {
-		User user = userService.selectUserById(uid);
-		if (user != null) {
-			List<GeneralDetail> walletList = generalDetailService.selectGenWalletDetailByUid(uid);
-			model.addAttribute("walletList", walletList);
-			return "general/genBalanceDetail";
-		} else{
-			return "erroruser";
-		}
-	}
-	
 	@RequestMapping("/genWalletDetailInfo")
 	public String genWalletDetailInfo(Integer id, Model model) {
 		GeneralDetail generalDetail = generalDetailService.selectGenWalletInfoById(id);

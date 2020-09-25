@@ -3,6 +3,8 @@ package com.hedong.hedongwx.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.hedong.hedongwx.entity.GeneralDetail;
 import com.hedong.hedongwx.entity.Parameter;
 import com.hedong.hedongwx.entity.Parameters;
@@ -13,7 +15,7 @@ public interface GeneralDetailDao {
 
 	List<Map<String, Object>> selecwalletdetail(Parameters parameters);
 	
-	List<GeneralDetail> selectGenWalletDetailByUid(Integer uid);
+	List<GeneralDetail> selectGenWalletDetailByUid(@Param("uid")Integer uid, @Param("startnum")Integer startnum);
 	
 	GeneralDetail selectGenWalletInfoById(Integer id);
 

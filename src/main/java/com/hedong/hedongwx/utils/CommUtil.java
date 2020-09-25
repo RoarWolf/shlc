@@ -1006,8 +1006,8 @@ public class CommUtil {
 	public static Map<String, Object> responseBuild(Integer code, String message, Object result, Map<String, Object> map){
 		map = map == null ? new HashMap<String, Object>() : map;
 		try {
-			map.put("code", toInteger(code));
-			map.put("message", toString(message));
+			map.put("result_code", toInteger(code));
+			map.put("result_info", toString(message));
 			map.put("result", result);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1018,8 +1018,8 @@ public class CommUtil {
 	public static Map<String, Object> responseBuildInfo(Integer code, String message, Map<String, Object> map){
 		map = map == null ? new HashMap<String, Object>() : map;
 		try {
-			map.put("code", toInteger(code));
-			map.put("message", toString(message));
+			map.put("result_code", toInteger(code));
+			map.put("result_info", toString(message));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1029,8 +1029,8 @@ public class CommUtil {
 	public static Map<String, Object> responseBuild(Integer code, String message, Object result){
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			map.put("code", toInteger(code));
-			map.put("message", toString(message));
+			map.put("result_code", toInteger(code));
+			map.put("result_info", toString(message));
 			map.put("result", result);
 		} catch (Exception e) {
 			e.printStackTrace();

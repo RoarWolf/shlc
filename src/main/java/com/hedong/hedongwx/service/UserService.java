@@ -25,6 +25,12 @@ public interface UserService {
 	int addUser(User user);
 	
 	/**
+	 * 添加用户
+	 * @param user
+	 */
+	int addUserInfo(String openid);
+	
+	/**
 	 * 删除用户
 	 * @param id
 	 */

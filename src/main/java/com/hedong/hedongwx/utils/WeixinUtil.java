@@ -66,12 +66,8 @@ import net.sf.json.JSONObject;
  */
 public class WeixinUtil {
 	
-	private static final String APPID = "wx3debe4a9c562c52a";
-	
-	private static final String SMALLAPPID = "wx14fea2f38688b040";
-	private static final String SMALLAPPSECRET = "b1c283633f48b4c1861a0cc9e0984447";
-	
-	private static final String APPSECRET = "ba145d77b7963d76d5ed1390c6d16341";
+	public static final String APPID = "wxd055087c1caa71a6";
+	public static final String APPSECRET = "c94124dcb3eeecc068802f4025ecb8a0";
 	
 	private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
 	
@@ -95,6 +91,8 @@ public class WeixinUtil {
 	
 	private static final String WEBPAGE_EXAMINETOKEN = "https://api.weixin.qq.com/sns/auth?access_token=ACCESSTOKEN&openid=OPENIDARGU";
 	
+	private static final String APPLET_OPENID = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
+	
 	private static XStream xstream = new XStream(new XppDriver() {  
         public HierarchicalStreamWriter createWriter(Writer out) {  
             return new PrettyPrintWriter(out) {  
@@ -109,7 +107,7 @@ public class WeixinUtil {
                         writer.write("<![CDATA[");  
                         writer.write(text);  
                         writer.write("]]>");  
-                    } else {  
+                    } else {
                         writer.write(text);  
                     }  
                 }  
@@ -705,14 +703,6 @@ public class WeixinUtil {
 	}
 	
 	
-	public static JSONObject smallWeChatToken(String code) throws ParseException, IOException{
-		String str = WEBPAGE_TOKEN;
-		str = str.replace("APPIDARGU", SMALLAPPID).replace("APPSECRETARGU", SMALLAPPSECRET).replace("CODEARGU", code);
-		JSONObject acctoken = WeixinUtil.doGetStr(str);
-//		System.out.println("输出acctoken：      "+acctoken);
-		return acctoken;
-	}
-	
 	/**
 	 * 刷新access_token（如果需要）
 	 * 由于access_token拥有较短的有效期，当access_token超时后，可以使用refresh_token进行刷新，refresh_token有效期为30天，
@@ -755,6 +745,21 @@ public class WeixinUtil {
 	public  static JSONObject examineToken(String accessToken, String openid) throws ParseException, IOException{
 		String str = WEBPAGE_EXAMINETOKEN;
 		str = str.replace("ACCESSTOKEN", accessToken).replace("OPENIDARGU", openid);
+		JSONObject examineToken = WeixinUtil.doGetStr(str);
+//		System.out.println("输出str_token：      "+examineToken);
+		return examineToken;
+	}
+	
+	/**
+	 * 检验授权凭证（access_token）是否有效
+	 * @param accessToken 网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
+	 * @param openid 用户的唯一标识
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public  static JSONObject getUserOpenid(String code) throws ParseException, IOException{
+		String str = APPLET_OPENID;
+		str = str.replace("APPID", APPID).replace("SECRET", APPSECRET).replace("JSCODE", code);
 		JSONObject examineToken = WeixinUtil.doGetStr(str);
 //		System.out.println("输出str_token：      "+examineToken);
 		return examineToken;

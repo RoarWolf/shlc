@@ -18,7 +18,7 @@ public interface GeneralDetailService {
 //	int insertGenDetail(Integer uid, Integer merid, Double money, Double sendmoney, Double balance, String ordernum, Date createTime, Integer paysource, String remark);
 	int insertGenDetail(Integer uid, Integer merid, Double paymoney, Double sendmoney, Double tomoney, Double balance, Double topupbalance, Double givebalance, String ordernum, Date createTime, Integer paysource, String remark);
 	
-	List<GeneralDetail> selectGenWalletDetailByUid(Integer uid);
+	Map<String, Object> selectGenWalletDetailByUid(Integer uid, Integer startnum);
 	
 	GeneralDetail selectGenWalletInfoById(Integer id);
 

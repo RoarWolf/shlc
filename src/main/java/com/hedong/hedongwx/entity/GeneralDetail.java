@@ -2,11 +2,15 @@ package com.hedong.hedongwx.entity;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * 普通用户钱包明细
  * @author RoarWolf
  *
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class GeneralDetail {
 
 	/** 表主键id*/
@@ -34,7 +38,10 @@ public class GeneralDetail {
 	/** 备注部分信息 */
 	private String remark;
 	/** 记录时间*/
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date createTime;
+	
+	
 	public Integer getId() {
 		return id;
 	}
