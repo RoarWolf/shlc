@@ -187,7 +187,7 @@ public class MerchantController {
 			Integer rank =  CommUtil.toInteger(maparam.get("rank"));
 			User user = new User();
 			user.setId(id);
-			user.setRank(rank);
+			user.setLevel(rank);
 			userService.updateUserById(user);
 			CommUtil.responseBuildInfo(200, "成功", datamap);
 		} catch (Exception e) {
@@ -397,7 +397,7 @@ public class MerchantController {
 		Parameters paramet = new Parameters();
 		paramet.setUid(user.getId());
 		paramet.setType("2");
-		paramet.setRank("3");
+		paramet.setLevel("3");
 		paramet.setStartTime(begintime);
 		paramet.setEndTime(endtime);
 		List<Map<String, Object>> codestmap = statisticsService.getStatistics(paramet);
@@ -455,7 +455,7 @@ public class MerchantController {
 			Parameters paramet = new Parameters();
 			paramet.setUid(user.getId());
 			paramet.setType("2");
-			paramet.setRank("3");
+			paramet.setLevel("3");
 			paramet.setStartTime(begintime);
 			paramet.setEndTime(endtime);
 			List<Map<String, Object>> codestmap = statisticsService.getStatistics(paramet);
@@ -517,13 +517,13 @@ public class MerchantController {
 		//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 		Integer merid = CommUtil.toInteger(user.getId());
 		//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-		model.addAttribute("rank", user.getRank());
-		if (user.getRank() == 1) {
+		model.addAttribute("rank", user.getLevel());
+		if (user.getLevel() == 1) {
 			model.addAttribute("openiderror", "没有权限进行后续访问");
 			model.addAttribute("name", null);
 			return "openiderror";
 		}
-		if (user.getRank() == 6) {
+		if (user.getLevel() == 6) {
 			List<Privilege> userPrivilege = userService.selectUserPrivilege(user.getId());
 			System.out.println("privilege===" + JSON.toJSONString(userPrivilege));
 			if (userPrivilege.size() > 0) {
@@ -626,9 +626,9 @@ public class MerchantController {
 					user.setOpenid(openid);
 					user.setEarnings(Double.valueOf(0.00));
 					if ("2".equals(state)) {
-						user.setRank(6);
+						user.setLevel(6);
 					} else {
-						user.setRank(4);
+						user.setLevel(4);
 					}
 					user.setCreateTime(new Date());
 					this.userService.addUser(user);
@@ -648,13 +648,13 @@ public class MerchantController {
 							this.request.getSession().setAttribute("user", userByOpenid);
 							return "redirect:/merchant/skipRegister?param=" + state;
 						}
-						if (userByOpenid.getRank() != 6) {
+						if (userByOpenid.getLevel() != 6) {
 							model.addAttribute("openiderror", "没有权限进行后续访问");
 							model.addAttribute("name", null);
 							return "openiderror";
 						} 
 					} else if ("1".equals(state)) {
-//						if (userByOpenid.getRank() == null || userByOpenid.getRank() != 0) {
+//						if (userByOpenid.getLevel() == null || userByOpenid.getLevel() != 0) {
 //							model.addAttribute("openiderror", "公众号已转移");
 //							model.addAttribute("name", "'自助充电平台'");
 //							return "openiderror";
@@ -716,7 +716,7 @@ public class MerchantController {
 		}
 		user.setOpenid(JsonInfor.getString("openid"));
 		user.setEarnings(Double.valueOf(0.00));
-		user.setRank(2);
+		user.setLevel(2);
 		user.setCreateTime(new Date());
 		this.userService.addUser(user);
 		this.request.getSession().setAttribute("user", user);
@@ -851,7 +851,7 @@ public class MerchantController {
 			} else if (length == 11) {
 				User merUser = userService.existAdmin(invitecode);
 				if (merUser != null) {
-					if (merUser.getRank() != 2 && merUser.getRank() != 0) {
+					if (merUser.getLevel() != 2 && merUser.getLevel() != 0) {
 						codeMap.put("code", 202);
 						return codeMap;
 					}
@@ -1200,7 +1200,7 @@ public class MerchantController {
 			model.addAttribute("user", user);
 			Integer tempid = CommUtil.toInteger(equipment.getTempid());
 			Integer dealid = CommUtil.toInteger(user.getId());
-			if (user.getRank() == 6) {
+			if (user.getLevel() == 6) {
 				dealid = CommUtil.toInteger(user.getMerid());
 			}
 			Integer status = 0;
@@ -3496,16 +3496,16 @@ public class MerchantController {
 			User user = userService.existAdmin(phonenum);
 			if (user == null) {
 				return CommUtil.responseBuildInfo(302, "此账户不存在，注册流程‘进入自助平台公众号’->商家登陆->填写手机号进行注册", null);
-			} else if (user.getRank() != 1) {
-				return CommUtil.responseBuildInfo(303, "此账号不可设置为子账号" + user.getRank(), null);
+			} else if (user.getLevel() != 1) {
+				return CommUtil.responseBuildInfo(303, "此账号不可设置为子账号" + user.getLevel(), null);
 			} else if (!meruser.getId().equals(user.getMerid()) && (user.getMerid() != null && user.getMerid() != 0)) {
-				return CommUtil.responseBuildInfo(304, "此账号所属商户不属于当前商户，如有疑问，请联系管理员" + user.getRank(), null);
-			} else if (user.getRank() != 1) {
-				return CommUtil.responseBuildInfo(303, "此账号已设置为子账号，无需再次设置" + user.getRank(), null);
+				return CommUtil.responseBuildInfo(304, "此账号所属商户不属于当前商户，如有疑问，请联系管理员" + user.getLevel(), null);
+			} else if (user.getLevel() != 1) {
+				return CommUtil.responseBuildInfo(303, "此账号已设置为子账号，无需再次设置" + user.getLevel(), null);
 			} else {
 				User editUser = new User();
 				editUser.setId(user.getId());
-				editUser.setRank(6);
+				editUser.setLevel(6);
 				if (user.getMerid() == null || user.getMerid() == 0) {
 					editUser.setMerid(meruser.getId());
 				}
@@ -3525,7 +3525,7 @@ public class MerchantController {
 			} else {
 				User editUser = new User();
 				editUser.setId(user.getId());
-				editUser.setRank(1);
+				editUser.setLevel(1);
 				userService.updateUserById(editUser);
 				userService.deleteUserPrivliege(user.getId(), 3);
 				try {

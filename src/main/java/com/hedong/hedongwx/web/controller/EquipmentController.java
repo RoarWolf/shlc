@@ -155,7 +155,7 @@ public class EquipmentController {
 		//用户
 		User user = (User) request.getSession().getAttribute("user");
 		if (user == null) return "erroruser";
-		if (user.getRank() == 6) {
+		if (user.getLevel() == 6) {
 			user = userService.selectUserById(user.getMerid());
 		}
 		//设备号
@@ -217,7 +217,7 @@ public class EquipmentController {
 		if ("".equals(parameter)) source = null;
 		User user = (User) request.getSession().getAttribute("user");
 		if (user != null) {
-			if (user.getRank() == 6) {
+			if (user.getLevel() == 6) {
 				user = userService.selectUserById(user.getMerid());
 			}
 			Integer merid = CommUtil.toInteger(user.getId());
@@ -313,7 +313,7 @@ public class EquipmentController {
 			Equipment deviceinfo = equipmentService.getEquipmentById(codenum);
 			Integer aid = CommUtil.toInteger(deviceinfo.getAid());
 			Integer dealid = CommUtil.toInteger(user.getId());
-			if (user.getRank() == 6) {
+			if (user.getLevel() == 6) {
 				dealid = CommUtil.toInteger(user.getMerid());
 			}
 			List<Map<String, Object>> areainfo = areaService.inquireDealAreaData(dealid);
@@ -374,7 +374,7 @@ public class EquipmentController {
 		if ("".equals(parameter)) source = null;
 		User user = (User) request.getSession().getAttribute("user");
 		if (user != null) {
-			if (user.getRank() == 6) {
+			if (user.getLevel() == 6) {
 				user = userService.selectUserById(user.getMerid());
 			}
 		}
@@ -1105,7 +1105,7 @@ public class EquipmentController {
 	/**
 	 * 引导用户关注公共号 暂时没有用
 	 * 
-	 * @param code
+	 * @param equcode
 	 *            设备号
 	 * @return
 	 */
@@ -1589,12 +1589,12 @@ public class EquipmentController {
 		UserEquipment userEquipment = userEquipmentService.getUserEquipmentByCode(code);
 		User user = (User) request.getSession().getAttribute("user");
 		if (user != null) {
-			model.addAttribute("rank", user.getRank());
+			model.addAttribute("rank", user.getLevel());
 			if (userEquipment != null) {
 				model.addAttribute("code", code);
 				return "equipment/equipmentisuse";
 			} else {
-				if (user.getRank() == 6) {
+				if (user.getLevel() == 6) {
 					user = userService.selectUserById(user.getMerid());
 				}
 				Equipment equipmentById = equipmentService.getEquipmentById(code);
@@ -1795,7 +1795,7 @@ public class EquipmentController {
 			User user = (User) request.getSession().getAttribute("user");
 			if(user==null) return "erroruser";
 			Integer merid = user.getId();
-			if (user.getRank() == 6) {
+			if (user.getLevel() == 6) {
 				merid = CommUtil.toInteger(user.getMerid());
 			}
 			model.addAttribute("merid", merid);
@@ -2172,7 +2172,7 @@ public class EquipmentController {
 				User user = new User();
 				user.setOpenid(openid);
 				user.setEarnings(Double.valueOf(0.00));
-				user.setRank(1);
+				user.setLevel(1);
 				user.setCreateTime(new Date());
 				// 存在设备和设备绑定小区
 				if (equipment != null) {
@@ -2244,7 +2244,7 @@ public class EquipmentController {
 				User user = new User();
 				user.setOpenid(openid);
 				user.setEarnings(Double.valueOf(0.00));
-				user.setRank(1);
+				user.setLevel(1);
 				user.setAid(aid);
 				user.setMerid(mercid);
 				user.setCreateTime(new Date());

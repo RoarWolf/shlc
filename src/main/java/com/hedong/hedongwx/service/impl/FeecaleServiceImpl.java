@@ -654,7 +654,7 @@ public class FeecaleServiceImpl implements FeescaleService {
 					logger.info("用户参数"+users);
 					logger.info("设备参数"+equipmentNum);
 					logger.info("A-a开始判断所有商家的收益"+"-----------"+dateFormat.format(System.currentTimeMillis()));
-					if(users.get(i).getId() != null && users.get(i).getEarnings() != null && users.get(i).getPayMonet() != null && users.get(i).getRank() != null){
+					if(users.get(i).getId() != null && users.get(i).getEarnings() != null && users.get(i).getPayMonet() != null && users.get(i).getLevel() != null){
 						// 查询用户
 						User user=userDao.selectUserById(users.get(i).getId());
 						// 用户未提现的钱
@@ -773,7 +773,7 @@ public class FeecaleServiceImpl implements FeescaleService {
 				List<AreaRelevance> listUser= new ArrayList<AreaRelevance>();
 				for (int i = 0; i < users.size(); i++) {
 					//商家
-					if(users.get(i).getRank()!=null && users.get(i).getRank()==2){
+					if(users.get(i).getLevel()!=null && users.get(i).getLevel()==2){
 						//商家id
 						merId=users.get(i).getId();
 						//商家分成比由前台传过来
@@ -859,7 +859,7 @@ public class FeecaleServiceImpl implements FeescaleService {
 			startTime = startTime==null ? StringUtil.getnumterday("yyyy-MM-dd HH:mm:ss",  StringUtil.toDateTime(), 7) : startTime;
 			endTime = endTime==null ? StringUtil.getCurrentDateTime() : endTime;
 			User user = CommonConfig.getAdminReq(request);
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			//设置参数
 			if(!rank.equals(0)) feescaleRecord.setMerId(user.getId()); 
 			feescaleRecord.setEquipmentNum(CommUtil.toString(maparam.get("code")));

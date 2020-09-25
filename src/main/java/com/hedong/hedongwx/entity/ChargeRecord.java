@@ -25,7 +25,7 @@ public class ChargeRecord {
 	
 	private Integer paytype;//消费类型： '1:钱包  2:微信  3:支付宝  4:包月下发数据 5:投币 6:离线卡 7:在线卡 8:支付宝小程序'
 	
-	private Integer status;//充电时的状态
+	private Integer status;//充电时的状态1充电中,2已结束
 	
 	private String	equipmentnum;//设备号、机位号
 	

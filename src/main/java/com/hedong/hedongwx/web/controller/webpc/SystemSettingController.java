@@ -171,7 +171,7 @@ public class SystemSettingController {
 		User user=CommonConfig.getAdminReq(request);
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else if(user!=null && user.getRank()==0){
+		}else if(user!=null && user.getLevel()==0){
 			Map<String,Map<String,Double>> net=new HashMap<String,Map<String,Double>>();
 			Map<String, Map<String,Double>> blue=new HashMap<String,Map<String,Double>>();
 			Map<String, Double> map=new HashMap<String,Double>();

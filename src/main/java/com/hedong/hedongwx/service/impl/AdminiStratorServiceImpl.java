@@ -171,7 +171,7 @@ public class AdminiStratorServiceImpl implements AdminiStratorService{
 	public List<Map<String, Object>> selectAdmini(HttpServletRequest request) {
 		Parameters parame = new Parameters();
 		String rank = request.getParameter("rank");
-		if( null != rank && !rank.equals("-1")) parame.setRank(rank);
+		if( null != rank && !rank.equals("-1")) parame.setLevel(rank);
 		parame.setUid(Integer.parseInt(request.getParameter("id")));
 		List<Map<String, Object>> userbank = userBankcardDao.selectUserBankinfo(parame);
 		return userbank;
@@ -279,7 +279,7 @@ public class AdminiStratorServiceImpl implements AdminiStratorService{
 		int currentPage = StringUtil.getIntString(request.getParameter("currentPage"));//页码
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameter = new Parameters();
-		Integer rank = CommUtil.toInteger(user.getRank());// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = CommUtil.toInteger(user.getLevel());// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(!rank.equals(0)) parameter.setUid(user.getId());//获取用户
 		parameter.setUsername(request.getParameter("username"));
 		parameter.setRealname(request.getParameter("realname"));
@@ -508,7 +508,7 @@ public class AdminiStratorServiceImpl implements AdminiStratorService{
 		}else if(rankwallet.equals(2)){
 			parameters.setParamete(" ORDER BY u.balance ASC");
 		}
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户
 		List<Map<String, Object>> admin = userDao.selectGeneralUserInfo(parameters);
 		if(null==murealname) murealname = "";

@@ -10,9 +10,9 @@ public class DBUtils {
 	public static Connection getConnection() throws Exception {
 		Class.forName("com.mysql.jdbc.Driver");
 //		String url = "jdbc:mysql://47.93.203.50:3306/hdwx?useUnicode=true&characterEncoding=UTF-8";
-		String url = "jdbc:mysql://localhost:3306/hdwx?useUnicode=true&characterEncoding=UTF-8";
+		String url = "jdbc:mysql://121.196.187.251:3306/shlc?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
 		String username = "root";
-		String password = "hedong2018";
+		String password = "shlc2020";
 		return DriverManager.getConnection(url, username, password);
 	}
 	

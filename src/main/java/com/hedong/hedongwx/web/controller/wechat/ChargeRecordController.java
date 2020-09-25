@@ -141,7 +141,7 @@ public class ChargeRecordController {
 				}
 				user.setOpenid(openid);
 				user.setEarnings(Double.valueOf(0.00));
-				user.setRank(1);
+				user.setLevel(1);
 				user.setCreateTime(new Date());
 				this.userService.addUser(user);
 				User user2 = userService.getUserByOpenid(openid);
@@ -151,7 +151,7 @@ public class ChargeRecordController {
 				return "openiderror";
 //				return "redirect:/charge/queryCharging?uid=" + user2.getId();
 			} else {
-				if (userByOpenid.getRank() == null || userByOpenid.getRank() != 0) {
+				if (userByOpenid.getLevel() == null || userByOpenid.getLevel() != 0) {
 					model.addAttribute("openiderror", "公众号已转移");
 					model.addAttribute("name", "'自助充电平台'");
 					return "openiderror";

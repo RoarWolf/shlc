@@ -613,7 +613,7 @@ public class DeviceDataController {
 	public Object setExpire(String code, String expire,HttpServletRequest request) {
 		Object result = null;
 		User user=CommonConfig.getAdminReq(request);
-		Integer rank=user.getRank();
+		Integer rank=user.getLevel();
 		//判断用户的级别
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
@@ -682,7 +682,7 @@ public class DeviceDataController {
 		User user=CommonConfig.getAdminReq(request);
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else if(user!=null && user.getRank()==0){
+		}else if(user!=null && user.getLevel()==0){
 			result = equipmentService.customizationCode(request);
 		}else{
 			result=CommUtil.responseBuild(103, "无权修改","");

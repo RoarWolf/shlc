@@ -117,7 +117,7 @@ public class StatisticsController { //统计
     public String graphindex( Model model) throws ParseException{
 		User admin = (User) request.getSession().getAttribute("admin");
 		Integer merid = null;
-		if(admin.getRank()==2){
+		if(admin.getLevel()==2){
 			merid = admin.getId();
 			Withdraw withdraw = new Withdraw();
 			withdraw.setUserId(merid);
@@ -188,7 +188,7 @@ public class StatisticsController { //统计
     public Object newestOrder(Integer traid){
 		Integer merid = null;
 		User admin = (User) request.getSession().getAttribute("admin");
-		if(admin.getRank()==2) merid = admin.getId();
+		if(admin.getLevel()==2) merid = admin.getId();
 		Object sometimeorder = tradeRecordService.newestOrder(traid+1, merid);
 		return sometimeorder;
 	}
