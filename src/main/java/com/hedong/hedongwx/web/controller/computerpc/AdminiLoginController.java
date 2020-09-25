@@ -58,9 +58,9 @@ public class AdminiLoginController {//用户登录控制类
 			User admin = userService.getUserByUnionid(unionid);
 			if(admin!=null){
 				request.getSession().setAttribute("admin",admin);
-				if(admin.getRank()==0){
+				if(admin.getLevel()==0){
 					return "redirect:/pcstatistics/collectinfo";
-				}else if(admin.getRank()==2){
+				}else if(admin.getLevel()==2){
 					return "redirect:/pcstatistics/agentdatacollect";
 				}
 			}else{
@@ -150,7 +150,7 @@ public class AdminiLoginController {//用户登录控制类
 	@RequestMapping({ "/adminlogout" })
 	public Object logout(HttpServletRequest request,  HttpServletResponse response){
 		User user = CommonConfig.getAdminReq(request);
-		int rank = user.getRank();
+		int rank = user.getLevel();
 		request.getSession().invalidate();
 		String path = "/pcadminlogin/index";
 		if(rank==2){

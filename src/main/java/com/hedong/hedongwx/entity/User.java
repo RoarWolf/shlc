@@ -30,7 +30,7 @@ public class User implements Serializable {
 	/** 用户银行卡表id*/
 	private String bankcardId;
 	/** 用户等级 */
-	private Integer rank; //0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理、5：微信子商户 、6：子账号
+	private Integer level; //0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理、5：微信子商户 、6：子账号
 	/** 用户收益 */
 	private Double earnings;
 	
@@ -243,12 +243,12 @@ public class User implements Serializable {
 		this.bankcardId = bankcardId;
 	}
 
-	public Integer getRank() {
-		return rank;
+	public Integer getLevel() {
+		return level;
 	}
 
-	public void setRank(Integer rank) {
-		this.rank = rank;
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
 	public Double getEarnings() {
@@ -327,7 +327,7 @@ public class User implements Serializable {
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", realname=" + realname + ", openid=" + openid
 				+ ", unionid=" + unionid + ", openidApplet=" + openidApplet + ", password=" + password + ", phoneNum="
-				+ phoneNum + ", servephone=" + servephone + ", bankcardId=" + bankcardId + ", rank=" + rank
+				+ phoneNum + ", servephone=" + servephone + ", bankcardId=" + bankcardId + ", level=" + level
 				+ ", earnings=" + earnings + ", feerate=" + feerate + ", balance=" + balance + ", sendmoney="
 				+ sendmoney + ", createTime=" + createTime + ", updateTime=" + updateTime + ", merid=" + merid
 				+ ", aid=" + aid + ", payhint=" + payhint + ", payMonet=" + payMonet + ", agentId=" + agentId

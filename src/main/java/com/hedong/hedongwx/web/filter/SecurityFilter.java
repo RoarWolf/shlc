@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Component;
 
@@ -30,16 +31,16 @@ public class SecurityFilter implements Filter {
 			throws IOException, ServletException {
 		
 //		System.out.println("this is cross filter");
-//	    HttpServletResponse resp = (HttpServletResponse) response;
-//	    System.out.println("输出打印 ：      " + resp);
+		HttpServletResponse resp = (HttpServletResponse) response;
+		HttpServletRequest servletRequest = (HttpServletRequest) request;
 //	    //如果要做细的限制，仅限某域名下的可以进行跨域访问到此，可以将*改为对应的域名
-//	    resp.setHeader("Access-Control-Allow-Origin", "http://39.97.98.149:8809");
-////		String originHeader = resp.getHeader("Origin");
-////		resp.setHeader("Access-Control-Allow-Origin", originHeader);
-//		resp.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-//		resp.setHeader("Access-Control-Allow-Headers", "Authorization,Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With,userId,token"); 
-//		resp.setHeader("Access-Control-Max-Age", "1728000");
-//	    resp.setHeader("Access-Control-Allow-Credentials", "true");
+		// resp.setHeader("Access-Control-Allow-Origin", "http://39.97.98.149:8809");
+		String originHeader =servletRequest.getHeader("Origin");
+		resp.setHeader("Access-Control-Allow-Origin", originHeader);
+		resp.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		resp.setHeader("Access-Control-Allow-Headers", "Authorization,Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With,userId,token");
+		resp.setHeader("Access-Control-Max-Age", "1728000");
+		resp.setHeader("Access-Control-Allow-Credentials", "true");
 		
 		HttpServletRequest req = (HttpServletRequest) request;
 		String url = req.getRequestURL().toString();

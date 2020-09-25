@@ -185,7 +185,7 @@ public class TradeRecordServiceImpl implements TradeRecordService {
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户
 		parameters.setMobile(CommUtil.toString(request.getParameter("mobile")));
 		parameters.setOrder(request.getParameter("ordernum"));
@@ -261,7 +261,7 @@ public class TradeRecordServiceImpl implements TradeRecordService {
 		parameters.setStartTime(startTime);
 		parameters.setEndTime(endTime);
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户
 		parameters.setSource("2");
 		parameters.setType("4");
@@ -350,7 +350,7 @@ public class TradeRecordServiceImpl implements TradeRecordService {
 		
 		Parameters parame = new Parameters();
 		if(merid!=null) parame.setUid(merid);
-		parame.setRank(traid.toString());
+		parame.setLevel(traid.toString());
 //		parame.setStartnumber(0);
 //		parame.setPages(10);
 		List<Map<String, Object>>  trade = tradeRecordDao.selectTradeRecord(parame);
@@ -371,7 +371,7 @@ public class TradeRecordServiceImpl implements TradeRecordService {
 		String order = CommUtil.toString(request.getParameter("order"));
 		
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		Parameters  parame = new Parameters();
 		if(rank!=0) parame.setDealer(user.getId().toString());//获取用户
 		parame.setNickname(nickname);
@@ -492,12 +492,12 @@ public class TradeRecordServiceImpl implements TradeRecordService {
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			// 参数
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			// 绑定id
 			if(!rank.equals(0)) parameters.setUid(user.getId());
 			// 设置参数
@@ -1151,7 +1151,7 @@ public class TradeRecordServiceImpl implements TradeRecordService {
 			Integer agentSelectmerId =  CommUtil.toInteger(mapParam.get("agentSelectmerid"));
 			if(agentSelectmerId!= null && !agentSelectmerId.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerId);
 			}
 			// 参数类
@@ -1184,7 +1184,7 @@ public class TradeRecordServiceImpl implements TradeRecordService {
 			parameters.setStartTime(startTime);
 			parameters.setEndTime(endTime);
 			// 设置用户ID参数
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());
 			// 订单号
 			parameters.setOrder(CommUtil.toString(mapParam.get("ordernum")));

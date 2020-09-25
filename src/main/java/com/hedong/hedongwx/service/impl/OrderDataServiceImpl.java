@@ -241,12 +241,12 @@ public class OrderDataServiceImpl implements OrderDataService{
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setDealer(CommUtil.toString(user.getId()));//绑定id
 			parameters.setNickname(CommUtil.toString(maparam.get("usernick")));
 			parameters.setOrder(CommUtil.toString(maparam.get("ordernum")));

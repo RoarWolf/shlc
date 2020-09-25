@@ -514,7 +514,7 @@ public class GeneralController {
 				user.setUsername(nickname);
 				user.setOpenid(openid);
 				user.setEarnings(Double.valueOf(0.00));
-				user.setRank(1);
+				user.setLevel(1);
 				user.setCreateTime(new Date());
 				this.userService.addUser(user);
 				model.addAttribute("openiderror", "正在开发，暂时无法访问");
@@ -522,7 +522,7 @@ public class GeneralController {
 //				this.request.getSession().setAttribute("user", this.userService.getUserByOpenid(openid));
 //				return "redirect:/general/index";
 			}else{
-				int rank = userByOpenid.getRank();
+				int rank = userByOpenid.getLevel();
 				if(rank==1){
 					model.addAttribute("openiderror", "正在开发，暂时无法访问");
 					return "openiderror";
@@ -2553,7 +2553,7 @@ public class GeneralController {
 				user.setServephone(phone);
 				String password = phone.substring(4);
 				user.setPassword(MD5Util.MD5Encode(password, "utf-8"));
-				user.setRank(2);
+				user.setLevel(2);
 				user.setCreateTime(new Date());
 				userService.addUser(user);
 				touuser = userService.getUserByPhoneNum(phone);
@@ -2905,7 +2905,7 @@ public class GeneralController {
 		User user = new User();
 		user.setOpenid(openid);
 		user.setEarnings(Double.valueOf(0.00));
-		user.setRank(1);
+		user.setLevel(1);
 		user.setCreateTime(new Date());
 		userService.addUser(user);
 	}
@@ -2917,7 +2917,7 @@ public class GeneralController {
 				User user = new User();
 				user.setOpenid(openid);
 				user.setEarnings(Double.valueOf(0.00));
-				user.setRank(1);
+				user.setLevel(1);
 				user.setCreateTime(new Date());
 				userService.addUser(user);
 			}

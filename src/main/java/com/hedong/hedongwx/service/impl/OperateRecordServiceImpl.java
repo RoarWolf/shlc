@@ -44,12 +44,12 @@ public class OperateRecordServiceImpl implements OperateRecordService{
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
 			parameters.setDealer(CommUtil.toString(maparam.get("operator")));
 			parameters.setNickname(CommUtil.toString(maparam.get("beoperated")));
@@ -97,7 +97,7 @@ public class OperateRecordServiceImpl implements OperateRecordService{
 		Integer numPerPage = CommUtil.toInteger(maparam.get("numPerPage"));
 		Integer currentPage = CommUtil.toInteger(maparam.get("currentPage"));
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = CommUtil.toInteger(user.getRank());
+		Integer rank = CommUtil.toInteger(user.getLevel());
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters paramet = new Parameters();
 		if(!rank.equals(0)) paramet.setUid(user.getId());//绑定id

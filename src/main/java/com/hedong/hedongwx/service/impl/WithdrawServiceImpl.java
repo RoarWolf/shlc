@@ -161,7 +161,7 @@ public class WithdrawServiceImpl implements WithdrawService {
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户
 		String startTime = request.getParameter("startTime");
 		if(startTime==null) startTime = StringUtil.getPastDate(30) + " 00:00:00";
@@ -264,7 +264,7 @@ public class WithdrawServiceImpl implements WithdrawService {
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 			User user = CommonConfig.getAdminReq(request);
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());
 			
 			String status = CommUtil.toString(maparam.get("status"));

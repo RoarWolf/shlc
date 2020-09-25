@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hedong.hedongwx.utils.JedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -212,8 +213,8 @@ public class AccountController {
 	@ResponseBody
     public Object getAccountListInfo(HttpServletRequest request, HttpServletResponse response) {
 		Object result = null;
-		if(CommonConfig.isExistSessionUser(request)){
-			result = CommUtil.responseBuild(901, "session缓存失效", "");
+		if(JedisUtils.get("admin")==null){
+			result = CommUtil.responseBuild(901, "缓存失效", "");
 		}else{
 			result = userService.getAccountListInfo(request);
 		}
@@ -417,8 +418,7 @@ public class AccountController {
 
 	/**
 	 * 查看商家的收费标准
-	 * 
-	 * @param merid
+	 *
 	 *            商家id
 	 * @return model
 	 */
@@ -445,7 +445,7 @@ public class AccountController {
 		if (CommonConfig.isExistSessionUser(request)) {
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
 			return JSON.toJSON(result);
-		} else if (user != null && user.getRank() != null && user.getRank() == 0) {
+		} else if (user != null && user.getLevel() != null && user.getLevel() == 0) {
 			//将JSON解析成Map
 			Map<String,Map<String,Double>> net=new HashMap<String,Map<String,Double>>();
 			Map<String, Map<String,Double>> blue=new HashMap<String,Map<String,Double>>();
@@ -481,7 +481,6 @@ public class AccountController {
 	}
 	/**
 	 * 给用户授权为代理商或者商家
-	 * @param id
 	 * @return 200
 	 */
 	@RequestMapping("/setAgent")
@@ -491,7 +490,7 @@ public class AccountController {
 		User superUser = CommonConfig.getAdminReq(request);
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else if(merId != null && superUser != null && superUser.getRank()==0 && rank != 0){
+		}else if(merId != null && superUser != null && superUser.getLevel()==0 && rank != 0){
 			result = userService.setAgent(merId,rank);
 		}else{
 			result = CommUtil.responseBuild(301, "失败", "参数错误");
@@ -510,7 +509,7 @@ public class AccountController {
 		User superUser = CommonConfig.getAdminReq(request);
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else if(superUser != null && superUser.getRank()==0){ 
+		}else if(superUser != null && superUser.getLevel()==0){
 			Object object = userService.selectAgents(request);
 			result =CommUtil.responseBuild(200, "成功",object);
 		}
@@ -529,7 +528,7 @@ public class AccountController {
 		User superUser = CommonConfig.getAdminReq(request);
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else if(agentId != null && superUser != null && superUser.getRank()==0){ 
+		}else if(agentId != null && superUser != null && superUser.getLevel()==0){
 			Parameters parameters = new Parameters();
 			parameters.setUid(agentId);
 			result = userService.selectMerByAgentId(parameters);
@@ -550,7 +549,7 @@ public class AccountController {
 		User superUser = CommonConfig.getAdminReq(request);
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else if(id != null && merId != null && superUser != null && superUser.getRank()==0){ 
+		}else if(id != null && merId != null && superUser != null && superUser.getLevel()==0){
 			result = userService.bindAgent(id,merId);
 		}else{
 			result = CommUtil.responseBuild(301, "失败","参数错误");
@@ -569,7 +568,7 @@ public class AccountController {
 		User superUser = CommonConfig.getAdminReq(request);
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else if(merId != null && superUser != null && superUser.getRank()==0){ 
+		}else if(merId != null && superUser != null && superUser.getLevel()==0){
 			result = userService.removeBindAgent(merId);;
 		}else{
 			result =CommUtil.responseBuild(301, "失败","参数错误");
@@ -588,7 +587,7 @@ public class AccountController {
 		User superUser = CommonConfig.getAdminReq(request);
 		if(CommonConfig.isExistSessionUser(request)){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else if(superUser != null && superUser.getRank()==0){ 
+		}else if(superUser != null && superUser.getLevel()==0){
 			result = userService.configMchid(request);;
 		}else{
 			result =CommUtil.responseBuild(301, "失败","参数错误");

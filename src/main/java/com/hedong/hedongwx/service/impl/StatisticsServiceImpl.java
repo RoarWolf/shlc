@@ -577,7 +577,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer userrank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer userrank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(userrank!=0) parameters.setUid(user.getId());//获取用户
 		parameters.setType(souce.toString());
 		parameters.setCode(request.getParameter("code"));//设备号
@@ -593,9 +593,9 @@ public class StatisticsServiceImpl implements StatisticsService{
 		if(sort.equals("0") && pararank.equals("0")){
 			parameters.setParamete("c.count_time DESC");
 		}else if(!sort.equals("0") && !pararank.equals("0")){
-			parameters.setRank(pararank);
+			parameters.setLevel(pararank);
 		}else{
-			parameters.setRank(pararank);
+			parameters.setLevel(pararank);
 			parameters.setSort(sort);
 		}
 		parameters.setStartTime(request.getParameter("startTime"));
@@ -626,7 +626,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer userrank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理  
+		Integer userrank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(userrank!=0) parameters.setUid(user.getId());//获取用户
 		parameters.setCode(request.getParameter("code"));//设备号
 		parameters.setStatus("1");//设备被绑定
@@ -1569,7 +1569,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 	public Map<String, Object> earningsinfonow() {
 		User admin = (User) request.getSession().getAttribute("admin");
 		Integer merid = null;
-		if(admin.getRank()!=0) merid = admin.getId();
+		if(admin.getLevel()!=0) merid = admin.getId();
 		Map<String, Object> resultamount = userDao.amountStatisticsInfo(merid);
 		return resultamount;
 	}
@@ -1578,10 +1578,10 @@ public class StatisticsServiceImpl implements StatisticsService{
 //		User admin = (User) request.getSession().getAttribute("admin");
 //		String timenow = StringUtil.getPastDate(0);
 //		Map<String, BigDecimal> turnovernow = null;
-//		if(admin.getRank()==2){
+//		if(admin.getLevel()==2){
 ////			turnovernow = earningsmernow(admin.getId(), timenow+" 00:00:00", timenow + " 23:59:59"); 
 //			turnovernow = earningsnow(admin.getId(), timenow+" 00:00:00", timenow + " 23:59:59");
-//		}else if(admin.getRank()==0){
+//		}else if(admin.getLevel()==0){
 //			turnovernow = earningsnow(null, timenow+" 00:00:00", timenow + " 23:59:59");
 //		}
 //		CommUtil.toHashMap(object)
@@ -1597,7 +1597,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 		Map<String, Object> turnovernow = new HashMap<>();
 		User admin = (User) request.getSession().getAttribute("admin");
 		Integer merid = admin.getId();
-		Integer rank = admin.getRank();
+		Integer rank = admin.getLevel();
 		Parameters parame = new Parameters();
 		parame.setStartTime(startTime);
 		parame.setEndTime(endTime);
@@ -1623,10 +1623,10 @@ public class StatisticsServiceImpl implements StatisticsService{
 		Parameters parame = new Parameters();
 		parame.setStartTime(weekstartTime);
 		parame.setEndTime(weekendTime);
-		if(admin.getRank()==0){
+		if(admin.getLevel()==0){
 			parame.setParamete("count_time DESC");
 			turnover = statisticsDao.selectInfo(parame);///List<Map<String, Object>>
-		}else if(admin.getRank()==2){
+		}else if(admin.getLevel()==2){
 			parame.setUid(admin.getId());
 			parame.setType("2");
 			parame.setParamete("c.count_time DESC");
@@ -1649,7 +1649,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 	public Object sometimeorder() {
 		User admin = (User) request.getSession().getAttribute("admin");
 		Parameters parame = new Parameters();
-		if(admin.getRank()==2) parame.setUid(admin.getId());
+		if(admin.getLevel()==2) parame.setUid(admin.getId());
 		parame.setStartnumber(0);
 		parame.setPages(14);
 		List<Map<String, Object>>  trade = tradeRecordDao.selectTradeRecord(parame);
@@ -1662,7 +1662,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 	public List<Map<String, Object>> codeincome() {
 		User admin = (User) request.getSession().getAttribute("admin");
 		Parameters parame = new Parameters();
-		if(admin.getRank()==2) parame.setUid(admin.getId());
+		if(admin.getLevel()==2) parame.setUid(admin.getId());
 		String time = StringUtil.getPastDate(1);
 		String startTime = time + " 00:00:00";
 		String endTime = StringUtil.toDateTime("yyyy-MM-dd") + " 23:59:59";
@@ -2688,7 +2688,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
@@ -2730,7 +2730,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 			parameters.setEndTime(CommUtil.toString(maparam.get("endTime")));
 			
 			
-			Integer userrank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+			Integer userrank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 			
 			Integer exportType =  CommUtil.toInteger(maparam.get("exportType"));//月份 1：天   2：月
 			if(exportType.equals(1)){
@@ -2795,7 +2795,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 //				user.setId(agentSelectmerid);
 //			}
 			//====================================================
-			Integer userrank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+			Integer userrank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 			Integer type = userrank;
 			Integer dealid = user.getId();
 
@@ -2997,7 +2997,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 		try {
 			//设备信息
 			User user = CommonConfig.getAdminReq(request);
-			Integer userrank = CommUtil.toInteger(user.getRank());
+			Integer userrank = CommUtil.toInteger(user.getLevel());
 			Integer userid = null;
 			if(userrank.equals(2)) userid = CommUtil.toInteger(user.getId());
 			Map<String, Object> deviceData = userEquipmentDao.selectustoequ(userid);
@@ -3164,7 +3164,7 @@ public class StatisticsServiceImpl implements StatisticsService{
 			String endTime = DisposeUtil.getPastDate(1,1);
 			Parameters parame = new Parameters();
 			User user = CommonConfig.getAdminReq(request);
-			Integer userrank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+			Integer userrank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 			if(userrank!=0) parame.setUid(user.getId());//获取用户
 			parame.setParamete("c.moneytotal DESC");
 			parame.setRemark("00,01,02,05,06,08");

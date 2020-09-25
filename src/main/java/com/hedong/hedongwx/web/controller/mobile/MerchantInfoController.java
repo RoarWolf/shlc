@@ -703,7 +703,7 @@ public class MerchantInfoController {
 				user = userService.selectUserById(merid);
 				request.getSession().setAttribute("user", user);
 			}
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			String openid = CommUtil.toString(user.getOpenid());
 			String paramredis = "merchHomePageData_" + merid;
 			Date newday = new Date();

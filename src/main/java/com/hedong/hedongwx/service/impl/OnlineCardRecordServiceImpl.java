@@ -102,10 +102,10 @@ public class OnlineCardRecordServiceImpl implements OnlineCardRecordService {
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户（商户）
 		
-		parameters.setRank(request.getParameter("id"));//id
+		parameters.setLevel(request.getParameter("id"));//id
 		parameters.setOrder(request.getParameter("ordernum"));//订单号
 		parameters.setNumber(request.getParameter("cardID"));//卡号
 		parameters.setCode(request.getParameter("code"));//设备号
@@ -136,10 +136,10 @@ public class OnlineCardRecordServiceImpl implements OnlineCardRecordService {
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户（商户）
 				
-		parameters.setRank(request.getParameter("id"));//id
+		parameters.setLevel(request.getParameter("id"));//id
 		parameters.setOrder(request.getParameter("ordernum"));//订单号
 		parameters.setNumber(request.getParameter("cardID"));//卡号
 		parameters.setCode(request.getParameter("code"));//设备号
@@ -323,12 +323,12 @@ public class OnlineCardRecordServiceImpl implements OnlineCardRecordService {
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());
 			parameters.setOrder(CommUtil.toString(maparam.get("ordernum")));
 			parameters.setNickname(CommUtil.toString(maparam.get("usernick")));
@@ -338,7 +338,7 @@ public class OnlineCardRecordServiceImpl implements OnlineCardRecordService {
 			parameters.setPhone(CommUtil.toString(maparam.get("phone")));
 			parameters.setType(CommUtil.toString(maparam.get("type")));
 			parameters.setCode(CommUtil.toString(maparam.get("devicenum")));
-			parameters.setRank(CommUtil.toString(maparam.get("id")));
+			parameters.setLevel(CommUtil.toString(maparam.get("id")));
 //			parameters.setStartTime(CommUtil.getRelevantDate(maparam.get("startTime"), 90, 1));
 //			parameters.setEndTime(CommUtil.getRelevantDate(maparam.get("endTime"), 0, 3));
 			parameters.setStartTime(CommUtil.toString(maparam.get("startTime")));
@@ -393,18 +393,18 @@ public class OnlineCardRecordServiceImpl implements OnlineCardRecordService {
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
 			parameters.setOrder(CommUtil.toString(maparam.get("ordernum")));
 			parameters.setNickname(CommUtil.toString(maparam.get("usernick")));
 			parameters.setDealer(CommUtil.toString(maparam.get("dealer")));
 			parameters.setPhone(CommUtil.toString(maparam.get("phone")));
-			parameters.setRank(CommUtil.toString(maparam.get("id")));
+			parameters.setLevel(CommUtil.toString(maparam.get("id")));
 			parameters.setNumber(CommUtil.toString(maparam.get("cardnumber")));
 			parameters.setCode(CommUtil.toString(maparam.get("devicenum")));
 			parameters.setStatus(CommUtil.toString(maparam.get("status")));

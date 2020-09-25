@@ -200,7 +200,7 @@ public class CardServiceImpl implements CardService {
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户
 		
 		parameters.setOrder(request.getParameter("serialnumber"));//编号

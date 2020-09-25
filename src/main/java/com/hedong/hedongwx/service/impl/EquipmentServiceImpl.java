@@ -353,7 +353,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户
 		parameters.setDeviceType(1);
 		List<Map<String, Object>> equiMaps = equipmentDao.selectEquList(parameters);
@@ -393,10 +393,10 @@ public class EquipmentServiceImpl implements EquipmentService {
 		if("1".equals(testnum)) {
 			parameters.setType("1");
 		}else if("2".equals(testnum)){
-			parameters.setRank("0,1,2,3,4,5,6,7,8,9");
+			parameters.setLevel("0,1,2,3,4,5,6,7,8,9");
 			parameters.setType("0");
 		}else if("3".equals(testnum)){
-			parameters.setRank("10");
+			parameters.setLevel("10");
 		}
 		List<Map<String, Object>> equiMap = equipmentDao.selectEquList(parameters);
 		page.setTotalRows(equiMap.size());
@@ -417,7 +417,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取用户
 		parameters.setDeviceType(2);
 		List<Map<String, Object>> equiMaps = equipmentDao.selectEquList(parameters);
@@ -449,10 +449,10 @@ public class EquipmentServiceImpl implements EquipmentService {
 		if("1".equals(testnum)) {
 			parameters.setType("1");
 		}else if("2".equals(testnum)){
-			parameters.setRank("0,1,2,3,4,5,6,7,8,9");
+			parameters.setLevel("0,1,2,3,4,5,6,7,8,9");
 			parameters.setType("0");
 		}else if("3".equals(testnum)){
-			parameters.setRank("10");
+			parameters.setLevel("10");
 		}
 		List<Map<String, Object>> equiMap = equipmentDao.selectEquList(parameters);
 		page.setTotalRows(equiMap.size());
@@ -702,7 +702,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 		PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 		Parameters parameters = new Parameters();
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) parameters.setUid(user.getId());//获取商户
 		parameters.setCode(request.getParameter("code"));
 		parameters.setDealer(request.getParameter("dealer"));//商户昵称
@@ -1236,11 +1236,11 @@ public class EquipmentServiceImpl implements EquipmentService {
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
 			parameters.setDeviceType(CommUtil.toInteger(type));
 			
@@ -1287,10 +1287,10 @@ public class EquipmentServiceImpl implements EquipmentService {
 			if(teststatus.equals(1)) {
 				parameters.setType("1");
 			}else if(teststatus.equals(2)){
-				parameters.setRank("0,1,2,3,4,5,6,7,8,9");
+				parameters.setLevel("0,1,2,3,4,5,6,7,8,9");
 				parameters.setType("0");
 			}else if(teststatus.equals(3)){
-				parameters.setRank("10");
+				parameters.setLevel("10");
 			}
 			List<Map<String, Object>> deviceData = CommUtil.isListMapEmpty(equipmentDao.selectEquList(parameters));
 
@@ -1342,7 +1342,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 		}
 		User user = CommonConfig.getAdminReq(request);
 		// 超级管理员才能导出数据
-		if(user != null && user.getRank() != 0){
+		if(user != null && user.getLevel() != 0){
 			dataMap.put("result", "无权操作");
 			CommUtil.responseBuildInfo(301, "异常错误", dataMap);
 		}
@@ -1404,13 +1404,13 @@ public class EquipmentServiceImpl implements EquipmentService {
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 			User user = CommonConfig.getAdminReq(request);
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			//===========================================
 			//前端传递代理商名下某一个商家的id
 			Integer agentSelectmerid = CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
@@ -1968,7 +1968,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 		String code2 = request.getParameter("code2");
 		User user=(User)request.getSession().getAttribute("user");
 		Integer merId = user.getId();
-		if (user.getRank() == 6) {
+		if (user.getLevel() == 6) {
 			merId = user.getMerid();
 		}
 		
@@ -2084,9 +2084,9 @@ public class EquipmentServiceImpl implements EquipmentService {
 			return CommUtil.responseBuildInfo(201, "失败", dataMap);
 		}
 		User user=CommonConfig.getAdminReq(request);
-		System.out.println("开始更换IMEI号:"+user.getRank());
+		System.out.println("开始更换IMEI号:"+user.getLevel());
 		//超级管理员互换设备的IMEI号
-		if(user != null && user.getRank().equals(0)){
+		if(user != null && user.getLevel().equals(0)){
 			// 判断设备号是否存在
 			Equipment codeA = equipmentDao.getEquipmentById(code1);
 			// 扫描的设备是未绑定的
@@ -2153,7 +2153,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 				}
 			} 
 		// 普通管理员PC端互换设备的IMEI号
-		}else if(user != null && user.getRank().equals(2)){
+		}else if(user != null && user.getLevel().equals(2)){
 			// 判断设备号是否存在
 			Equipment codeA = equipmentDao.getEquipmentById(code1);
 			// 扫描的设备是未绑定的

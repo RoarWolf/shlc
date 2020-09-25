@@ -84,7 +84,7 @@ public class HousingManageController {//区域(小区管理)
 		//CommonConfig.getAdminReq(request);
 		User admin = (User) request.getSession().getAttribute("admin");
 		Area area = new Area();
-		if(admin.getRank() != 0) area.setMerid(merid);
+		if(admin.getLevel() != 0) area.setMerid(merid);
 		List<Area>  arealist =  areaService.selectAreaList(area);
 		return arealist;
 	}

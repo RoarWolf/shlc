@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
+import com.hedong.hedongwx.utils.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +48,6 @@ import com.hedong.hedongwx.entity.TradeRecord;
 import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.entity.UserBankcard;
 import com.hedong.hedongwx.service.UserService;
-import com.hedong.hedongwx.utils.CommUtil;
-import com.hedong.hedongwx.utils.MD5Util;
-import com.hedong.hedongwx.utils.PageUtils;
-import com.hedong.hedongwx.utils.StringUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -243,7 +241,7 @@ public class UserServiceImpl implements UserService {
 				if (user == null) {
 					result.put("message", "邀请码不正确");
 					return result;
-				} else if (user.getRank() != 2) {
+				} else if (user.getLevel() != 2) {
 					result.put("message", "邀请码不正确");
 					return result;
 				} else {
@@ -268,9 +266,9 @@ public class UserServiceImpl implements UserService {
 				user.setServephone(mobile);
 				user.setPassword(MD5Util.MD5Encode(password, "utf-8"));
 				if (flag) {
-					user.setRank(1);
+					user.setLevel(1);
 				} else {
-					user.setRank(2);
+					user.setLevel(2);
 				}
 				//if(StringUtil.getIntString(statuere)==1) user.setRank(2);
 				userDao.registerUser(user);
@@ -315,7 +313,7 @@ public class UserServiceImpl implements UserService {
 		String argument = null;
 		if(admin==null){
 			argument = "不存在该用户，请重新输入";
-		}else if(admin.getRank()!=0 && admin.getRank()!=2){
+		}else if(admin.getLevel()!=0 && admin.getLevel()!=2){
 			argument = "该用户无登录权限，请重新输入";
 		}else if(password==null){
 			argument =  existCaptcha(request.getParameter("captcha"), request.getParameter("captchaNum"), request.getParameter("time"));
@@ -326,8 +324,8 @@ public class UserServiceImpl implements UserService {
 			}else if(admin.getPassword().equals(pwd)){
 				request.getSession().setAttribute("user",admin);
 				request.getSession().setAttribute("admin",admin);
-				if(admin.getRank()==0) argument =  "0";
-				if(admin.getRank()==2) argument =  "1";
+				if(admin.getLevel()==0) argument =  "0";
+				if(admin.getLevel()==2) argument =  "1";
 			}
 		}
 		return argument;
@@ -452,14 +450,14 @@ public class UserServiceImpl implements UserService {
 		User admin = existAdmin(account);
 		if(admin==null){
 			argument = "该用户不存在";
-		}else if(admin.getRank()!=0 && admin.getRank()!=2){
+		}else if(admin.getLevel()!=0 && admin.getLevel()!=2){
 			argument = "该用户无登录权限，请检查输入";
 		}else if(!admin.getPassword().equals(pwdm)){
 			argument =  "用户名或密码错误";
 		}else{
 			request.getSession().setAttribute("admin",admin);
-			if(admin.getRank()==0) argument =  "0";
-			if(admin.getRank()==2) argument =  "1";
+			if(admin.getLevel()==0) argument =  "0";
+			if(admin.getLevel()==2) argument =  "1";
 		}
 		return argument;
 	}
@@ -473,7 +471,7 @@ public class UserServiceImpl implements UserService {
 		User admin = existAdmin(mobile);
 		if(admin==null){
 			result = "用户不存在！";
-		}else if(admin.getRank()!=0 && admin.getRank()!=2){
+		}else if(admin.getLevel()!=0 && admin.getLevel()!=2){
 			result = "该用户无登录权限，请检查输入";
 		}else if(!security.equals(authcode)){
 			result = "验证码不正确！";
@@ -484,8 +482,8 @@ public class UserServiceImpl implements UserService {
 				result = "验证码过期！";
 			}else{
 				request.getSession().setAttribute("admin",admin);
-				if(admin.getRank()==0) result =  "0";
-				if(admin.getRank()==2) result =  "1";
+				if(admin.getLevel()==0) result =  "0";
+				if(admin.getLevel()==2) result =  "1";
 			}
 		}
 		return result;
@@ -901,7 +899,7 @@ public class UserServiceImpl implements UserService {
 			String md5word = DigestUtils.md5Hex(password);
 			User account = acquireUserData(accountnum);
 			String cipher = CommUtil.trimToEmpty(account.getPassword());
-			Integer rank = CommUtil.toInteger(account.getRank());
+			Integer rank = CommUtil.toInteger(account.getLevel());
 			if(account.getId()==null){
 				return CommUtil.responseBuildInfo(101, "该用户不存在", datamap);
 			} 
@@ -922,6 +920,8 @@ public class UserServiceImpl implements UserService {
 			datamap.put("token", account.getId());
 			request.getSession().setAttribute("user", account);
 			request.getSession().setAttribute("admin", account);
+			JedisUtils.set("admin", JSON.toJSONString(account),1800);
+			JedisUtils.set("user", JSON.toJSONString(account),1800);
 			return CommUtil.responseBuildInfo(200, "登录成功", datamap);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -964,7 +964,7 @@ public class UserServiceImpl implements UserService {
 			}else{
 				return CommUtil.responseBuildInfo(104, "时间验证失败！", datamap);
 			}
-			Integer rank = CommUtil.toInteger(account.getRank());
+			Integer rank = CommUtil.toInteger(account.getLevel());
 			if(!rank.equals(0) && !rank.equals(2) && !rank.equals(3)){
 				return CommUtil.responseBuildInfo(104, "该用户无登录权限，请重新输入", datamap);
 			}
@@ -1020,7 +1020,7 @@ public class UserServiceImpl implements UserService {
 			if(account!=null){
 				request.getSession().setAttribute("user", account);
 				request.getSession().setAttribute("admin", account);
-				Integer rank = CommUtil.toInteger(account.getRank());
+				Integer rank = CommUtil.toInteger(account.getLevel());
 				if(!rank.equals(0) && !rank.equals(2) && !rank.equals(3)){
 					return CommUtil.responseBuildInfo(104, "该用户无登录权限，请重新输入", datamap);
 				}
@@ -1062,7 +1062,7 @@ public class UserServiceImpl implements UserService {
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 			Parameters parameter = new Parameters();
 			User user = CommonConfig.getAdminReq(request);
-			Integer userrank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+			Integer userrank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 			if(userrank!=0) parameter.setUid(user.getId());//获取用户
 			Integer dealid = CommUtil.toInteger(maparam.get("merid"));
 			if(!dealid.equals(0)) parameter.setUid(dealid);
@@ -1274,45 +1274,47 @@ public class UserServiceImpl implements UserService {
 		Map<String, Object> datamap = new HashMap<String, Object>();
 		try {
 			Map<String, Object> maparam = CommUtil.getRequestParam(request);
+			System.err.println("==================="+maparam);
 			User user = CommonConfig.getAdminReq(request);
 			//===========================================
 			//前端传递代理商名下某一个商家的id
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
-			Integer rank = CommUtil.toInteger(user.getRank());
-			Integer condition = CommUtil.toInteger(maparam.get("condition"));
-			if(rank.equals(0) && condition.equals(1)){//管理员初次查询
+//			Integer rank = CommUtil.toInteger(user.getLevel());
+			//Integer condition = CommUtil.toInteger(maparam.get("condition"));
+			/*if(rank.equals(0) && condition.equals(1)){//管理员初次查询
 				datamap.put("wallettotalmoney", 0.00);
 				datamap.put("touristinfo", new ArrayList<Map<String,Object>>());
 				datamap.put("totalRows", 0);
 				datamap.put("totalPages", 0);
 				datamap.put("currentPage", 0);
 				return CommUtil.responseBuildInfo(200, "成功", datamap);
-			}
+			}*/
 			Parameters parameters = new Parameters();
-			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
+			//if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
+			System.err.println(numPerPage+"================:"+currentPage);
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			parameters.setOrder(CommUtil.toString(maparam.get("memberId")));//会员id
+			//parameters.setOrder(CommUtil.toString(maparam.get("memberId")));//会员id
 			parameters.setNickname(CommUtil.toString(maparam.get("nick")));
 			parameters.setUsername(CommUtil.toString(maparam.get("realname")));
 			parameters.setPhone(CommUtil.toString(maparam.get("phone")));
-			parameters.setDealer(CommUtil.toString(maparam.get("dealer")));
-			parameters.setSource(CommUtil.toString(maparam.get("areaname")));
+			//parameters.setDealer(CommUtil.toString(maparam.get("dealer")));
+			//parameters.setSource(CommUtil.toString(maparam.get("areaname")));
 			parameters.setMobile(CommUtil.toString(maparam.get("mobile")));
 //			parameters.setSource(CommUtil.toString(maparam.get("income")));//归属小区
 			Integer rankwallet = CommUtil.toInteger(maparam.get("moneySort"));
 			
-			Integer startID = CommUtil.toInteger(maparam.get("startID"));//会员id
-			Integer endID = CommUtil.toInteger(maparam.get("endID"));//会员id
+			/*Integer startID = CommUtil.toInteger(maparam.get("startID"));//会员id
+			Integer endID = CommUtil.toInteger(maparam.get("endID"));//会员id*/
 			
-			StringBuffer idsort = new StringBuffer();
+			/*StringBuffer idsort = new StringBuffer();
 			if(!startID.equals(0)){
 				idsort.append("u.id >= " + startID );
 			}
@@ -1322,8 +1324,8 @@ public class UserServiceImpl implements UserService {
 				}else{
 					idsort.append(" AND u.id <= " + endID );
 				}
-			}
-			parameters.setSort(idsort.toString());
+			}*/
+			//parameters.setSort(idsort.toString());
 			if(rankwallet.equals(1)){
 				parameters.setParamete(" ORDER BY u.balance DESC");
 			}else if(rankwallet.equals(2)){
@@ -1459,7 +1461,7 @@ public class UserServiceImpl implements UserService {
 			}
 //			User user = CommonConfig.getAdminReq(request);
 			Parameters parameters = new Parameters();
-			parameters.setRank(CommUtil.toString(maparam.get("rank")));
+			parameters.setLevel(CommUtil.toString(maparam.get("rank")));
 			parameters.setUid((Integer)maparam.get("id"));
 			List<Map<String, Object>> userbank = userBankcardDao.selectUserBankinfo(parameters);
 			datamap.put("listdata", CommUtil.isListMapEmpty(userbank));
@@ -1854,7 +1856,7 @@ public class UserServiceImpl implements UserService {
 				}else{
 					User user = new User();
 					user.setId(userId);
-					user.setRank(rank);
+					user.setLevel(rank);
 					userDao.updateUserById(user);
 					return CommUtil.responseBuild(200, "授权成功", "");
 				}
@@ -1865,7 +1867,7 @@ public class UserServiceImpl implements UserService {
 				if(user.getAgentId() == 0){
 					User user1 = new User();
 					user1.setId(userId);
-					user1.setRank(rank);
+					user1.setLevel(rank);
 					userDao.updateUserById(user1);
 					return CommUtil.responseBuild(200, "授权成功", "");
 				}else{
@@ -1943,7 +1945,7 @@ public class UserServiceImpl implements UserService {
 		if(id != null && merId != null){
 			//绑定前判断是否有人绑定
 			User user = userDao.selectUserById(merId);
-			if(user != null && user.getAgentId() == 0 && user.getRank() == 2){
+			if(user != null && user.getAgentId() == 0 && user.getLevel() == 2){
 				userDao.bindAgent(id, merId);
 				return CommUtil.responseBuild(200, "成功", "");
 			}else{
@@ -2192,7 +2194,7 @@ public class UserServiceImpl implements UserService {
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 			Parameters parameter = new Parameters();
 			User user = (User) request.getSession().getAttribute("admin");//登录账户信息获取
-			Integer merrank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+			Integer merrank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 			if(merrank!=0) parameter.setUid(user.getId());//获取登录账户id
 			Integer dealid = CommUtil.toInteger(maparam.get("merid"));
 			if(!dealid.equals(0)) parameter.setUid(dealid);
@@ -2201,7 +2203,7 @@ public class UserServiceImpl implements UserService {
 			parameter.setPhone(CommUtil.toString(maparam.get("phone")));
 			parameter.setDealer(CommUtil.toString(maparam.get("dealer")));
 			parameter.setMobile(CommUtil.toString(maparam.get("mobile")));
-			parameter.setRank("6");
+			parameter.setLevel("6");
 			List<Map<String, Object>> listdata = userDao.inquireBypassAccount(parameter);
 			page.setTotalRows(listdata.size());
 			page.setTotalPages();
@@ -2253,7 +2255,7 @@ public class UserServiceImpl implements UserService {
 				}else if (meruser == null) {
 					return CommUtil.responseBuildInfo(105, "商户信息账号不存在", datamap);
 				}
-				Integer tourank =  CommUtil.toInteger(touruser.getRank());
+				Integer tourank =  CommUtil.toInteger(touruser.getLevel());
 				Integer touid =  CommUtil.toInteger(touruser.getId());
 				Integer dealid =  CommUtil.toInteger(touruser.getMerid());
 				Integer merid =  CommUtil.toInteger(meruser.getId());
@@ -2264,7 +2266,7 @@ public class UserServiceImpl implements UserService {
 				}else{
 					User editUser = new User();
 					editUser.setId(touid);
-					editUser.setRank(6);
+					editUser.setLevel(6);
 					if(dealid.equals(0)) editUser.setMerid(merid);
 					userDao.updateUserById(editUser);
 					privilegeDao.insertUserPrivliege(touid, 3);
@@ -2276,7 +2278,7 @@ public class UserServiceImpl implements UserService {
 				Integer id =  CommUtil.toInteger(maparam.get("id"));
 				User editUser = new User();
 				editUser.setId(id);
-				editUser.setRank(1);
+				editUser.setLevel(1);
 				userDao.updateUserById(editUser);
 				privilegeDao.deleteUserPrivliege(id, null);
 				operateRecordDao.insertoperate( "子账户删除", operuser.getId(), id, 1, 0, null, null);

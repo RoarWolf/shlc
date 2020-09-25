@@ -72,7 +72,7 @@ public class DataCollectInfoController {
 			}else{
 				User admin = (User) request.getSession().getAttribute("admin");
 				Parameters parame = new Parameters();
-				if(admin.getRank()==2) parame.setUid(admin.getId());
+				if(admin.getLevel()==2) parame.setUid(admin.getId());
 				parame.setStartnumber(0);
 				parame.setPages(14);
 				List<Map<String, Object>>  trade = tradeRecordService.tradeDetailsinquire(parame);
@@ -308,9 +308,10 @@ public class DataCollectInfoController {
 	@RequestMapping(value="/dataCollectQuery")
 	@ResponseBody
 	public Object dataCollectQuery(HttpServletRequest request, HttpServletResponse response){
+		System.err.println("进来了=================");
 		Map<String, Object> resultdata = new HashMap<String, Object>();
 		try {
-			if(CommonConfig.isExistSessionUser(request)){
+			if(JedisUtils.get("admin")==null){
 				resultdata = CommUtil.responseBuild(901, "session缓存失效", "");
 			}else{
 				//设备信息

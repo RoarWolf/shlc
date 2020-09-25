@@ -26,7 +26,7 @@ public class Parameters {
 	
 	private String sort;
 	
-	private String rank;
+	private String level;
 	
 	private String source;
 	
@@ -238,12 +238,12 @@ public class Parameters {
 		this.sort = sort;
 	}
 
-	public String getRank() {
-		return rank;
+	public String getLevel() {
+		return level;
 	}
 
-	public void setRank(String rank) {
-		this.rank = rank;
+	public void setLevel(String level) {
+		this.level = level;
 	}
 
 	public String getSource() {
@@ -378,7 +378,7 @@ public class Parameters {
 	public String toString() {
 		return "Parameters [merId=" + merId + ", uid=" + uid + ", nickname=" + nickname + ", username=" + username
 				+ ", phone=" + phone + ", dealer=" + dealer + ", realname=" + realname + ", mobile=" + mobile
-				+ ", order=" + order + ", code=" + code + ", sort=" + sort + ", rank=" + rank + ", source=" + source
+				+ ", order=" + order + ", code=" + code + ", sort=" + sort + ", level=" + level + ", source=" + source
 				+ ", type=" + type + ", state=" + state + ", status=" + status + ", number=" + number + ", remark="
 				+ remark + ", paramete=" + paramete + ", statement=" + statement + ", quantity=" + quantity
 				+ ", startTime=" + startTime + ", endTime=" + endTime + ", pages=" + pages + ", startnumber="

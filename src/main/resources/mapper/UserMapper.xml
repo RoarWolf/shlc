@@ -18,7 +18,7 @@
 	</select>
 	
 	<select id="earningsMoney" parameterType="java.lang.Integer" resultType="java.lang.Double">
-		SELECT SUM(earnings) AS sumearnings FROM hd_user WHERE rank IN (0,2) 
+		SELECT SUM(earnings) AS sumearnings FROM hd_user WHERE level IN (0,2)
 		<if test="uid!=null"> id = #{uid}</if>
 	</select>
 	
@@ -61,8 +61,8 @@
 	<!-- ************************************************************************************************  -->
 
 	<sql id="User_Column_List">
-		id, username, realname, openid, unionid, openid_applet, password, phone_num, servephone, rank, earnings,balance,sendmoney,feerate,
-		create_time, update_time,agent_id,merid, aid, payhint,submer
+		id, username, realname, openid, unionid, openid_applet, password, phone_num, servephone, level, earnings,balance,sendmoney,feerate,
+		create_time, update_time,agent_id,merid, aid, payhint
 	</sql>
 
 	<insert id="addUser" parameterType="com.hedong.hedongwx.entity.User">
@@ -414,7 +414,7 @@
 		    <if test=" username!=null and  username!=''"> and u.realname LIKE '%${username}%' </if>
 		    <if test=" phone!=null and  phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
 		    <if test=" uid!=null and uid!=''"> and u.merid = #{uid} </if>
-			<if test=" rank!=null and rank!=''"> and u.rank in (#{rank}) </if>
+			<if test=" level!=null and level!=''"> and u.level in (#{level}) </if>
 		    <if test=" source!=null and  source!=''"> and a.`name` LIKE '%${source}%' </if>
 		    <if test=" dealer!=null and dealer!=''"> and mu.realname LIKE '%${dealer}%' </if>
 		    <if test=" mobile!=null and mobile!=''"> and mu.phone_num LIKE '%${mobile}%' </if>
@@ -425,7 +425,15 @@
 	    <if test=" paramete!=null and paramete!=''"> ${paramete} </if>
 	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
 	</select>
-	
+
+
+
+
+
+
+
+
+
 	<select id="getUserByUnionid" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.User">
 		SELECT 
 		 <include refid="User_Column_List" />

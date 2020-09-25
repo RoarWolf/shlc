@@ -58,7 +58,7 @@ public class AreaServiceImpl implements AreaService {
 		Parameters param = new Parameters();
 
 		User user = CommonConfig.getAdminReq(request);
-		Integer rank = user.getRank();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
+		Integer rank = user.getLevel();// 0:管理员、 1:普通用户、 2:商户、  3:代理商、4：小区管理
 		if(rank!=0) param.setUid(user.getId());//获取用户
 		param.setRemark(request.getParameter("name"));//小区名称
 		param.setSource(request.getParameter("address"));//小区地址
@@ -340,7 +340,7 @@ public class AreaServiceImpl implements AreaService {
 		if(user == null || user.getSubMer().equals(1)){
 			return map = CommUtil.responseBuild(201, "商户不存在或为特约商户", null, map);
 		}
-		if(user.getRank()!=0 && user.getRank()!=2){
+		if(user.getLevel()!=0 && user.getLevel()!=2){
 			return map = CommUtil.responseBuild(201, "该账户不为商户", null, map);
 		}
 		try {
@@ -576,12 +576,12 @@ public class AreaServiceImpl implements AreaService {
 			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
-				user.setRank(2);
+				user.setLevel(2);
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getRank());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());
 			
 			parameters.setRemark(CommUtil.toString(maparam.get("areaname")));//小区名称

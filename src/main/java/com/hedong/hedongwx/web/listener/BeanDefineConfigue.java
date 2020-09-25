@@ -60,7 +60,7 @@ public class BeanDefineConfigue implements ApplicationListener<ContextRefreshedE
 		Parameters parameters = new Parameters();
 		List<User> userList = userService.getUserList();
 		for (User user : userList) {
-			if ((user.getRank() != null && user.getRank() != 1) || (user.getEarnings() != null && user.getEarnings() > 0)) {
+			if ((user.getLevel() != null && user.getLevel() != 1) || (user.getEarnings() != null && user.getEarnings() > 0)) {
 				parameters.setDealer(user.getId().toString());
 				Map<String, Object> totalcoins = inCoinsService.selectcoinsup(parameters);
 				String startTime = StringUtil.toDateTime("yyyy-MM-dd 00:00:00");
