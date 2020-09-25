@@ -35,9 +35,9 @@ public interface ChargeRecordDao {
 
 	List<ChargeRecord> getChargeRecordListByEquipmentnum(String equipmentnum);
 	
-	List<ChargeRecord> queryChargingByUid(Integer uid);
+	List<ChargeRecord> queryChargingByUid(@Param("uid") Integer uid, @Param("startnum") Integer startnum);
 	
-	List<ChargeRecord> queryChargedByUid(Integer uid);
+	List<ChargeRecord> queryChargedByUid(@Param("uid") Integer uid, @Param("startnum") Integer startnum);
 	
 	Double getChargingTotalMoney(Integer id);
 	

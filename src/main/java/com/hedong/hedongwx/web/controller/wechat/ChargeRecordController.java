@@ -185,70 +185,70 @@ public class ChargeRecordController {
 	}
 
 
-	/**
-	 * 通过充电用户id查询正在充电中信息
-	 * @param uid 用户id
-	 * @param model
-	 * @return {@link String}
-	 */
-	@RequestMapping("queryCharging")
-	public String queryCharging(Integer uid, Model model) {
-		List<ChargeRecord> chargingList = chargeRecordService.queryChargingByUid(uid);
-		List<ChargeRecord> chargedList = chargeRecordService.queryChargedByUid(uid);
-		List<ChargeRecord> chargeRecords = new ArrayList<>();
-		model.addAttribute("chargedList", chargedList);
-		model.addAttribute("uid", uid);
-		model.addAttribute("manageclick", 1);
-		String str = "1";
-		if (chargingList.size() > 0) {
-			for (ChargeRecord chargeRecord : chargingList) {
-				String equipmentnum = chargeRecord.getEquipmentnum();
-				Integer port = chargeRecord.getPort();
-				long begintime = chargeRecord.getBegintime().getTime();
-				long currentTime = System.currentTimeMillis();
-				long intervaltime = currentTime - begintime;
-				// 判断充电记录大于48小时的订单，还未结束的不显示
-				if (intervaltime > (48 * 60 * 60 * 1000)) {
-					continue;
-				}
-				//根据设备和端口获取所有端口状态
-//				AllPortStatus allPortStatus = allPortStatusService.findPortStatusByEquipmentnumAndPort(equipmentnum, port);
-				Map<String,String> allPortStatus = DisposeUtil.addPortStatus(equipmentnum, port);
-				if (allPortStatus == null) {//端口为空
-					continue;
-				} else if ("2".equals(allPortStatus.get("portStatus"))) {
-					str = "0";
-					//根据id查询总钱数
-					Double totalMoney = chargeRecordService.getChargingTotalMoney(chargeRecord.getId());
-					chargeRecord.setTotalMoney(totalMoney);
-					//获取当前功率
-					Short power = stringToShort(allPortStatus.get("power"));
-					//获取时间
-					Short time = stringToShort(allPortStatus.get("time"));
-					String predict = "";
-					if (power == 0 || power == null) {//判断功率是否为0或空
-						//预计剩余时间
-						predict = time + "";
-					} else {
-						Short elec = stringToShort(allPortStatus.get("elec"));//获取所有当前电量
-						Short surptime = (short) (elec * 1000 / power * 60);
-						if (surptime < time && surptime > 0) {
-							predict = surptime + "";
-						} else {
-							predict = time + "";
-						}
-					}
-					System.out.println("剩余时间---" + predict + "分钟");
-					allPortStatus.put("predict", predict);
-					chargeRecord.setAllPortStatus(allPortStatus);
-					chargeRecords.add(chargeRecord);
-				}
-			}
-			model.addAttribute("chargingList", chargeRecords);
-		}
-		model.addAttribute("errormsg", str);
-		return "record/chargingByUid";
-	}
+//	/**
+//	 * 通过充电用户id查询正在充电中信息
+//	 * @param uid 用户id
+//	 * @param model
+//	 * @return {@link String}
+//	 */
+//	@RequestMapping("queryCharging")
+//	public String queryCharging(Integer uid, Model model) {
+//		List<ChargeRecord> chargingList = chargeRecordService.queryChargingByUid(uid, 0);
+//		List<ChargeRecord> chargedList = chargeRecordService.queryChargedByUid(uid, 0);
+//		List<ChargeRecord> chargeRecords = new ArrayList<>();
+//		model.addAttribute("chargedList", chargedList);
+//		model.addAttribute("uid", uid);
+//		model.addAttribute("manageclick", 1);
+//		String str = "1";
+//		if (chargingList.size() > 0) {
+//			for (ChargeRecord chargeRecord : chargingList) {
+//				String equipmentnum = chargeRecord.getEquipmentnum();
+//				Integer port = chargeRecord.getPort();
+//				long begintime = chargeRecord.getBegintime().getTime();
+//				long currentTime = System.currentTimeMillis();
+//				long intervaltime = currentTime - begintime;
+//				// 判断充电记录大于48小时的订单，还未结束的不显示
+//				if (intervaltime > (48 * 60 * 60 * 1000)) {
+//					continue;
+//				}
+//				//根据设备和端口获取所有端口状态
+////				AllPortStatus allPortStatus = allPortStatusService.findPortStatusByEquipmentnumAndPort(equipmentnum, port);
+//				Map<String,String> allPortStatus = DisposeUtil.addPortStatus(equipmentnum, port);
+//				if (allPortStatus == null) {//端口为空
+//					continue;
+//				} else if ("2".equals(allPortStatus.get("portStatus"))) {
+//					str = "0";
+//					//根据id查询总钱数
+//					Double totalMoney = chargeRecordService.getChargingTotalMoney(chargeRecord.getId());
+//					chargeRecord.setTotalMoney(totalMoney);
+//					//获取当前功率
+//					Short power = stringToShort(allPortStatus.get("power"));
+//					//获取时间
+//					Short time = stringToShort(allPortStatus.get("time"));
+//					String predict = "";
+//					if (power == 0 || power == null) {//判断功率是否为0或空
+//						//预计剩余时间
+//						predict = time + "";
+//					} else {
+//						Short elec = stringToShort(allPortStatus.get("elec"));//获取所有当前电量
+//						Short surptime = (short) (elec * 1000 / power * 60);
+//						if (surptime < time && surptime > 0) {
+//							predict = surptime + "";
+//						} else {
+//							predict = time + "";
+//						}
+//					}
+//					System.out.println("剩余时间---" + predict + "分钟");
+//					allPortStatus.put("predict", predict);
+//					chargeRecord.setAllPortStatus(allPortStatus);
+//					chargeRecords.add(chargeRecord);
+//				}
+//			}
+//			model.addAttribute("chargingList", chargeRecords);
+//		}
+//		model.addAttribute("errormsg", str);
+//		return "record/chargingByUid";
+//	}
 	
 	/**
 	 * @Description： 查询指定人员的充电记录信息（Ajax）

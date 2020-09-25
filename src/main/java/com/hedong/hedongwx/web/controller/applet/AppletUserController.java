@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hedong.hedongwx.service.ChargeRecordService;
 import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.WeixinUtil;
@@ -22,7 +23,14 @@ public class AppletUserController {
 	
 	@Autowired
 	private GeneralDetailService generalDetailService;
+	@Autowired
+	private ChargeRecordService chargeService;
 
+	/**
+	 * 获取用户openid
+	 * @param code
+	 * @return
+	 */
 	@PostMapping("/getopenid")
 	public 	Object getopenid(String code) {
 		try {
@@ -38,8 +46,30 @@ public class AppletUserController {
 		}
 	}
 	
+	/**
+	 * 查询用户钱包记录
+	 * @param userid
+	 * @param startnum
+	 * @return
+	 */
 	@PostMapping("/getWalletRecord")
 	public 	Object getWalletRecord(Integer userid, Integer startnum) {
 		return generalDetailService.selectGenWalletDetailByUid(userid, startnum);
+	}
+	
+	/**
+	 * 查询用户订单记录
+	 * @param userid
+	 * @param startnum
+	 * @param status
+	 * @return
+	 */
+	@RequestMapping("/getChargeRecord")
+	public 	Object getChargeRecord(Integer userid, Integer startnum, Integer status) {
+		if (status == 1) {
+			return chargeService.queryChargedByUid(userid, startnum);
+		} else {
+			return chargeService.queryChargingByUid(userid, startnum);
+		}
 	}
 }

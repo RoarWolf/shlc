@@ -72,6 +72,8 @@ public class ChargeRecord {
 	
 	private Integer flag;
 	
+	private String codenick;
+	
 	public Integer getFlag() {
 		return flag;
 	}
@@ -302,6 +304,14 @@ public class ChargeRecord {
 
 	public void setRefundTime(Date refundTime) {
 		this.refundTime = refundTime;
+	}
+
+	public String getCodenick() {
+		return codenick;
+	}
+
+	public void setCodenick(String codenick) {
+		this.codenick = codenick;
 	}
 
 	@Override

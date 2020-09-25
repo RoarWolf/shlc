@@ -20,6 +20,7 @@ import com.hedong.hedongwx.dao.TradeRecordDao;
 import com.hedong.hedongwx.entity.Area;
 import com.hedong.hedongwx.entity.ChargeRecord;
 import com.hedong.hedongwx.entity.Equipment;
+import com.hedong.hedongwx.entity.GeneralDetail;
 import com.hedong.hedongwx.entity.MerchantDetail;
 import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.Realchargerecord;
@@ -111,8 +112,20 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 	}
 
 	@Override
-	public List<ChargeRecord> queryChargingByUid(Integer uid) {
-		return chargeRecordDao.queryChargingByUid(uid);
+	public Map<String, Object> queryChargingByUid(Integer uid, Integer startnum) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			List<ChargeRecord> charginglist = chargeRecordDao.queryChargingByUid(uid, startnum * 10);
+			map.put("charginglist", charginglist);
+			map.put("startnum", startnum++);
+			if (charginglist.size() > 0) {
+				return CommUtil.responseBuildInfo(1000, "获取成功", map);
+			} else {
+				return CommUtil.responseBuild(1000, "获取成功", null);
+			}
+		} catch (Exception e) {
+			return CommUtil.responseBuild(1002, "系统异常", null);
+		}
 	}
 
 	@Override
@@ -126,8 +139,20 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 	}
 
 	@Override
-	public List<ChargeRecord> queryChargedByUid(Integer uid) {
-		return chargeRecordDao.queryChargedByUid(uid);
+	public Map<String, Object> queryChargedByUid(Integer uid, Integer startnum) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			List<ChargeRecord> charginglist = chargeRecordDao.queryChargedByUid(uid, startnum * 10);
+			map.put("charginglist", charginglist);
+			map.put("startnum", startnum++);
+			if (charginglist.size() > 0) {
+				return CommUtil.responseBuildInfo(1000, "获取成功", map);
+			} else {
+				return CommUtil.responseBuild(1000, "获取成功", null);
+			}
+		} catch (Exception e) {
+			return CommUtil.responseBuild(1002, "系统异常", null);
+		}
 	}
 
 	//ＲＺＣ（ＰＣ）　查询订单记录

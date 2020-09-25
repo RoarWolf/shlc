@@ -46,10 +46,10 @@ public interface ChargeRecordService {
 			String equipmentnum, Integer merchantid, String ordernum);
 	
 	/** query is charging records by user id*/
-	List<ChargeRecord> queryChargingByUid(Integer uid);
+	Map<String, Object> queryChargingByUid(Integer uid, Integer startnum);
 	
 	/** query is charged records by user id*/
-	List<ChargeRecord> queryChargedByUid(Integer uid);
+	Map<String, Object> queryChargedByUid(Integer uid, Integer startnum);
 	
 	/** query charge and continue charge total money by charge id*/
 	Double getChargingTotalMoney(Integer id);
