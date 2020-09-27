@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.hedong.hedongwx.entity.ChargeRecord;
+import com.hedong.hedongwx.entity.ChargeRecordCopy;
 import com.hedong.hedongwx.entity.Parameters;
 
 public interface ChargeRecordDao {
@@ -38,6 +39,10 @@ public interface ChargeRecordDao {
 	List<ChargeRecord> queryChargingByUid(@Param("uid") Integer uid, @Param("startnum") Integer startnum);
 	
 	List<ChargeRecord> queryChargedByUid(@Param("uid") Integer uid, @Param("startnum") Integer startnum);
+	
+	List<ChargeRecordCopy> queryChargeRecord(@Param("uid") Integer uid, @Param("status") Integer status, @Param("startnum") Integer startnum);
+	
+	ChargeRecordCopy queryChargeRecordInfo(@Param("id") Integer id);
 	
 	Double getChargingTotalMoney(Integer id);
 	

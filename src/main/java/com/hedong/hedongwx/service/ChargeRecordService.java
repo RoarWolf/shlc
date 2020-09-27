@@ -260,5 +260,9 @@ public interface ChargeRecordService {
 	 */
 	Map<String, Object> chargeRecordCompute(Integer merid, String startTime, String endTime);
 
+	/** 查询用户充电订单列表*/
+	Map<String, Object> queryChargeRecord(Integer uid, Integer status, Integer startnum);
 	
+	/** 查询订单信息*/
+	Map<String, Object> queryChargeRecordInfo(Integer id);
 }

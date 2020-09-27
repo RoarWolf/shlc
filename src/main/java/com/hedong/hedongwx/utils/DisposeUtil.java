@@ -23,9 +23,7 @@ import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.thread.Server;
 
 /**
- * 
  * @author RoarWolf
- *
  */
 public class DisposeUtil {
 	
@@ -45,6 +43,9 @@ public class DisposeUtil {
 //				System.out.println(str);
 //			}
 //		}
+		String createOrdernum = HttpRequest.createOrdernum(-1);
+		System.out.println("ordernum===" + createOrdernum);
+		System.out.println("length===" + createOrdernum.length());
 	}
 	
 	public static List<String> quChong(List<String> list) {

@@ -69,11 +69,12 @@ public class GeneralDetailServiceImpl implements GeneralDetailService {
 		try {
 			List<GeneralDetail> walletDetail = generalDetailDao.selectGenWalletDetailByUid(uid, startnum * 10);
 			map.put("walletRecord", walletDetail);
-			map.put("startnum", startnum++);
+			map.put("startnum", startnum + 1);
+			map.put("listsize", walletDetail.size());
 			if (walletDetail.size() > 0) {
 				return CommUtil.responseBuildInfo(1000, "获取成功", map);
 			} else {
-				return CommUtil.responseBuild(1000, "获取成功", null);
+				return CommUtil.responseBuild(1001, "未查询到数据", null);
 			}
 		} catch (Exception e) {
 			return CommUtil.responseBuild(1002, "系统异常", null);

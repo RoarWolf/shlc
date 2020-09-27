@@ -247,4 +247,6 @@ public interface AreaService {
 	void addAPartEarn(String code, double money, Integer merid, Integer aid, int type, int status);
 	
 	//=====================================================================================================
+	
+	Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum);
 }

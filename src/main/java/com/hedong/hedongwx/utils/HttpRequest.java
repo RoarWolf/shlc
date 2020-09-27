@@ -306,12 +306,15 @@ public class HttpRequest {
 	}
 	
 	/**
-	 * 获得随机字符串
-	 * 
+	 * 生成订单号
+	 * @param length 传-1则默认为32位，其他则看传入值加17位
 	 * @return
 	 */
 	public static String createOrdernum(int length) {
 		String format = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+		if (length == -1) {
+			length = 32 - format.length();
+		}
 		StringBuffer sb = new StringBuffer();
 		sb.append(format);
 		for (int i = 0; i < length; i++) {
@@ -319,6 +322,7 @@ public class HttpRequest {
 		}
 		return sb.toString();
 	}
+	
 
 	/**
 	 * 获取订单号 商户订单号（每个订单号必须唯一） 组成：mch_id+yyyymmdd+10位一天内不能重复的数字。

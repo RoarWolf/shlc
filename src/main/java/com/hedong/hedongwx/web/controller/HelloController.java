@@ -1294,10 +1294,10 @@ public class HelloController {
 		return "bluetooth/bluetooth1";
 	}
 	
-	@RequestMapping("/")
-	public String home() {
-		return "home";
-	}
+//	@RequestMapping("/")
+//	public String home() {
+//		return "home";
+//	}
 	
 	@RequestMapping("/testTemp")
 	public String testTemp() {

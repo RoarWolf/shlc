@@ -303,6 +303,65 @@
 		WHERE aid=#{aid}
 	</select>
 	
+	<!-- 查询距离最近的站点 -->
+	<select id="queryAreaRecently" resultType="com.hedong.hedongwx.entity.Area">
+		select
+	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((34.8149006*PI()/180-lat*PI()/180)/2),2)+
+	    COS(34.8149006*PI()/180)*COS(lat*PI()/180)*POW(SIN((113.568114*PI()/180- 
+	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.freenum,0) as freenum,a.id,a.`name`
+		FROM hd_area a
+		LEFT JOIN 
+		(SELECT ap.aid,
+		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as freenum 
+		FROM hd_allportstatus ap GROUP BY ap.aid) s 
+		on s.aid = a.id
+		<if test="distance != null">
+			HAVING distance &lt;= #{distance} 
+		</if>
+		order by distance LIMIT #{startnum}, 10
+	</select>
+	
+	<!-- 查询距离最近的站点 -->
+	<!-- <select id="queryAreaRecently2" resultType="java.util.Map">
+		SELECT id, 
+		( 
+		  6371 * acos(cos(radians(#{lat})) * cos(radians(a.lat)) * cos(radians(a.lon) - radians(#{lon}))
+		    +
+		    sin(radians(#{lon})) * sin(radians(a.lat)) 
+		  ) 
+		)
+		AS wolfdistance, 
+		IFNULL(s.freenum,0) as freenum,
+		a.`name`
+		FROM hd_area a
+		LEFT JOIN 
+		(SELECT ap.aid,
+		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as freenum 
+		FROM hd_allportstatus ap GROUP BY ap.aid) s 
+		on s.aid = a.id
+		<if test="distance != null">
+			HAVING wolfdistance &lt;= #{distance} 
+		</if>
+		ORDER BY  wolfdistance LIMIT #{startnum}, 10
+	</select> -->
+	
+	<select id="queryAreaRecently2" resultType="java.util.Map">
+		select
+	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((34.8149006*PI()/180-lat*PI()/180)/2),2)+
+	    COS(34.8149006*PI()/180)*COS(lat*PI()/180)*POW(SIN((113.568114*PI()/180- 
+	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.freenum,0) as freenum,a.id,a.`name`
+		FROM hd_area a
+		LEFT JOIN 
+		(SELECT ap.aid,
+		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as freenum 
+		FROM hd_allportstatus ap GROUP BY ap.aid) s 
+		on s.aid = a.id
+		<if test="distance != null">
+			HAVING distance &lt;= #{distance} 
+		</if>
+		order by distance LIMIT #{startnum}, 10
+	</select>
+	
 </mapper>
 
 

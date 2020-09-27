@@ -19,6 +19,7 @@ import com.hedong.hedongwx.dao.RealchargerecordDao;
 import com.hedong.hedongwx.dao.TradeRecordDao;
 import com.hedong.hedongwx.entity.Area;
 import com.hedong.hedongwx.entity.ChargeRecord;
+import com.hedong.hedongwx.entity.ChargeRecordCopy;
 import com.hedong.hedongwx.entity.Equipment;
 import com.hedong.hedongwx.entity.GeneralDetail;
 import com.hedong.hedongwx.entity.MerchantDetail;
@@ -145,6 +146,7 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 			List<ChargeRecord> charginglist = chargeRecordDao.queryChargedByUid(uid, startnum * 10);
 			map.put("charginglist", charginglist);
 			map.put("startnum", startnum++);
+			map.put("recordsize", charginglist.size());
 			if (charginglist.size() > 0) {
 				return CommUtil.responseBuildInfo(1000, "获取成功", map);
 			} else {
@@ -832,6 +834,60 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 		} catch (Exception e) {
 			e.printStackTrace();
 			return CommUtil.isMapEmpty(null);
+		}
+	}
+
+	@Override
+	public Map<String, Object> queryChargeRecord(Integer uid, Integer status, Integer startnum) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			List<ChargeRecordCopy> chargelist = chargeRecordDao.queryChargeRecord(uid, status, startnum * 10);
+			for (ChargeRecordCopy chargeRecordCopy : chargelist) {
+				String equipmentnum = chargeRecordCopy.getEquipmentnum();
+				int parseInt = Integer.parseInt(equipmentnum.substring(4, 6));
+				if (parseInt >= 1 && parseInt <= 31) {
+					chargeRecordCopy.setEquipemnttype(1);
+				} else if (parseInt >= 51 && parseInt <= 81) {
+					chargeRecordCopy.setEquipemnttype(2);
+				} else {
+					chargeRecordCopy.setEquipemnttype(1);
+				}
+			}
+			map.put("charginglist", chargelist);
+			map.put("startnum", startnum + 1);
+			map.put("listsize", chargelist.size());
+			if (chargelist.size() > 0) {
+				return CommUtil.responseBuildInfo(1000, "获取成功", map);
+			} else {
+				return CommUtil.responseBuild(1001, "未查询到数据", null);
+			}
+		} catch (Exception e) {
+			return CommUtil.responseBuild(1002, "系统异常", null);
+		}
+	}
+
+	@Override
+	public Map<String, Object> queryChargeRecordInfo(Integer id) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			ChargeRecordCopy chargeRecordCopy = chargeRecordDao.queryChargeRecordInfo(id);
+			if (chargeRecordCopy != null) {
+				String equipmentnum = chargeRecordCopy.getEquipmentnum();
+				int parseInt = Integer.parseInt(equipmentnum.substring(4, 6));
+				if (parseInt >= 1 && parseInt <= 31) {
+					chargeRecordCopy.setEquipemnttype(1);
+				} else if (parseInt >= 51 && parseInt <= 81) {
+					chargeRecordCopy.setEquipemnttype(2);
+				} else {
+					chargeRecordCopy.setEquipemnttype(1);
+				}
+				map.put("chargeinfo", chargeRecordCopy);
+				return CommUtil.responseBuildInfo(1000, "获取成功", map);
+			} else {
+				return CommUtil.responseBuild(1001, "未查询到数据", null);
+			}
+		} catch (Exception e) {
+			return CommUtil.responseBuild(1002, "系统异常", null);
 		}
 	}
 }

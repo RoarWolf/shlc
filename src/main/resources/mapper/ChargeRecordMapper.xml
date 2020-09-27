@@ -605,6 +605,24 @@
 		</where>
 		LIMIT #{startnumber},#{pages}
 	</select>
+	
+	<!-- 查询用户订单列表 -->
+	<select id="queryChargeRecord" resultType="com.hedong.hedongwx.entity.ChargeRecordCopy">
+		select e.remark as equipmentnick,c.id,c.ordernum,c.equipmentnum,(c.paymoney - c.refund_money - c.server_money) as chargemoney,c.create_time from hd_chargerecord_copy c
+		LEFT JOIN hd_equipment_new e on e.`code` = c.equipmentnum
+		where c.uid = #{uid} and c.status = #{status} order by c.id desc limit #{startnum}, 10
+	</select>
+	
+	<!-- 查询订单 -->
+	<select id="queryChargeRecordInfo" resultType="com.hedong.hedongwx.entity.ChargeRecordCopy">
+		select e.remark as equipmentnick,c.ordernum,c.equipmentnum,
+		(c.paymoney - c.refund_money - c.server_money) as chargemoney,c.paymoney,c.server_money,c.refund_money,
+		c.create_time,c.pay_time,c.begin_time,c.end_time,c.useelec,c.usetime
+		from hd_chargerecord_copy c
+		LEFT JOIN
+		hd_equipment_new e on e.`code` = c.equipmentnum
+		 where c.id = #{id}
+	</select>
 </mapper>
 
 

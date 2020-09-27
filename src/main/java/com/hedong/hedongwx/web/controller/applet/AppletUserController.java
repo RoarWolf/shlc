@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hedong.hedongwx.service.AreaService;
 import com.hedong.hedongwx.service.ChargeRecordService;
 import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.utils.CommUtil;
@@ -25,6 +26,8 @@ public class AppletUserController {
 	private GeneralDetailService generalDetailService;
 	@Autowired
 	private ChargeRecordService chargeService;
+	@Autowired
+	private AreaService areaService;
 
 	/**
 	 * 获取用户openid
@@ -64,12 +67,28 @@ public class AppletUserController {
 	 * @param status
 	 * @return
 	 */
-	@RequestMapping("/getChargeRecord")
+	@PostMapping("/getChargeRecord")
 	public 	Object getChargeRecord(Integer userid, Integer startnum, Integer status) {
-		if (status == 1) {
-			return chargeService.queryChargedByUid(userid, startnum);
-		} else {
-			return chargeService.queryChargingByUid(userid, startnum);
-		}
+		return chargeService.queryChargeRecord(userid, status, startnum);
+	}
+	
+	/**
+	 * 查询用户订单信息
+	 * @param userid
+	 * @return
+	 */
+	@PostMapping("/getChargeRecordInfo")
+	public 	Object getChargeRecordInfo(Integer orderid) {
+		return chargeService.queryChargeRecordInfo(orderid);
+	}
+	
+	/**
+	 * 查询用户订单信息
+	 * @param userid
+	 * @return
+	 */
+	@PostMapping("/getAreaRecently")
+	public 	Object getAreaRecently(Double lon, Double lat, Double distance, Integer startnum) {
+		return areaService.queryAreaRecently(lon, lat, distance, startnum);
 	}
 }

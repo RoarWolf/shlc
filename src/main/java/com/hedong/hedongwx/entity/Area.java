@@ -1,7 +1,11 @@
 package com.hedong.hedongwx.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Area {
 
 	/** 表自增id */
@@ -20,6 +24,10 @@ public class Area {
 	private Double divideinto;
 	/** 具体位置 */
 	private String address;
+	/** 经度 */
+	private BigDecimal lon;
+	/** 纬度 */
+	private BigDecimal lat;
 	/** 创建时间 */
 	private Date createTime;
 	/** 修改时间 */
@@ -56,6 +64,11 @@ public class Area {
 	private Integer expiredEquNum;
 	//快到期设备数(小于15天)
 	private Integer almostExEquNum;
+	
+	//距离（km）
+	private BigDecimal distance;
+	//空闲端口数
+	private Integer freenum;
 	
 	
 
@@ -137,6 +150,22 @@ public class Area {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public BigDecimal getLon() {
+		return lon;
+	}
+
+	public void setLon(BigDecimal lon) {
+		this.lon = lon;
+	}
+
+	public BigDecimal getLat() {
+		return lat;
+	}
+
+	public void setLat(BigDecimal lat) {
+		this.lat = lat;
 	}
 
 	public Date getCreateTime() {
@@ -257,6 +286,22 @@ public class Area {
 
 	public void setEqucount(String equcount) {
 		this.equcount = equcount;
+	}
+
+	public BigDecimal getDistance() {
+		return distance;
+	}
+
+	public void setDistance(BigDecimal distance) {
+		this.distance = distance;
+	}
+
+	public Integer getFreenum() {
+		return freenum;
+	}
+
+	public void setFreenum(Integer freenum) {
+		this.freenum = freenum;
 	}
 
 	@Override

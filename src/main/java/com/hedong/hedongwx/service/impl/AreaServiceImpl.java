@@ -19,6 +19,7 @@ import com.hedong.hedongwx.dao.OnlineCardDao;
 import com.hedong.hedongwx.entity.Area;
 import com.hedong.hedongwx.entity.AreaRelevance;
 import com.hedong.hedongwx.entity.Areastatistics;
+import com.hedong.hedongwx.entity.ChargeRecordCopy;
 import com.hedong.hedongwx.entity.OnlineCard;
 import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.User;
@@ -886,6 +887,24 @@ public class AreaServiceImpl implements AreaService {
 			} 
 		} catch (Exception e) {
 			logger.warn("小区修改余额错误===" + e.getMessage());
+		}
+	}
+
+	@Override
+	public Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum);
+			map.put("charginglist", arealist);
+			map.put("startnum", startnum + 1);
+			map.put("listsize", arealist.size());
+			if (arealist.size() > 0) {
+				return CommUtil.responseBuildInfo(1000, "获取成功", map);
+			} else {
+				return CommUtil.responseBuild(1001, "未查询到数据", null);
+			}
+		} catch (Exception e) {
+			return CommUtil.responseBuild(1002, "系统异常", null);
 		}
 	}
 	
