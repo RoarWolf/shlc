@@ -887,7 +887,7 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 				return CommUtil.responseBuild(1001, "未查询到数据", null);
 			}
 		} catch (Exception e) {
-			return CommUtil.responseBuild(1002, "系统异常", null);
+			return CommUtil.responseBuild(1002, "系统异常", e.getMessage());
 		}
 	}
 }
