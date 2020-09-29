@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.service.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.utils.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -2353,6 +2355,33 @@ public class UserServiceImpl implements UserService {
 				}
 			}
 			return fsal;
+		}
+	}
+
+	@Transactional
+	@Override
+	public Map<String, Object> addUserByAuth_code(String auth_code,String username) {
+		try {
+			JSONObject userOpenid = WeixinUtil.getUserOpenid(auth_code);
+			System.out.println("授权：" + userOpenid.toString());
+			if (!userOpenid.has("openid")) {
+				return CommUtil.responseBuildInfo(1001, "授权code已使用或未接收到微信返openid", null);
+			}
+			String openid = userOpenid.getString("openid");
+			User selectUser = userDao.getUserByOpenid(openid);
+			if (selectUser == null) {
+				User user = new User();
+				user.setOpenid(openid);
+				user.setUsername(username);
+				userDao.addUser(user);
+				selectUser = userDao.getUserByOpenid(openid);
+			}
+			Map<String,Object> map = new HashMap<>();
+			map.put("userinfo", selectUser);
+			return CommUtil.responseBuildInfo(1000, "授权code已使用或未接收到微信返openid", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
 	}
 	

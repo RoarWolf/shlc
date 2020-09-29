@@ -3,6 +3,9 @@ package com.hedong.hedongwx.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class User implements Serializable {
 
 	/**

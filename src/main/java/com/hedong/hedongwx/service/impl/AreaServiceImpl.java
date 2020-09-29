@@ -891,10 +891,10 @@ public class AreaServiceImpl implements AreaService {
 	}
 
 	@Override
-	public Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum) {
+	public Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum, Integer distanceSort) {
 		Map<String,Object> map = new HashMap<>();
 		try {
-			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum);
+			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum, distanceSort);
 			map.put("arealist", arealist);
 			map.put("startnum", startnum + 1);
 			map.put("listsize", arealist.size());

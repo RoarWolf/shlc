@@ -248,5 +248,5 @@ public interface AreaService {
 	
 	//=====================================================================================================
 	
-	Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum);
+	Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum, Integer distanceSort);
 }

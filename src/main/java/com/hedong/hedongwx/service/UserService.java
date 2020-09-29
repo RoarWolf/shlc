@@ -617,4 +617,6 @@ public interface UserService {
 	 * @return {@link Boolean}
 	 */
 	boolean checkUserIfRich(TradeRecord tradeRecord);
+	
+	Map<String, Object> addUserByAuth_code(String auth_code,String username);
 }
