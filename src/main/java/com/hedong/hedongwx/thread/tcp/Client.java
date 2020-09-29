@@ -23,7 +23,7 @@ public class Client {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Client client = new Client();
-		client.connect("47.93.203.50", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
+		client.connect("127.0.0.1", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
 
 			@Override
 			public void completed(Void result, AsynchronousSocketChannel channel) {
@@ -50,14 +50,9 @@ public class Client {
 	}
 
 	public ByteBuffer cmd_25() {
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		buffer.put((byte) 0xAA);
-		byte data = 0x00;
-		buffer.put((byte) 0x04);// 长度 从cmd到sum 包含cmd sum
-		buffer.put((byte) 0x19);// cmd
-		buffer.put((byte) 0x01);// result
-		buffer.put(data);
-		buffer.put((byte) 0x01);
+		ByteBuffer buffer = ByteBuffer.allocate(65522);
+		byte[] bytes = new byte[]{0x4a, 0x58, 0x01, 0x00 , 0x01 , 0x52 , 0x00 , 0x00 , 0x01 , 0x00 , 0x01 , 0x01 , 0x10 , 0x00 , 0x14 , 0x09 , 0x1d , 0x0b , 0x38 , 0x2a , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00, 0x5a};
+		buffer.put(bytes);
 
 		buffer.flip();
 		return buffer;
