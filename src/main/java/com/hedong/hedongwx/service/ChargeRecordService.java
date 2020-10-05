@@ -265,4 +265,7 @@ public interface ChargeRecordService {
 	
 	/** 查询订单信息*/
 	Map<String, Object> queryChargeRecordInfo(Integer id);
+	
+	Map<String, Object> insertChargeRecord(String equipmentnum, int port, int ctrlWay, int ctrlParam, int chargeWay,
+			Integer uid, Integer paytype, Double paymoney);
 }

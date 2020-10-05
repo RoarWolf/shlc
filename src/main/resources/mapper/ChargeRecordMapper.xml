@@ -623,6 +623,152 @@
 		hd_equipment_new e on e.`code` = c.equipmentnum
 		 where c.id = #{id}
 	</select>
+	
+	<insert id="insertChargeRecord" parameterType="com.hedong.hedongwx.entity.ChargeRecordCopy">
+	    insert into hd_chargerecord_copy
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="id != null" >
+	        id,
+	      </if>
+	      <if test="merchantid != null" >
+	        merchantid,
+	      </if>
+	      <if test="uid != null" >
+	        uid,
+	      </if>
+	      <if test="ordernum != null" >
+	        ordernum,
+	      </if>
+	      <if test="number != null" >
+	        number,
+	      </if>
+	      <if test="paytype != null" >
+	        paytype,
+	      </if>
+	      <if test="status != null" >
+	        status,
+	      </if>
+	      <if test="equipmentnum != null" >
+	        equipmentnum,
+	      </if>
+	      <if test="port != null" >
+	        port,
+	      </if>
+	      <if test="paymoney != null" >
+	        paymoney,
+	      </if>
+	      <if test="serverMoney != null" >
+	        server_money,
+	      </if>
+	      <if test="refundMoney != null" >
+	        refund_money,
+	      </if>
+	      <if test="ctrlWay != null" >
+	        ctrl_way,
+	      </if>
+	      <if test="ctrlParam != null" >
+	        ctrl_param,
+	      </if>
+	      <if test="chargeWay != null" >
+	        charge_way,
+	      </if>
+	      <if test="createTime != null" >
+	        create_time,
+	      </if>
+	      <if test="payTime != null" >
+	        pay_time,
+	      </if>
+	      <if test="beginTime != null" >
+	        begin_time,
+	      </if>
+	      <if test="endTime != null" >
+	        end_time,
+	      </if>
+	      <if test="resultinfo != null" >
+	        resultinfo,
+	      </if>
+	      <if test="refundTime != null" >
+	        refund_time,
+	      </if>
+	      <if test="usetime != null" >
+	        usetime,
+	      </if>
+	      <if test="useelec != null" >
+	        useelec,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="id != null" >
+	        #{id,jdbcType=INTEGER},
+	      </if>
+	      <if test="merchantid != null" >
+	        #{merchantid,jdbcType=INTEGER},
+	      </if>
+	      <if test="uid != null" >
+	        #{uid,jdbcType=INTEGER},
+	      </if>
+	      <if test="ordernum != null" >
+	        #{ordernum,jdbcType=VARCHAR},
+	      </if>
+	      <if test="number != null" >
+	        #{number,jdbcType=INTEGER},
+	      </if>
+	      <if test="paytype != null" >
+	        #{paytype,jdbcType=INTEGER},
+	      </if>
+	      <if test="status != null" >
+	        #{status,jdbcType=INTEGER},
+	      </if>
+	      <if test="equipmentnum != null" >
+	        #{equipmentnum,jdbcType=VARCHAR},
+	      </if>
+	      <if test="port != null" >
+	        #{port,jdbcType=INTEGER},
+	      </if>
+	      <if test="paymoney != null" >
+	        #{paymoney,jdbcType=DOUBLE},
+	      </if>
+	      <if test="serverMoney != null" >
+	        #{serverMoney,jdbcType=DOUBLE},
+	      </if>
+	      <if test="refundMoney != null" >
+	        #{refundMoney,jdbcType=DOUBLE},
+	      </if>
+	      <if test="ctrlWay != null" >
+	        #{ctrlWay,jdbcType=INTEGER},
+	      </if>
+	      <if test="ctrlParam != null" >
+	        #{ctrlParam,jdbcType=INTEGER},
+	      </if>
+	      <if test="chargeWay != null" >
+	        #{chargeWay,jdbcType=INTEGER},
+	      </if>
+	      <if test="createTime != null" >
+	        #{createTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="payTime != null" >
+	        #{payTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="beginTime != null" >
+	        #{beginTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="endTime != null" >
+	        #{endTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="resultinfo != null" >
+	        #{resultinfo,jdbcType=INTEGER},
+	      </if>
+	      <if test="refundTime != null" >
+	        #{refundTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="usetime != null" >
+	        #{usetime,jdbcType=INTEGER},
+	      </if>
+	      <if test="useelec != null" >
+	        #{useelec,jdbcType=INTEGER},
+	      </if>
+	    </trim>
+	</insert>
 </mapper>
 
 

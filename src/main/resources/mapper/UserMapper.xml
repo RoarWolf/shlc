@@ -261,8 +261,8 @@
 			<if test="servephone != null">
 				servephone = #{servephone,jdbcType=VARCHAR},
 			</if>
-			<if test="rank != null">
-				rank = #{rank,jdbcType=INTEGER},
+			<if test="level != null">
+				level = #{level,jdbcType=INTEGER},
 			</if>
 			<if test="merid != null">
 				merid = #{merid,jdbcType=INTEGER},

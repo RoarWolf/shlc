@@ -70,6 +70,12 @@ public class ChargeRecord {
 	
 	private Integer consumeTime;//消耗的电量
 	
+	private Integer ctrlWay;//控制方式
+	
+	private Integer ctrlParam;//控制参数
+	
+	private Integer chargeWay;//充电模式
+	
 	private Integer flag;
 	
 	private String codenick;
@@ -312,6 +318,30 @@ public class ChargeRecord {
 
 	public void setCodenick(String codenick) {
 		this.codenick = codenick;
+	}
+
+	public Integer getCtrlWay() {
+		return ctrlWay;
+	}
+
+	public void setCtrlWay(Integer ctrlWay) {
+		this.ctrlWay = ctrlWay;
+	}
+
+	public Integer getCtrlParam() {
+		return ctrlParam;
+	}
+
+	public void setCtrlParam(Integer ctrlParam) {
+		this.ctrlParam = ctrlParam;
+	}
+
+	public Integer getChargeWay() {
+		return chargeWay;
+	}
+
+	public void setChargeWay(Integer chargeWay) {
+		this.chargeWay = chargeWay;
 	}
 
 	@Override

@@ -251,4 +251,6 @@ public interface ChargeRecordDao {
 	 */
 	List<Map<String, Object>> selectChargeRecords(Parameters parameters);
 	
+	int insertChargeRecord(ChargeRecordCopy chargeRecordCopy);
+	
 }

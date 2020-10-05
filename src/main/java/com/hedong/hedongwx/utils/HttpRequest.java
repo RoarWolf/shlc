@@ -323,6 +323,22 @@ public class HttpRequest {
 		return sb.toString();
 	}
 	
+	/**
+	 * 生成订单号
+	 * @param length 传-1则默认为32位，其他则看传入值加17位
+	 * @return
+	 */
+	public static String createNewOrdernum(String equipmentnum) {
+		String format = CommUtil.toDateTime("yyMMddHHmmss");
+		StringBuffer sb = new StringBuffer();
+		sb.append(equipmentnum);
+		sb.append(format);
+		for (int i = 0; i < 4; i++) {
+			sb.append((int)(Math.random()*9));
+		}
+		return sb.toString();
+	}
+	
 
 	/**
 	 * 获取订单号 商户订单号（每个订单号必须唯一） 组成：mch_id+yyyymmdd+10位一天内不能重复的数字。

@@ -928,8 +928,6 @@ public class UserServiceImpl implements UserService {
 			datamap.put("token", account.getId());
 			request.getSession().setAttribute("user", account);
 			request.getSession().setAttribute("admin", account);
-			JedisUtils.set("admin", JSON.toJSONString(account),1800);
-			JedisUtils.set("user", JSON.toJSONString(account),1800);
 			return CommUtil.responseBuildInfo(200, "登录成功", datamap);
 		} catch (Exception e) {
 			e.printStackTrace();
