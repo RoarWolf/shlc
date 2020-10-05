@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.EquipmentDao">
+	<insert id="insertEquipmentNew" parameterType="com.hedong.hedongwx.entity.EquipmentNew">
+		insert into hd_equipment_new
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="code != null">
+				code,
+			</if>
+			<if test="bindtype != null">
+				bindtype,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="hardversion != null">
+				hardversion,
+			</if>
+			<if test="softversion != null">
+				softversion,
+			</if>
+			<if test="subHardversion != null">
+				sub_hardversion,
+			</if>
+			<if test="subSoftversion != null">
+				sub_softversion,
+			</if>
+			<if test="dcModeltype != null">
+				dc_modeltype,
+			</if>
+			<if test="dcModelnum != null">
+				dc_modelnum,
+			</if>
+			<if test="dcModelpower != null">
+				dc_modelpower,
+			</if>
+			<if test="billtype != null">
+				billtype,
+			</if>
+			<if test="location != null">
+				location,
+			</if>
+			<if test="lon != null">
+				lon,
+			</if>
+			<if test="lat != null">
+				lat,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="registTime != null">
+				regist_time,
+			</if>
+			<if test="tempid != null">
+				tempid,
+			</if>
+			<if test="aid != null">
+				aid,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="bindtype != null">
+				#{bindtype,jdbcType=TINYINT},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=TINYINT},
+			</if>
+			<if test="hardversion != null">
+				#{hardversion,jdbcType=VARCHAR},
+			</if>
+			<if test="softversion != null">
+				#{softversion,jdbcType=VARCHAR},
+			</if>
+			<if test="subHardversion != null">
+				#{subHardversion,jdbcType=VARCHAR},
+			</if>
+			<if test="subSoftversion != null">
+				#{subSoftversion,jdbcType=VARCHAR},
+			</if>
+			<if test="dcModeltype != null">
+				#{dcModeltype,jdbcType=INTEGER},
+			</if>
+			<if test="dcModelnum != null">
+				#{dcModelnum,jdbcType=INTEGER},
+			</if>
+			<if test="dcModelpower != null">
+				#{dcModelpower,jdbcType=INTEGER},
+			</if>
+			<if test="billtype != null">
+				#{billtype,jdbcType=INTEGER},
+			</if>
+			<if test="location != null">
+				#{location,jdbcType=VARCHAR},
+			</if>
+			<if test="lon != null">
+				#{lon,jdbcType=DECIMAL},
+			</if>
+			<if test="lat != null">
+				#{lat,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="registTime != null">
+				#{registTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tempid != null">
+				#{tempid,jdbcType=INTEGER},
+			</if>
+			<if test="aid != null">
+				#{aid,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateEquipmentNew" parameterType="com.hedong.hedongwx.entity.EquipmentNew">
+		update hd_equipment_new
+		<set>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="bindtype != null">
+				bindtype = #{bindtype,jdbcType=TINYINT},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=TINYINT},
+			</if>
+			<if test="hardversion != null">
+				hardversion = #{hardversion,jdbcType=VARCHAR},
+			</if>
+			<if test="softversion != null">
+				softversion = #{softversion,jdbcType=VARCHAR},
+			</if>
+			<if test="subHardversion != null">
+				sub_hardversion = #{subHardversion,jdbcType=VARCHAR},
+			</if>
+			<if test="subSoftversion != null">
+				sub_softversion = #{subSoftversion,jdbcType=VARCHAR},
+			</if>
+			<if test="dcModeltype != null">
+				dc_modeltype = #{dcModeltype,jdbcType=INTEGER},
+			</if>
+			<if test="dcModelnum != null">
+				dc_modelnum = #{dcModelnum,jdbcType=INTEGER},
+			</if>
+			<if test="dcModelpower != null">
+				dc_modelpower = #{dcModelpower,jdbcType=INTEGER},
+			</if>
+			<if test="billtype != null">
+				billtype = #{billtype,jdbcType=INTEGER},
+			</if>
+			<if test="location != null">
+				location = #{location,jdbcType=VARCHAR},
+			</if>
+			<if test="lon != null">
+				lon = #{lon,jdbcType=DECIMAL},
+			</if>
+			<if test="lat != null">
+				lat = #{lat,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="registTime != null">
+				regist_time = #{registTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tempid != null">
+				tempid = #{tempid,jdbcType=INTEGER},
+			</if>
+			<if test="aid != null">
+				aid = #{aid,jdbcType=INTEGER},
+			</if>
+			<if test="several != null">
+				several = #{several,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="liveTime != null">
+				live_time = #{liveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="deviceType != null">
+				device_type = #{deviceType,jdbcType=INTEGER},
+			</if>
+		</set>
+		where code = #{code,jdbcType=VARCHAR}
+	</update>
+
+</mapper>
