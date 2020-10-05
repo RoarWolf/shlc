@@ -315,10 +315,13 @@
 		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as freenum 
 		FROM hd_allportstatus ap GROUP BY ap.aid) s 
 		on s.aid = a.id
-		<if test="distance != null">
-			HAVING distance &lt;= #{distance} 
+		HAVING distance &lt;= #{distance} 
+		<if test="distanceSort == 1">
+			order by distance 
 		</if>
-		order by distance LIMIT #{startnum}, 10
+		<if test="startnum != null">
+		 	LIMIT #{startnum}, 10
+		</if>
 	</select>
 	
 	<!-- 查询距离最近的站点 -->
@@ -356,10 +359,13 @@
 		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as freenum 
 		FROM hd_allportstatus ap GROUP BY ap.aid) s 
 		on s.aid = a.id
-		<if test="distance != null">
-			HAVING distance &lt;= #{distance} 
+		HAVING distance &lt;= #{distance} 
+		<if test="distanceSort == 1">
+			order by distance 
 		</if>
-		order by distance LIMIT #{startnum}, 10
+		<if test="startnum != null">
+		 	LIMIT #{startnum}, 10
+		</if>
 	</select>
 	
 </mapper>

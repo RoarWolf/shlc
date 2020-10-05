@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.web.controller.applet;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hedong.hedongwx.service.AreaService;
 import com.hedong.hedongwx.service.ChargeRecordService;
 import com.hedong.hedongwx.service.GeneralDetailService;
+import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.WeixinUtil;
 
@@ -28,6 +30,8 @@ public class AppletUserController {
 	private ChargeRecordService chargeService;
 	@Autowired
 	private AreaService areaService;
+	@Autowired
+	private UserService userService;
 
 	/**
 	 * 获取用户openid
@@ -35,18 +39,8 @@ public class AppletUserController {
 	 * @return
 	 */
 	@PostMapping("/getopenid")
-	public 	Object getopenid(String code) {
-		try {
-			JSONObject userOpenid = WeixinUtil.getUserOpenid(code);
-			if (!userOpenid.has("openid")) {
-				return CommUtil.responseBuild(1001, "code is error", userOpenid.toString());
-			}
-			System.out.println("===" + userOpenid.toString());
-			return CommUtil.responseBuild(1000, "success", userOpenid.toString());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return CommUtil.responseBuild(1002, "request fail: system error", null);
-		}
+	public 	Object getopenid(String code, String username) {
+		return userService.addUserByAuth_code(code, username);
 	}
 	
 	/**
@@ -88,7 +82,11 @@ public class AppletUserController {
 	 * @return
 	 */
 	@PostMapping("/getAreaRecently")
-	public 	Object getAreaRecently(Double lon, Double lat, Double distance, Integer startnum) {
-		return areaService.queryAreaRecently(lon, lat, distance, startnum);
+	public 	Object getAreaRecently(Double lon, Double lat, Double distance, Integer startnum, 
+			Integer distanceSort) {
+		return areaService.queryAreaRecently(lon, lat, distance, startnum, distanceSort);
 	}
+	
+	
+	
 }

@@ -66,8 +66,8 @@ import net.sf.json.JSONObject;
  */
 public class WeixinUtil {
 	
-	public static final String APPID = "wxd055087c1caa71a6";
-	public static final String APPSECRET = "c94124dcb3eeecc068802f4025ecb8a0";
+	public static final String APPID = "wx9b422ab1c06627b3";
+	public static final String APPSECRET = "966ecd8ffb1a5e126da82fc7cf7ef73c";
 	
 	private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
 	

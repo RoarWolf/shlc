@@ -617,7 +617,7 @@
 	<select id="queryChargeRecordInfo" resultType="com.hedong.hedongwx.entity.ChargeRecordCopy">
 		select e.remark as equipmentnick,c.ordernum,c.equipmentnum,
 		(c.paymoney - c.refund_money - c.server_money) as chargemoney,c.paymoney,c.server_money,c.refund_money,
-		c.create_time,c.pay_time,c.begin_time,c.end_time,c.useelec,c.usetime
+		c.create_time,c.pay_time,c.begin_time,c.end_time,c.useelec,c.usetime,c.status
 		from hd_chargerecord_copy c
 		LEFT JOIN
 		hd_equipment_new e on e.`code` = c.equipmentnum
