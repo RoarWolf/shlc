@@ -17,8 +17,8 @@ public class CommonConfig {
 
 	private final Logger logger = LoggerFactory.getLogger(CommonConfig.class);
 	
-	public static  String ZIZHUCHARGE = "http://www.tengfuchong.com.cn";
-	public static  String ZIZHUCHARGES = "http://www.tengfuchong.com.cn/";
+	public static  String ZIZHUCHARGE = "http://ck.taifengkeji.com";
+	public static  String ZIZHUCHARGES = "http://ck.taifengkeji.com/";
 //	public static  String ZIZHUCHARGES = "http://www.he360.cn/";
 	public static  String ZIZHUCHARG = "http://www.he360.cn/";
 	/** 微信开放平台 AppID*/

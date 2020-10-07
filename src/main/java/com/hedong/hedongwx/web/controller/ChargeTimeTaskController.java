@@ -117,30 +117,30 @@ public class ChargeTimeTaskController {
 	 * @param handOffline 手动断电的时间
 	 * @return
 	 */
-	@PostMapping("/setOfflineTime")
-	@ResponseBody
-	public String setTime(String sysOffline,String handOffline) {
-		Map<String,String> map = new HashMap<>();
-		boolean isnumberhand = SendMsgUtil.checkIfAllNumber(handOffline);
-		boolean isnumbersys = SendMsgUtil.checkIfAllNumber(handOffline);
-		if (!isnumberhand || !isnumbersys) {
-			return "1001";
-		} else {
-			int sysInt = Integer.parseInt(sysOffline);
-			int handInt = Integer.parseInt(handOffline);
-			if (sysInt == 0 && handInt == 0) {
-				return "1001";
-			}
-		}
-		map.put("sysOffline", sysOffline);
-		map.put("handOffline", handOffline);
-		String hmset = JedisUtils.hmset("sysTime", map);
-		if ("OK".equals(hmset)) {
-			return "1000";
-		} else {
-			return "1001";
-		}
-	}
+//	@PostMapping("/setOfflineTime")
+//	@ResponseBody
+//	public String setTime(String sysOffline,String handOffline) {
+//		Map<String,String> map = new HashMap<>();
+//		boolean isnumberhand = SendMsgUtil.checkIfAllNumber(handOffline);
+//		boolean isnumbersys = SendMsgUtil.checkIfAllNumber(handOffline);
+//		if (!isnumberhand || !isnumbersys) {
+//			return "1001";
+//		} else {
+//			int sysInt = Integer.parseInt(sysOffline);
+//			int handInt = Integer.parseInt(handOffline);
+//			if (sysInt == 0 && handInt == 0) {
+//				return "1001";
+//			}
+//		}
+//		map.put("sysOffline", sysOffline);
+//		map.put("handOffline", handOffline);
+//		String hmset = JedisUtils.hmset("sysTime", map);
+//		if ("OK".equals(hmset)) {
+//			return "1000";
+//		} else {
+//			return "1001";
+//		}
+//	}
 	
 	/**
 	 * 查询离线设备，超过系统时间的处理未结束的订单
@@ -157,10 +157,10 @@ public class ChargeTimeTaskController {
 				for (Entry<String, String> entry : entrySet) {
 					String code = entry.getKey();
 					System.out.println("设备号===" + code);
-					boolean isAllNumber = SendMsgUtil.checkIfAllNumber(code);
-					if (!isAllNumber) {
-						continue;
-					}
+//					boolean isAllNumber = SendMsgUtil.checkIfAllNumber(code);
+//					if (!isAllNumber) {
+//						continue;
+//					}
 					// 设备离线的时间
 					String updateTime = entry.getValue();
 					long updateTimeLong = CommUtil.DateTime(updateTime, "yyyy-MM-dd HH:mm:ss").getTime();
@@ -253,7 +253,7 @@ public class ChargeTimeTaskController {
 						
 						if (elec != null && elec != 0) {
 							Double refundMoney = 0.0;
-							refundMoney = SendMsgUtil.clacRefund(code,power, quantity + 0.0, CommUtil.subBig(quantity, elec), allTime, surpTime, allMoney,norm,chargeRecord.getBegintime().getTime(),System.currentTimeMillis());
+							refundMoney = 0.0;
 							double round = (Math.round(refundMoney * 100) + 0.0) / 100;
 							logger.info("退款金额===" + round);
 							for (ChargeRecord charge : chargeRecordList) {
@@ -344,7 +344,7 @@ public class ChargeTimeTaskController {
 		String ordernum = chargeRecord.getOrdernum();
 		Integer merchantid = chargeRecord.getMerchantid();
 		if (round != 0) {
-			SendMsgUtil.resetChargeData(code, chargeRecord.getPort(), uid, 0, 0);
+//			SendMsgUtil.resetChargeData(code, chargeRecord.getPort(), uid, 0, 0);
 			Map<String, String> chargeInfoMap = JedisUtils.hgetAll(ordernum);
 			if (DisposeUtil.checkMapIfHasValue(chargeInfoMap)) {
 				String type = chargeInfoMap.get("type");
@@ -627,7 +627,7 @@ public class ChargeTimeTaskController {
 									merchantDetailService.insertMerEarningDetail(merid, paymoney, merUser.getEarnings(), ordernum, datetime, paysource, paytype, paystatus);
 								}else{
 									//普通商家充电退费数据
-									HelloController.dealerIncomeRefund(comment, merid, paymoney, ordernum, datetime, paysource, paytype, paystatus);
+//									HelloController.dealerIncomeRefund(comment, merid, paymoney, ordernum, datetime, paysource, paytype, paystatus);
 								}
 							} catch (Exception e) {
 								logger.warn("小区修改余额错误===" + e.getMessage());

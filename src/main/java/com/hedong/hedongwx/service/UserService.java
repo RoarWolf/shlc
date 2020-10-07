@@ -619,4 +619,24 @@ public interface UserService {
 	boolean checkUserIfRich(TradeRecord tradeRecord);
 	
 	Map<String, Object> addUserByAuth_code(String auth_code,String username);
+	
+	/**
+	 * 用户钱包充值（预订单）
+	 * @param userid
+	 * @param openid
+	 * @param money
+	 * @param request
+	 * @return
+	 */
+	Map<String, Object> walletAppointCharge(Integer userid, String openid, Double money,HttpServletRequest request);
+	
+	/**
+	 * 用户钱包充值（微信支付回调）
+	 * @param resultMap
+	 * @param openid
+	 * @param ordernum
+	 * @return
+	 */
+	Map<String, Object> walletCharge(Map<Object,Object> resultMap, String openid, String ordernum);
+	
 }

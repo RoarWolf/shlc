@@ -901,7 +901,7 @@ public class TradeRecordServiceImpl implements TradeRecordService {
 					int idx = money.lastIndexOf(".");
 					String totalFee = money.substring(0, idx);
 					// 发送指令
-					SendMsgUtil.send_0x83(inCoins.getEquipmentnum(), inCoins.getPort(), Byte.parseByte(totalFee));
+//					SendMsgUtil.send_0x83(inCoins.getEquipmentnum(), inCoins.getPort(), Byte.parseByte(totalFee));
 					//WolfHttpRequest.sendIncoinsPaydata(inCoins.getEquipmentnum(), inCoins.getPort(), Byte.parseByte(totalFee));
 					// 更新脉冲已支付状态
 					inCoinsDao.updateInCoinsStatusAndRecycletype(orderNum, (byte)1);

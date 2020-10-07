@@ -66,7 +66,6 @@ import com.hedong.hedongwx.utils.WeiXinConfigParam;
 import com.hedong.hedongwx.utils.WeixinUtil;
 import com.hedong.hedongwx.utils.XMLUtil;
 import com.hedong.hedongwx.web.controller.EquipmentController;
-import com.hedong.hedongwx.web.controller.HelloController;
 import com.hedong.hedongwx.web.controller.WxPayController;
 
 import net.sf.json.JSONObject;
@@ -307,7 +306,7 @@ public class ChargeRecordController {
 		//当前时间
 		long currentTime = System.currentTimeMillis();
 		//使用发送信息工具
-		SendMsgUtil.send_21(Byte.parseByte(port), code);
+//		SendMsgUtil.send_21(Byte.parseByte(port), code);
 		boolean flag = true;
 		int temp = 0;
 		while (flag) {
@@ -365,7 +364,7 @@ public class ChargeRecordController {
 		map.put("code", code);
 		boolean checkTimeIfExceed = DisposeUtil.checkTimeIfExceed(code, 2);
 		if (!checkTimeIfExceed) {
-			SendMsgUtil.send_13(Byte.parseByte(port), code);
+//			SendMsgUtil.send_13(Byte.parseByte(port), code);
 		}
 		long currentTime = System.currentTimeMillis();
 //		ChargeRecord chargeRecord = chargeRecordService.getChargeRecordById(chargeid);
@@ -440,7 +439,7 @@ public class ChargeRecordController {
 //							Map<String,String> parse = (Map<String, String>) JSON.parse(subFee);
 //							String totalfee = parse.get("totalfee");
 //							double round = Double.parseDouble(totalfee);
-							double round = SendMsgUtil.getV3FeeMoney(code, Byte.parseByte(port), uid, chargeRecord.getConsumeTime());
+							double round = 0.0;
 							String ordernum = chargeRecord.getOrdernum();
 							Integer merchantid = chargeRecord.getMerchantid();
 							Map<String, String> chargeInfoMap = JedisUtils.hgetAll(ordernum);
@@ -590,7 +589,7 @@ public class ChargeRecordController {
 									}
 								}
 							}
-							SendMsgUtil.resetChargeData(code, chargeRecord.getPort(), uid, 0, 0);
+//							SendMsgUtil.resetChargeData(code, chargeRecord.getPort(), uid, 0, 0);
 						} else if (permit == 1) {
 							if (chargeRecord.getNumber() != null && chargeRecord.getNumber() == 0) {
 								User user = userService.selectUserById(chargeRecord.getUid());
@@ -611,7 +610,7 @@ public class ChargeRecordController {
 									Double useTime = allTime - surpTime;
 									if (elec != null && elec != 0) {
 //										Double refundMoney = 0.0;
-										refundMoney = SendMsgUtil.clacRefund(code,(short) power, quantity + 0.0, elec + 0.0, allTime, surpTime, allMoney,norm,chargeRecord.getBegintime().getTime(),System.currentTimeMillis());
+//										refundMoney = SendMsgUtil.clacRefund(code,(short) power, quantity + 0.0, elec + 0.0, allTime, surpTime, allMoney,norm,chargeRecord.getBegintime().getTime(),System.currentTimeMillis());
 										double round = (Math.round(refundMoney * 100) + 0.0) / 100;
 										logger.info(chargeRecord.getOrdernum() + "退款金额===" + round);
 										for (ChargeRecord charge : chargeRecordList) {
@@ -886,7 +885,7 @@ public class ChargeRecordController {
 		}
 		model.addAttribute("temptype", temptype);
 		model.addAttribute("uid", chargeRecord.getUid());
-		SendMsgUtil.send_15(chargeRecord.getEquipmentnum());
+//		SendMsgUtil.send_15(chargeRecord.getEquipmentnum());
 		model.addAttribute("nowtime", System.currentTimeMillis() + "");
 		//--------------------------------------------
 //		User user = (User) request.getSession().getAttribute("user");
@@ -1097,7 +1096,7 @@ public class ChargeRecordController {
 			model.addAttribute("existuser", request.getParameter("existuser"));
 			return "equipment/equipmentunbind";
 		} else {
-			SendMsgUtil.send_15(code);
+//			SendMsgUtil.send_15(code);
 //			User user = userService.selectUserById(userEquipment.getUserId());
 //			TemplateParent temp =  templateService.getParentTemplateOne(equipment1.getTempid()); 
 			List<String> forbidport =  new ArrayList<String>();
@@ -1436,7 +1435,7 @@ public class ChargeRecordController {
 					model.addAttribute("existuser", request.getParameter("existuser"));
 					return "equipment/equipmentunbind";
 				} else {
-					SendMsgUtil.send_15(deviceNum);
+//					SendMsgUtil.send_15(deviceNum);
 //					List<TemplateSon> templatelist = templateService.getSonTemplateLists(tempid);
 					model.addAttribute("balance", user.getBalance());
 					model.addAttribute("sendmoney", CommUtil.toDouble(user.getSendmoney()));
@@ -1700,7 +1699,7 @@ public class ChargeRecordController {
 				model.addAttribute("existuser", request.getParameter("existuser"));
 				return "equipment/equipmentunbind";
 			} else {
-				SendMsgUtil.send_15(equcode);
+//				SendMsgUtil.send_15(equcode);
 				model.addAttribute("balance", user.getBalance());
 				model.addAttribute("sendmoney", CommUtil.toDouble(user.getSendmoney()));
 				System.out.println("********************   "+ CommUtil.toDouble(user.getSendmoney()));
@@ -1939,12 +1938,12 @@ public class ChargeRecordController {
 			try {
 				// 2、修改用户钱包金额
 				if ("07".equals(equipment.getHardversion()) || DisposeUtil.checkIfHasV3(equipment.getHardversion())) {
-					SendMsgUtil.send_0x27((byte)port, (short)(money / 10), (short)time, (short)elec, chargeRecord.getEquipmentnum(), (byte)1);
+//					SendMsgUtil.send_0x27((byte)port, (short)(money / 10), (short)time, (short)elec, chargeRecord.getEquipmentnum(), (byte)1);
 					if (DisposeUtil.checkIfHasV3(equipment.getHardversion())) {
-						SendMsgUtil.resetChargeData(code, port, chargeRecord2.getUid(), money2, 1);
+//						SendMsgUtil.resetChargeData(code, port, chargeRecord2.getUid(), money2, 1);
 					}
 				} else {
-					SendMsgUtil.send_0x14(port, (short) (money / 10), time, elec, chargeRecord.getEquipmentnum());// 支付完成充电开始
+//					SendMsgUtil.send_0x14(port, (short) (money / 10), time, elec, chargeRecord.getEquipmentnum());// 支付完成充电开始
 				}
 				String urltem = CommonConfig.ZIZHUCHARGE+"/general/sendmsgdetails?source=1&ordernum="+chargeRecord.getOrdernum();
 				String phone = userService.selectUserById(merid).getPhoneNum();
@@ -1998,9 +1997,9 @@ public class ChargeRecordController {
 			Short time = Short.valueOf(tmpTime + "");
 			Short elec = Short.valueOf(tmpElec + "");
 			if ("07".equals(equipment.getHardversion()) || DisposeUtil.checkIfHasV3(equipment.getHardversion())) {
-				SendMsgUtil.send_0x27(port, (short)(money / 10), (short)time, (short)elec, code, (byte)1);
+//				SendMsgUtil.send_0x27(port, (short)(money / 10), (short)time, (short)elec, code, (byte)1);
 			} else {
-				SendMsgUtil.send_0x14(port, (short) (money / 10), time, elec, code);// 支付完成充电开始
+//				SendMsgUtil.send_0x14(port, (short) (money / 10), time, elec, code);// 支付完成充电开始
 			}
 		}
 //		try {
@@ -2070,7 +2069,7 @@ public class ChargeRecordController {
 						code, port + 0, 1, time + 0, elec + 0, 0, -1.0);
 				try {
 					// 2、修改用户钱包金额
-					SendMsgUtil.send_0x14(port, (short) (money / 10), time, elec, code);//支付完成充电开始
+//					SendMsgUtil.send_0x14(port, (short) (money / 10), time, elec, code);//支付完成充电开始
 //					WolfHttpRequest.sendChargePaydata(port, time, money/10 + "", chargeRecord.getQuantity() + "", code);
 					String urltem = CommonConfig.ZIZHUCHARGE+"/general/sendmsgdetails?source=1&ordernum="+chargeRecord.getOrdernum();
 					String phone = userService.selectUserById(merid).getPhoneNum();
@@ -2508,7 +2507,7 @@ public class ChargeRecordController {
 									merchantDetailService.insertMerEarningDetail(merid, paymoney, merUser.getEarnings(), ordernum, datetime, paysource, paytype, paystatus);
 								}else{
 									//普通商家充电退费数据
-									HelloController.dealerIncomeRefund(comment, merid, paymoney, ordernum, datetime, paysource, paytype, paystatus);
+//									HelloController.dealerIncomeRefund(comment, merid, paymoney, ordernum, datetime, paysource, paytype, paystatus);
 								}
 							} catch (Exception e) {
 								logger.warn("小区修改余额错误===" + e.getMessage());

@@ -73,7 +73,7 @@ public class AppletController {
 				return "0";
 			}
 			String endCode = equipmentService.selectEndDeviceNum(null);
-			String code = SendMsgUtil.createNewCode(endCode);
+			String code = "000001";
 			Equipment equipment = new Equipment();
 			equipment.setCode(code);
 			equipment.setDeviceIdAndroid(deviceId);

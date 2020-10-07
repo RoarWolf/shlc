@@ -25,7 +25,7 @@ public class JedisUtils {
 	static{
 		JedisPoolConfig poolConfig=new JedisPoolConfig();
 		poolConfig.setMaxTotal(1000);
-		pool=new JedisPool(poolConfig,"47.93.203.50",6379,0,"hedongnengyuan");
+		pool=new JedisPool(poolConfig,"121.196.187.251",6379,0,"redisshzylc");
 	}
 	
 	//@PostConstruct

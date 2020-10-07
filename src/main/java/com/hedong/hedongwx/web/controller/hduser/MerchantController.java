@@ -1443,14 +1443,14 @@ public class MerchantController {
 			} else if ("04".equals(hardversion)) {
 				List<TemplateSon> templateLists = templateService.getEquSonTem(code);
 				model.addAttribute("templateLists", templateLists);
-				SendMsgUtil.send_0x22(code, 0, (short) 0, (byte) 2);
+//				SendMsgUtil.send_0x22(code, 0, (short) 0, (byte) 2);
 				model.addAttribute("nowtime", System.currentTimeMillis());
 				model.addAttribute("openid", user.getOpenid());
 				return "merchant/offlineCard";
 			} else {
 				List<TemplateSon> templatelist = templateService.getEquSonTem(code);
 				model.addAttribute("templatelist", templatelist);
-				SendMsgUtil.send_15(code);
+//				SendMsgUtil.send_15(code);
 				return "merchant/remotechargechoose";
 			}
 		} else {
@@ -1474,9 +1474,9 @@ public class MerchantController {
 				Short elec = Short.valueOf(chargeQuantity);
 				Equipment equipment = equipmentService.getEquipmentById(code);
 				if ("07".equals(equipment.getHardversion())) {
-					SendMsgUtil.send_0x27((byte)portchoose, (short)(money / 10), (short)time, (short)elec, code, (byte)1);
+//					SendMsgUtil.send_0x27((byte)portchoose, (short)(money / 10), (short)time, (short)elec, code, (byte)1);
 				} else {
-					SendMsgUtil.send_0x14(portchoose, (short) (money / 10), time, elec, code);// 支付完成充电开始
+//					SendMsgUtil.send_0x14(portchoose, (short) (money / 10), time, elec, code);// 支付完成充电开始
 				}
 //				SendMsgUtil.send_0x14(portchoose, (short) (money / 10), time, elec, code);
 //				WolfHttpRequest.sendChargePaydata(portchoose, time, (short) (money / 10) + "", chargeQuantity, code);

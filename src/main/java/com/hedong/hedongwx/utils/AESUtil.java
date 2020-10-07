@@ -14,6 +14,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.alibaba.fastjson.JSON;
+
 public class AESUtil {
 
 	public static void main(String[] args) throws Exception {
@@ -28,22 +30,29 @@ public class AESUtil {
 //		System.out.println("加密后的2进制密文：" + new String(byte2));
 //		byte[] decrypt = decrypt(byte2, password);
 //		System.out.println("解密后的内容：" + new String(decrypt, "utf-8"));
-		int i1 = 59;
-		int i2 = 12;
-		String i1Hex = Integer.toHexString(i1);
-		System.out.println("i1Hex===" + i1Hex);
-		String i2Hex = Integer.toHexString(i2);
-		System.out.println("i2Hex===" + i2Hex);
-		String str = i1Hex + i2Hex;
-		System.out.println("str===" + str);
-		byte[] str2cbcd = String_BCD(str);
-		System.out.println("length===" + str2cbcd.length);
-		for (byte b : str2cbcd) {
-			System.out.print("b=" + b);
+//		int i1 = 59;
+//		int i2 = 12;
+//		String i1Hex = Integer.toHexString(i1);
+//		System.out.println("i1Hex===" + i1Hex);
+//		String i2Hex = Integer.toHexString(i2);
+//		System.out.println("i2Hex===" + i2Hex);
+//		String str = i1Hex + i2Hex;
+//		System.out.println("str===" + str);
+//		byte[] str2cbcd = String_BCD(str);
+//		System.out.println("length===" + str2cbcd.length);
+//		for (byte b : str2cbcd) {
+//			System.out.print("b=" + b);
+//		}
+//		System.out.println();
+//		String bcd_String = BCD_String(str2cbcd);
+//		System.out.println(bcd_String);
+		
+		String str = "www.tengfuchong.com.cn";
+		byte[] bytes = str.getBytes();
+		for (byte b : bytes) {
+			System.out.println("b===" + b);
 		}
-		System.out.println();
-		String bcd_String = BCD_String(str2cbcd);
-		System.out.println(bcd_String);
+				
 	}
 
 	/**
@@ -178,6 +187,17 @@ public class AESUtil {
 			sb.append(bcd[i]>>4&0xf)
 			.append(bcd[i]&0xf);
 		}
+		return sb.toString();
+	}
+	
+	/**
+	 * 将BCD编码的byte转换为String
+	 * @param bcd
+	 * @return
+	 */
+	public static String byte_BCD_String(byte bcd) {
+		StringBuilder sb = new StringBuilder();
+			sb.append(bcd>>4&0xf).append(bcd&0xf);
 		return sb.toString();
 	}
 

@@ -1,6 +1,5 @@
 package com.hedong.hedongwx.service.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,14 +10,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
-import com.hedong.hedongwx.utils.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.hedong.hedongwx.config.CommonConfig;
 import com.hedong.hedongwx.config.WeChatOpenPlatform;
 import com.hedong.hedongwx.dao.AreaDao;
@@ -41,6 +38,8 @@ import com.hedong.hedongwx.entity.Codestatistics;
 import com.hedong.hedongwx.entity.DealerAuthority;
 import com.hedong.hedongwx.entity.Equipment;
 import com.hedong.hedongwx.entity.MerAmount;
+import com.hedong.hedongwx.entity.MerchantDetail;
+import com.hedong.hedongwx.entity.Money;
 import com.hedong.hedongwx.entity.PackageMonth;
 import com.hedong.hedongwx.entity.PackageMonthRecord;
 import com.hedong.hedongwx.entity.Parameter;
@@ -49,7 +48,17 @@ import com.hedong.hedongwx.entity.Privilege;
 import com.hedong.hedongwx.entity.TradeRecord;
 import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.entity.UserBankcard;
+import com.hedong.hedongwx.service.GeneralDetailService;
+import com.hedong.hedongwx.service.MoneyService;
 import com.hedong.hedongwx.service.UserService;
+import com.hedong.hedongwx.utils.CommUtil;
+import com.hedong.hedongwx.utils.HttpRequest;
+import com.hedong.hedongwx.utils.MD5Util;
+import com.hedong.hedongwx.utils.PageUtils;
+import com.hedong.hedongwx.utils.StringUtil;
+import com.hedong.hedongwx.utils.WeixinUtil;
+import com.hedong.hedongwx.utils.WxpayUtil;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -88,6 +97,10 @@ public class UserServiceImpl implements UserService {
 	private DealerAuthorityDao dealerAuthorityDao;
 	@Autowired
 	private PrivilegeDao privilegeDao;
+	@Autowired
+	private MoneyService moneyService;
+	@Autowired
+	private GeneralDetailService generalDetailService;
 	
 	
 	@Transactional
@@ -2381,6 +2394,68 @@ public class UserServiceImpl implements UserService {
 			e.printStackTrace();
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
+	}
+
+	@Override
+	public Map<String, Object> walletAppointCharge(Integer userid, String openid, Double money,HttpServletRequest request) {
+		try {
+			String ordernum = HttpRequest.createOrdernum(-1);
+			Map<String, Object> payParam = WxpayUtil.payParam(openid, "applet/wolfnotify", ordernum, request, money);
+			User user = userDao.selectUserById(userid);
+			double aftermoney = CommUtil.addBig(user.getBalance(), money);
+			moneyService.payMoneys(userid, ordernum, 0, 0, money, 0.0, money, aftermoney, aftermoney, 0.0 , "钱包充值");
+			return CommUtil.responseBuildInfo(1000, "后台请求成功", payParam);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1001, "系统异常", null);
+		}
+	}
+
+	@Override
+	public Map<String, Object> walletCharge(Map<Object, Object> resultMap, String openid, String ordernum) {
+		Money money = moneyService.queryMoneyByOrdernum(ordernum);
+		if (money.getStatus() == null || money.getStatus() == 0) {//该订单处于预订单状态
+			//修改本地数据
+			Integer uid = CommUtil.toInteger(money.getUid());
+			Double paymoney = CommUtil.toDouble(money.getMoney());//付款总额
+			Double opertopupmoney = CommUtil.toDouble(paymoney);//操作总额
+			Double opersendmoney = CommUtil.toDouble(money.getSendmoney());//操作充值金额
+			Double opermoney = CommUtil.toDouble(money.getTomoney());//操作赠送金额
+			
+			String mremark = money.getRemark();//来源
+			
+			Integer orderid = CommUtil.toInteger(money.getId());
+			Date time = new Date();
+			String strtime = CommUtil.toDateTime(time);
+			Integer paysource = MerchantDetail.WALLETSOURCE;
+			Integer paytype = MerchantDetail.WEIXINPAY;
+			Integer paystatus = MerchantDetail.NORMAL;
+			Integer type = 1;
+			Double mermoney = 0.00;
+			
+			User touuser = userDao.selectUserById(uid);
+			Integer merid = CommUtil.toInteger(touuser.getMerid());
+			//============================================================================
+			Double topupmoney = CommUtil.toDouble(touuser.getBalance());//账户充值余额
+			Double sendmoney = CommUtil.toDouble(touuser.getSendmoney());//账户赠送余额
+			Double accountmoney = CommUtil.addBig(topupmoney, sendmoney);//账户金额（充值与赠送的合）
+			//============================================================================
+			Double topupbalance = CommUtil.addBig(opertopupmoney, topupmoney);//充值余额
+			Double sendbalance = CommUtil.addBig(opersendmoney, sendmoney);//赠送余额
+			Double accountbalance = CommUtil.addBig(topupbalance, sendbalance);//账户余额
+			//==========================================================================
+			//1、充值记录修改
+			money.setBalance(accountbalance);
+			money.setStatus(1);
+			moneyService.updateMoney(money);
+			
+			//2、添加钱包明细
+			generalDetailService.insertGenDetail(uid, merid, opertopupmoney, opersendmoney, 
+					opermoney, accountbalance, topupbalance, sendbalance, ordernum, time, 1, mremark);
+			//3、修改用户金额
+			userDao.updateBalanceByOpenid(topupbalance, sendbalance, touuser.getOpenid(),null);
+		}
+		return null;
 	}
 	
 }

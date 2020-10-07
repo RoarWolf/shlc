@@ -2040,10 +2040,10 @@ public class EquipmentServiceImpl implements EquipmentService {
 					insertCodeoperatelog(code1,5,1,merId,0,JSON.toJSONString(remark));
 					dataMap.put("msg", "设备IMEI互换成功");
 					if (codeA.getState() == 1) {
-						server.removeClient(code1);
+//						server.removeClient(code1);
 					}
 					if (codeB.getState() == 1) {
-						server.removeClient(code2);
+//						server.removeClient(code2);
 					}
 					return dataMap;
 				} catch (Exception e) {
@@ -2140,10 +2140,10 @@ public class EquipmentServiceImpl implements EquipmentService {
 					}
 					dataMap.put("msg", "设备IMEI互换成功");
 					if (codeA.getState() == 1) {
-						server.removeClient(code1);
+//						server.removeClient(code1);
 					}
 					if (codeB.getState() == 1) {
-						server.removeClient(code2);
+//						server.removeClient(code2);
 					}
 					return CommUtil.responseBuildInfo(200, "成功", dataMap);
 				} catch (Exception e) {
@@ -2626,7 +2626,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 				return "unionpay/chargeallport1";
 			// 脉冲投币
 			}else if("03".equals(hardVersion)){
-				SendMsgUtil.send_0x82(code);
+//				SendMsgUtil.send_0x82(code);
 				if(templateSons.size()>=2) {
 					model.addAttribute("defaultTemp", templateSons.get(1).getId());
 				}else {

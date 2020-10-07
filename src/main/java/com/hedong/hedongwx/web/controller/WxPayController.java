@@ -924,33 +924,33 @@ public class WxPayController {
 				Short time = 0;
 				Short elec = 0;
 				if (chargeRecord.getStatus() == null || chargeRecord.getStatus() == 0) {
-					try {
-						Byte port = Byte.valueOf(chargeRecord.getPort().toString());
-						time = Short.valueOf(chargeRecord.getDurationtime());
-						elec = Short.valueOf(chargeRecord.getQuantity() + "");
-						Equipment equipment = equipmentService.getEquipmentById(code);
-						if ("07".equals(equipment.getHardversion()) || DisposeUtil.checkIfHasV3(equipment.getHardversion())) {
-							SendMsgUtil.send_0x27((byte)port, (short)(money / 10), (short)time, (short)elec, code, (byte)1);
-							if (DisposeUtil.checkIfHasV3(equipment.getHardversion())) {
-								SendMsgUtil.resetChargeData(code, port, chargeRecord.getUid(), chargeRecord.getExpenditure(), 0);
-							}
-						} else {
-							SendMsgUtil.send_0x14(port, (short) (money / 10), time, elec, code);// 支付完成充电开始
-						}
-						long session_id = System.currentTimeMillis();
-						Timer timer = new Timer();
-						timer.schedule(new TimerTask() {
-							@Override
-							public void run() {
-								chargepayTask(code, port, chargeRecord.getDurationtime(), chargeRecord.getQuantity(), session_id, ordernum);
-							}
-						}, 60000);
-						Server.chargeTimerNumMap.put(session_id, 2);
-						System.out.println("定时任务已开启");
-					} catch (Exception e) {
-						logger.warn(ordernum + "  [origin] 脉冲     "+new Date());
-						e.printStackTrace();
-					}
+//					try {
+//						Byte port = Byte.valueOf(chargeRecord.getPort().toString());
+//						time = Short.valueOf(chargeRecord.getDurationtime());
+//						elec = Short.valueOf(chargeRecord.getQuantity() + "");
+//						Equipment equipment = equipmentService.getEquipmentById(code);
+//						if ("07".equals(equipment.getHardversion()) || DisposeUtil.checkIfHasV3(equipment.getHardversion())) {
+//							SendMsgUtil.send_0x27((byte)port, (short)(money / 10), (short)time, (short)elec, code, (byte)1);
+//							if (DisposeUtil.checkIfHasV3(equipment.getHardversion())) {
+//								SendMsgUtil.resetChargeData(code, port, chargeRecord.getUid(), chargeRecord.getExpenditure(), 0);
+//							}
+//						} else {
+//							SendMsgUtil.send_0x14(port, (short) (money / 10), time, elec, code);// 支付完成充电开始
+//						}
+//						long session_id = System.currentTimeMillis();
+//						Timer timer = new Timer();
+//						timer.schedule(new TimerTask() {
+//							@Override
+//							public void run() {
+//								chargepayTask(code, port, chargeRecord.getDurationtime(), chargeRecord.getQuantity(), session_id, ordernum);
+//							}
+//						}, 60000);
+//						Server.chargeTimerNumMap.put(session_id, 2);
+//						System.out.println("定时任务已开启");
+//					} catch (Exception e) {
+//						logger.warn(ordernum + "  [origin] 脉冲     "+new Date());
+//						e.printStackTrace();
+//					}
 				}
 //				try {
 //					AllPortStatus portStatus = allPortStatusService.findPortStatusByEquipmentnumAndPort(code, chargeRecord.getPort() + 0);
@@ -1007,7 +1007,7 @@ public class WxPayController {
 	public String offlineCardCharge(String openid, String code, Model model) {
 		Equipment equipment = equipmentService.getEquipmentById(code);
 		if (equipment == null) return "erroruser";
-		int send_0x22 = SendMsgUtil.send_0x22(code, 0, (short) 0, (byte) 2);
+//		int send_0x22 = SendMsgUtil.send_0x22(code, 0, (short) 0, (byte) 2);
 		String devicenum = CommUtil.toString(equipment.getCode());
 		String hardversion = CommUtil.toString(equipment.getHardversion());
 		Integer tempid = CommUtil.toInteger(equipment.getTempid());
@@ -1315,7 +1315,7 @@ public class WxPayController {
 					String accountmoney = String.valueOf(offlineCard.getAccountmoney() * 10);
 					String money = accountmoney.substring(0, accountmoney.indexOf("."));
 					short parseShort = Short.parseShort(money);
-					SendMsgUtil.send_0x22(offlineCard.getEquipmentnum(), parseLong, parseShort, (byte) 1);
+//					SendMsgUtil.send_0x22(offlineCard.getEquipmentnum(), parseLong, parseShort, (byte) 1);
 					//WolfHttpRequest.sendOfflineCardPaydata(offlineCard.getEquipmentnum(), cardID, parseShort, (byte) 1);
 				} catch (Exception e) {
 					logger.warn(ordernum + "离线卡充值异常[origin]");
@@ -1501,7 +1501,7 @@ public class WxPayController {
 					// 根据订单号将预订单改变为正常
 					inCoinsService.updateInCoinsStatusAndRecycletype(ordernum, (byte) 1);
 					try {
-						SendMsgUtil.send_0x83(devicenum, inCoins.getPort(), Byte.parseByte(total_fee));
+//						SendMsgUtil.send_0x83(devicenum, inCoins.getPort(), Byte.parseByte(total_fee));
 //						WolfHttpRequest.sendIncoinsPaydata(devicenum, inCoins.getPort(), Byte.parseByte(total_fee));
 					} catch (Exception e) {
 						logger.warn(
@@ -3248,53 +3248,53 @@ public class WxPayController {
 	
 	//定时任务
 	public void chargepayTask(String code, byte port, String times, int elec, long session_id, String ordernum) {
-		try {
-			List<ChargeRecord> chargelist = chargeRecordService.getOrderByOrdernum(ordernum);
-			if (chargelist.size() > 0) {
-				ChargeRecord chargeRecord = chargelist.get(0);
-				Integer resultinfo = chargeRecord.getResultinfo();
-				if (resultinfo == null) {
-					Map<String, String> codeMap = JedisUtils.hgetAll(code);
-					System.out.println(JSON.toJSONString(codeMap));
-					if (codeMap != null && codeMap.size() > 0) {
-						Map<String, String> parse = (Map<String, String>) JSON.parse(codeMap.get(port + ""));
-						String timeStr = parse.get("time");
-						String elecStr = parse.get("elec");
-						int timeInt = Integer.parseInt(timeStr);
-						int elecInt = Integer.parseInt(elecStr);
-						int time = Integer.parseInt(times);
-						Integer num = Server.chargeTimerNumMap.get(session_id);
-						if (num != null && num >= 1) {
-							if (time == timeInt && elec == elecInt) {
-								SendMsgUtil.send_21(port, code);
-								Timer timer = new Timer();
-								timer.schedule(new TimerTask() {
-									@Override
-									public void run() {
-										chargepayTask(code, port, timeStr, elecInt, session_id, ordernum);
-									}
-								}, 60000);
-								System.out.println(ordernum + "定时任务再开启==session_id:" + session_id);
-								num--;
-								Server.chargeTimerMap.put(session_id, timer);
-								Server.chargeTimerNumMap.put(session_id, num);
-							} else {
-								System.out.println(ordernum + "时间电量都不为额定电量，定时任务结束");
-								Server.chargeTimerMap.remove(session_id);
-								Server.chargeTimerNumMap.remove(session_id);
-							}
-						} else {
-							System.out.println(ordernum + "次数已达最大，定时任务结束");
-							Server.chargeTimerMap.remove(session_id);
-							Server.chargeTimerNumMap.remove(session_id);
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			System.out.println("定时任务异常---");
-			e.printStackTrace();
-		}
+//		try {
+//			List<ChargeRecord> chargelist = chargeRecordService.getOrderByOrdernum(ordernum);
+//			if (chargelist.size() > 0) {
+//				ChargeRecord chargeRecord = chargelist.get(0);
+//				Integer resultinfo = chargeRecord.getResultinfo();
+//				if (resultinfo == null) {
+//					Map<String, String> codeMap = JedisUtils.hgetAll(code);
+//					System.out.println(JSON.toJSONString(codeMap));
+//					if (codeMap != null && codeMap.size() > 0) {
+//						Map<String, String> parse = (Map<String, String>) JSON.parse(codeMap.get(port + ""));
+//						String timeStr = parse.get("time");
+//						String elecStr = parse.get("elec");
+//						int timeInt = Integer.parseInt(timeStr);
+//						int elecInt = Integer.parseInt(elecStr);
+//						int time = Integer.parseInt(times);
+//						Integer num = Server.chargeTimerNumMap.get(session_id);
+//						if (num != null && num >= 1) {
+//							if (time == timeInt && elec == elecInt) {
+//								SendMsgUtil.send_21(port, code);
+//								Timer timer = new Timer();
+//								timer.schedule(new TimerTask() {
+//									@Override
+//									public void run() {
+//										chargepayTask(code, port, timeStr, elecInt, session_id, ordernum);
+//									}
+//								}, 60000);
+//								System.out.println(ordernum + "定时任务再开启==session_id:" + session_id);
+//								num--;
+//								Server.chargeTimerMap.put(session_id, timer);
+//								Server.chargeTimerNumMap.put(session_id, num);
+//							} else {
+//								System.out.println(ordernum + "时间电量都不为额定电量，定时任务结束");
+//								Server.chargeTimerMap.remove(session_id);
+//								Server.chargeTimerNumMap.remove(session_id);
+//							}
+//						} else {
+//							System.out.println(ordernum + "次数已达最大，定时任务结束");
+//							Server.chargeTimerMap.remove(session_id);
+//							Server.chargeTimerNumMap.remove(session_id);
+//						}
+//					}
+//				}
+//			}
+//		} catch (Exception e) {
+//			System.out.println("定时任务异常---");
+//			e.printStackTrace();
+//		}
 	}
 	
 	/**

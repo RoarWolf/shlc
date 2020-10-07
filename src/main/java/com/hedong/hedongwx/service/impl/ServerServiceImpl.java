@@ -13,13 +13,11 @@ public class ServerServiceImpl implements ServerService {
 	
 	// private SocketThread socketThread;
 	// private Server server;
-	@Autowired
-	private Server server;
 
 	public void serverStart() {
 		int port = 14700;
 		try {
-			server.createServer(port);
+			Server server = new Server(port);
 			server.run();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -1344,10 +1344,10 @@ public class EquipmentController {
 				checkUserBindAndDispose(openid, equcode);
 				return "redirect:/wxpay/inCoins?openid=" + openid + "&code=" + equcode;
 			} else {//在线状态的其他
-				int send_15 = SendMsgUtil.send_15(equcode);
-				if (send_15 == 0) {
-					return "equipment/equipmentoffline";
-				}
+//				int send_15 = SendMsgUtil.send_15(equcode);
+//				if (send_15 == 0) {
+//					return "equipment/equipmentoffline";
+//				}
 				List<String> forbidport = new ArrayList<String>();
 				if ("01".equals(hardversion)) {
 					Map<String, Object> defaulte = tempDefaultObje(tempson);
@@ -1574,10 +1574,10 @@ public class EquipmentController {
 		Short elec = Short.valueOf(chargeQuantity);
 		System.out.println("hardversion===" + hardversion);
 		if ("07".equals(hardversion) || DisposeUtil.checkIfHasV3(hardversion)) {
-			SendMsgUtil.send_0x27((byte)portchoose, (short)(money3 / 10), (short)time, (short)elec, code, (byte)1);
+//			SendMsgUtil.send_0x27((byte)portchoose, (short)(money3 / 10), (short)time, (short)elec, code, (byte)1);
 		} else {
-			SendMsgUtil.send_0x14(portchoose, (short) (money3 / 10), time, elec,
-					code);
+//			SendMsgUtil.send_0x14(portchoose, (short) (money3 / 10), time, elec,
+//					code);
 //			WolfHttpRequest.sendChargePaydata(portchoose, time, money3 / 10 + "", chargeQuantity, code , 0);
 		}
 		return "success";
@@ -2100,12 +2100,12 @@ public class EquipmentController {
 		// hashMap.put("elecTimeFirst", elecTimeFirst + "");
 		// Map<String, String> map = WolfHttpRequest.httpconnectwolf(hashMap,
 		// WolfHttpRequest.SEND_SETSYSTEM_URL);
-		SendMsgUtil.send_24(parseShort(coinMin + ""), parseShort(cardMin + ""), parseByte(clacCoinElecStr),
-				parseByte(clacCardElecStr), parseByte(clacCstStr), parseShort(powerMax1 + ""),
-				parseShort(powerMax2 + ""), parseShort(powerMax3 + ""), parseShort(powerMax4 + ""),
-				parseByte(powerTim2 + ""), parseByte(powerTim3 + ""), parseByte(powerTim4 + ""),
-				parseByte(spRecMon + ""), parseByte(spFullEmpty + ""), parseByte(fullPowerMin + ""),
-				parseByte(fullChargeTime + ""), parseByte(elecTimeFirst + ""), code);
+//		SendMsgUtil.send_24(parseShort(coinMin + ""), parseShort(cardMin + ""), parseByte(clacCoinElecStr),
+//				parseByte(clacCardElecStr), parseByte(clacCstStr), parseShort(powerMax1 + ""),
+//				parseShort(powerMax2 + ""), parseShort(powerMax3 + ""), parseShort(powerMax4 + ""),
+//				parseByte(powerTim2 + ""), parseByte(powerTim3 + ""), parseByte(powerTim4 + ""),
+//				parseByte(spRecMon + ""), parseByte(spFullEmpty + ""), parseByte(fullPowerMin + ""),
+//				parseByte(fullChargeTime + ""), parseByte(elecTimeFirst + ""), code);
 		long currentTime = System.currentTimeMillis();
 		boolean flag = true;
 		int temp = 0;
@@ -2456,10 +2456,10 @@ public class EquipmentController {
 				checkUserBindAndDispose(openid, equcode);
 				return "redirect:/wxpay/inCoins?openid=" + openid + "&code=" + equcode;
 			} else {//在线状态的其他
-				int send_15 = SendMsgUtil.send_15(equcode);
-				if (send_15 == 0) {
-					return "equipment/equipmentoffline";
-				}
+//				int send_15 = SendMsgUtil.send_15(equcode);
+//				if (send_15 == 0) {
+//					return "equipment/equipmentoffline";
+//				}
 //				TemplateParent temp = templateService.getParentTemplateOne(tempid);
 //				User user = userService.selectUserById(userEquipment.getUserId());
 //				TemplateParent temp = templateService.getParentTemplateOne(equipment.getTempid());
@@ -3274,7 +3274,7 @@ public class EquipmentController {
 				model.addAttribute("existuser", request.getParameter("existuser"));
 				return "equipment/equipmentunbind";
 			} else {
-				SendMsgUtil.send_15(equcode);
+//				SendMsgUtil.send_15(equcode);
 				//设备到期时间不为空且当前时间大于到期时间
 				if(expirationTime != null && new Date().after(expirationTime)){
 					model.addAttribute("errorinfo", "对不起，当前设备已到期");
