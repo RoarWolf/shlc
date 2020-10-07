@@ -30,22 +30,6 @@ public class DisposeUtil {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
 	public static void main(String[] args) {
-//		for (int i = 310100; i <= 310499; i++) {
-//			for (int j = 1; j <= 20; j++) {
-//				String str = "http://www.he360.com.cn/oauth2Portpay?codeAndPort=";
-//				String str = "";
-//				if (j >= 10) {
-//					str = str + i + j;
-//				} else {
-//					str = str + i + "0" + j;
-//				}
-//				logfile(str);
-//				System.out.println(str);
-//			}
-//		}
-		String createOrdernum = HttpRequest.createOrdernum(-1);
-		System.out.println("ordernum===" + createOrdernum);
-		System.out.println("length===" + createOrdernum.length());
 	}
 	
 	public static List<String> quChong(List<String> list) {

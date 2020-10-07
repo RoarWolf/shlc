@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hedong.hedongwx.config.CommonConfig;
 import com.hedong.hedongwx.dao.AreaDao;
@@ -30,8 +31,11 @@ import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.service.AreaService;
 import com.hedong.hedongwx.service.ChargeRecordService;
 import com.hedong.hedongwx.service.EquipmentService;
+import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.service.MerchantDetailService;
+import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.utils.CommUtil;
+import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.PageUtils;
 import com.hedong.hedongwx.utils.StringUtil;
 
@@ -54,6 +58,10 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 	private AreaDao areaDao;
 	@Autowired
 	private MerchantDetailService merchantDetailService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private GeneralDetailService generalDetailService;
 	
 	@Override
 	public List<ChargeRecord> chargeRecordByUid(Integer uid) {
@@ -889,5 +897,36 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 		} catch (Exception e) {
 			return CommUtil.responseBuild(1002, "系统异常", e.getMessage());
 		}
+	}
+
+	@Transactional
+	@Override
+	public Map<String, Object> insertChargeRecord(String equipmentnum, int port, int ctrlWay, int ctrlParam, int chargeWay,
+			Integer uid, Integer paytype, Double paymoney) {
+		User user = userService.selectUserById(uid);
+		if (user == null || user.getBalance() < paymoney) {
+			return CommUtil.responseBuildInfo(1001, "余额不足", null);
+		}
+		ChargeRecordCopy charge = new ChargeRecordCopy();
+		String ordernum = HttpRequest.createNewOrdernum(equipmentnum);
+		charge.setOrdernum(ordernum);
+		charge.setUid(uid);
+		charge.setEquipmentnum(equipmentnum);
+		charge.setPort(port);
+		charge.setPaymoney(paymoney);
+		charge.setCtrlWay(ctrlWay);
+		charge.setCtrlParam(ctrlParam);
+		charge.setChargeWay(chargeWay);
+		Date date = new Date();
+		charge.setCreateTime(date);
+		charge.setPayTime(date);
+		chargeRecordDao.insertChargeRecord(charge);
+		User edituser = new User();
+		edituser.setId(uid);
+		double balance = CommUtil.subBig(user.getBalance(), paymoney);
+		edituser.setBalance(balance);
+		userService.updateUserById(edituser);
+		generalDetailService.insertGenDetail(uid, 0, paymoney, 0.0, paymoney, balance, balance, 0.0, ordernum, date, 2, "充电");
+		return CommUtil.responseBuildInfo(1000, "付款成功，余额修改成功", null);
 	}
 }

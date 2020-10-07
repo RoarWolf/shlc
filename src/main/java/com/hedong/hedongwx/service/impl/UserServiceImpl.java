@@ -930,8 +930,6 @@ public class UserServiceImpl implements UserService {
 			datamap.put("token", account.getId());
 			request.getSession().setAttribute("user", account);
 			request.getSession().setAttribute("admin", account);
-			//JedisUtils.set("admin", JSON.toJSONString(account),1800);
-			//JedisUtils.set("user", JSON.toJSONString(account),1800);
 			return CommUtil.responseBuildInfo(200, "登录成功", datamap);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1295,16 +1293,16 @@ public class UserServiceImpl implements UserService {
 				user.setId(agentSelectmerid);
 			}
 			//====================================================
-			Integer rank = CommUtil.toInteger(user.getLevel());
-			Integer condition = CommUtil.toInteger(maparam.get("condition"));
-			if(rank.equals(0) && condition.equals(1)){//管理员初次查询
+//			Integer rank = CommUtil.toInteger(user.getLevel());
+			//Integer condition = CommUtil.toInteger(maparam.get("condition"));
+			/*if(rank.equals(0) && condition.equals(1)){//管理员初次查询
 				datamap.put("wallettotalmoney", 0.00);
 				datamap.put("touristinfo", new ArrayList<Map<String,Object>>());
 				datamap.put("totalRows", 0);
 				datamap.put("totalPages", 0);
 				datamap.put("currentPage", 0);
 				return CommUtil.responseBuildInfo(200, "成功", datamap);
-			}
+			}*/
 			Parameters parameters = new Parameters();
 			//if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));

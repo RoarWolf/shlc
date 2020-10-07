@@ -76,6 +76,12 @@ public class ChargeRecordCopy {
 	
 	private Integer usetime;//充电时长
 	
+	private Integer ctrlWay;//控制方式
+	
+	private Integer ctrlParam;//控制参数
+	
+	private Integer chargeWay;//充电模式
+	
 	private String equipmentnick;
 	
 	private Integer equipemnttype;
@@ -294,6 +300,30 @@ public class ChargeRecordCopy {
 
 	public void setUsetime(Integer usetime) {
 		this.usetime = usetime;
+	}
+
+	public Integer getCtrlWay() {
+		return ctrlWay;
+	}
+
+	public void setCtrlWay(Integer ctrlWay) {
+		this.ctrlWay = ctrlWay;
+	}
+
+	public Integer getCtrlParam() {
+		return ctrlParam;
+	}
+
+	public void setCtrlParam(Integer ctrlParam) {
+		this.ctrlParam = ctrlParam;
+	}
+
+	public Integer getChargeWay() {
+		return chargeWay;
+	}
+
+	public void setChargeWay(Integer chargeWay) {
+		this.chargeWay = chargeWay;
 	}
 
 	public String getEquipmentnick() {
