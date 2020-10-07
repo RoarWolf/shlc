@@ -311,7 +311,7 @@ public class DataCollectInfoController {
 		System.err.println("进来了=================");
 		Map<String, Object> resultdata = new HashMap<String, Object>();
 		try {
-			if(JedisUtils.get("admin")==null){
+			if(CommonConfig.isExistSessionUser(request)){
 				resultdata = CommUtil.responseBuild(901, "session缓存失效", "");
 			}else{
 				//设备信息

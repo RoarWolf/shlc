@@ -1008,6 +1008,7 @@ public class CommUtil {
 		try {
 			map.put("result_code", toInteger(code));
 			map.put("result_info", toString(message));
+			map.put("code", toInteger(code));
 			map.put("result", result);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1020,6 +1021,7 @@ public class CommUtil {
 		try {
 			map.put("result_code", toInteger(code));
 			map.put("result_info", toString(message));
+			map.put("code", toInteger(code));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1031,6 +1033,7 @@ public class CommUtil {
 		try {
 			map.put("result_code", toInteger(code));
 			map.put("result_info", toString(message));
+			map.put("code", toInteger(code));
 			map.put("result", result);
 		} catch (Exception e) {
 			e.printStackTrace();
