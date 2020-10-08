@@ -929,4 +929,10 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 		generalDetailService.insertGenDetail(uid, 0, paymoney, 0.0, paymoney, balance, balance, 0.0, ordernum, date, 2, "充电");
 		return CommUtil.responseBuildInfo(1000, "付款成功，余额修改成功", null);
 	}
+
+	@Override
+	public Map<String, Object> stopChargeRecord(String ordernum, String begintime, String endtime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -271,5 +271,5 @@ public interface ChargeRecordService {
 			Integer uid, Integer paytype, Double paymoney);
 	
 	/** 结束订单*/
-	Map<String, Object> stopChargeRecord(String ordernum);
+	Map<String, Object> stopChargeRecord(String ordernum, String begintime, String endtime);
 }
