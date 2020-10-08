@@ -37,17 +37,14 @@ import lombok.extern.slf4j.Slf4j;
 public class Server {
 	public static void main(String[] args) throws IOException {
 
-		Server server = new Server(14700);
-		server.run();
-
 	}
 	
 	private static Logger logger = LoggerFactory.getLogger(Server.class);
 	private static final List<Client> connections = Collections.synchronizedList(new ArrayList<Client>());
 	private static ConcurrentHashMap<String, Client> clientMap = new ConcurrentHashMap<String, Client>();
 	public static ConcurrentHashMap<String, String> codeAndIPMap = new ConcurrentHashMap<String, String>();
-	private final AsynchronousServerSocketChannel listener;
-	private final AsynchronousChannelGroup channelGroup;
+	private AsynchronousServerSocketChannel listener;
+	private AsynchronousChannelGroup channelGroup;
 	private final Queue<SendData> queue = new LinkedList<>();
 	private int port;
 	private Map<String, Object> msgMap = new HashMap<>();
@@ -66,11 +63,15 @@ public class Server {
 	public static Map<String,Map<String,String>> setSystemMap = new HashMap<>();
 	public static short scanTime;
 	
-	public Server(int port) throws IOException {
-		channelGroup = AsynchronousChannelGroup.withFixedThreadPool(Runtime.getRuntime().availableProcessors(),
-				Executors.defaultThreadFactory());
-		this.port = port;
-		listener = createListener(channelGroup);
+	public void createServer(int portParam) throws IOException {
+		if (channelGroup == null) {
+			channelGroup = AsynchronousChannelGroup.withFixedThreadPool(Runtime.getRuntime().availableProcessors(),
+					Executors.defaultThreadFactory());
+			port = portParam;
+			listener = createListener(channelGroup);
+		} else {
+			return;
+		}
 	}
 
 	/*

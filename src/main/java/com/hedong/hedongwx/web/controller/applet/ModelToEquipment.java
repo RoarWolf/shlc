@@ -4,8 +4,11 @@ import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hedong.hedongwx.entity.Equipment;
+import com.hedong.hedongwx.service.EquipmentService;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.SendMsgUtil;
@@ -19,8 +22,11 @@ import com.hedong.hedongwx.utils.SendMsgUtil;
 @RestController
 @RequestMapping("/deviceConnect")
 public class ModelToEquipment {
+	
 	@Autowired
 	private HttpServletRequest request;
+	@Autowired
+	private EquipmentService equipmentService;
 	
 	/**
 	 * 预约
@@ -34,6 +40,10 @@ public class ModelToEquipment {
 	@PostMapping("/yuyueCharge")
 	public Object yuyueCharge(String devicenum, Integer port, String userid, Integer userType,
 			String phonenum) {
+		Equipment equipment = equipmentService.getEquipmentById(devicenum);
+		if (equipment == null) {
+			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
+		}
 		userid = DisposeUtil.completeNum(userid, 8);
 		return SendMsgUtil.send_0x1B(devicenum, port.byteValue(), userid, userType.byteValue(), phonenum);
 	}
@@ -64,11 +74,11 @@ public class ModelToEquipment {
 	 * @return
 	 */
 	@PostMapping("/startCharge")
-	public Object startCharge(String devicenum, Integer port, String userid, Integer userType,
-			String groupCode, Double money, Integer chargeWay, Integer startWay, String userOperCode) {
-		userid = DisposeUtil.completeNum(userid, 8);
+	public Object startCharge(String devicenum, Integer port, Integer userid, @RequestParam(value= "userType", defaultValue="21") Integer userType,
+			@RequestParam(value= "groupCode", defaultValue="0") String groupCode, Double money, Integer chargeWay, Integer startWay, String userOperCode) {
+		String useridStr = DisposeUtil.completeNum(userid + "", 8);
 		money = money * 100;
-		return SendMsgUtil.send_0x1F(devicenum, port.byteValue(), "1", userid, userType.shortValue(), groupCode, (byte) 3, 
+		return SendMsgUtil.send_0x1F(devicenum, port.byteValue(), "1", useridStr, userType.shortValue(), groupCode, (byte) 3, 
 				money.intValue(), chargeWay.byteValue(), startWay.byteValue(), userOperCode, (byte)1, null);
 	}
 	

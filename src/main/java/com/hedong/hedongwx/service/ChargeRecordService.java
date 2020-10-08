@@ -266,6 +266,10 @@ public interface ChargeRecordService {
 	/** 查询订单信息*/
 	Map<String, Object> queryChargeRecordInfo(Integer id);
 	
+	/** 添加订单*/
 	Map<String, Object> insertChargeRecord(String equipmentnum, int port, int ctrlWay, int ctrlParam, int chargeWay,
 			Integer uid, Integer paytype, Double paymoney);
+	
+	/** 结束订单*/
+	Map<String, Object> stopChargeRecord(String ordernum);
 }

@@ -306,9 +306,9 @@
 	<!-- 查询距离最近的站点 -->
 	<select id="queryAreaRecently" resultType="com.hedong.hedongwx.entity.Area">
 		select
-	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((34.8149006*PI()/180-lat*PI()/180)/2),2)+
-	    COS(34.8149006*PI()/180)*COS(lat*PI()/180)*POW(SIN((113.568114*PI()/180- 
-	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.freenum,0) as freenum,a.id,a.`name`
+	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{lat}*PI()/180-lat*PI()/180)/2),2)+
+	    COS(#{lat}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{lon}*PI()/180- 
+	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.freenum,0) as freenum,a.id,a.`name`,a.lat,a.lon
 		FROM hd_area a
 		LEFT JOIN 
 		(SELECT ap.aid,

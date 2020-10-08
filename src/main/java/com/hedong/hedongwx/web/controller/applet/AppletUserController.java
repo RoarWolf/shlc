@@ -108,7 +108,7 @@ public class AppletUserController {
 	}
 	
 	/**
-	 * 查询用户订单信息
+	 * 查询站点
 	 * @param userid
 	 * @return
 	 */
@@ -188,7 +188,7 @@ public class AppletUserController {
 			}
 		} catch (IOException e) {
 			// logger.error("支付回调发布异常：" + e);SortedMap<String, String> params = packagePayParamsToMap(request, money, openid, "wxpay/inCoinsPayback", format, "扫码投币");
-			logger.warn("  [origin] 扫码     "+new Date());
+			logger.warn("  [origin] 扫码     ");
 			e.printStackTrace();
 		}
 		return resXml;
