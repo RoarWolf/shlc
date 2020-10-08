@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hedong.hedongwx.entity.ParseMsg;
@@ -39,6 +40,8 @@ public class Server {
 
 	}
 	
+	@Autowired
+	private SendMsgUtil sendMsgUtil;
 	private static Logger logger = LoggerFactory.getLogger(Server.class);
 	private static final List<Client> connections = Collections.synchronizedList(new ArrayList<Client>());
 	private static ConcurrentHashMap<String, Client> clientMap = new ConcurrentHashMap<String, Client>();
@@ -268,6 +271,7 @@ public class Server {
 				byte[] deviceDateBytes = new byte[8];
 				buffer.get(deviceDateBytes);
 				String devicenum = AESUtil.BCD_String(deviceDateBytes);
+				System.out.println("devicenum===" + devicenum);
 //				short operatorNum = buffer.getShort();//运营商编号
 //				String operatorStr = DisposeUtil.completeNumIntHex((operatorNum & 0xffff), 4);
 //				byte gunNum = buffer.get();//枪数
@@ -308,19 +312,23 @@ public class Server {
 				//有无回复 1-有、2无
 				if (cmd == 0x01) {//桩请求连接 1
 					SendMsgUtil.parse_0x01(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
-				} else if (cmd == 0x05) {//登录信息 2桩回复对时命令
-					
+				} else if (cmd == 0x03) {//登录信息 2桩回复对时命令
+					sendMsgUtil.parse_0x03(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+					clientMap.put(devicenum, client);
+				} else if (cmd == 0x03) {//登录信息 2桩回复对时命令
+					SendMsgUtil.parse_0x05(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x07) {//桩回复对时命令
-					
+					SendMsgUtil.parse_0x07(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x09) {//桩遥信
-					
+					SendMsgUtil.parse_0x09(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x0A) {//桩遥测
-					
+					SendMsgUtil.parse_0x0A(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x0C) {//桩心跳
-					
-				} else if (cmd == 0x0E) {//桩回复查询连续变量
-					
-				} else if (cmd == 0x10) {//桩回复设置连续变量
+					SendMsgUtil.parse_0x0C(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else if (cmd == 0x1C) {//桩回复预约命令
+					SendMsgUtil.parse_0x1C(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else if (cmd == 0x1E) {//桩回复取消预约
+					SendMsgUtil.parse_0x1E(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 					
 				}
 			}

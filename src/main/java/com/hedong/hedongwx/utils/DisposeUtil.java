@@ -3,6 +3,7 @@ package com.hedong.hedongwx.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class DisposeUtil {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
 	public static void main(String[] args) {
+		byte[] bytes = new byte[]{(byte) 0xA6,(byte) 0xBB,0x41,0x31,0x32,0x33,0x34,0x35,0x36};
+		System.out.println(handleCarnum(bytes).trim());
 	}
 	
 	public static List<String> quChong(List<String> list) {
@@ -705,5 +708,33 @@ public class DisposeUtil {
     		str = "未知状态";
     	}
     	return str;
+    }
+    
+    /**
+     * 处理车牌号
+     * @param bytes
+     * @return
+     */
+    public static String handleCarnum(byte[] bytes){
+    	byte[] carlocalbytes = new byte[2];
+    	byte[] carlocalnumbytes = new byte[1];
+    	byte[] carnumbytes = new byte[6];
+    	carlocalbytes[0] = bytes[1];
+    	carlocalbytes[1] = bytes[0];
+    	for (int i = 0; i < bytes.length; i++) {
+			if (i >= 2 && i < 3) {
+				carlocalnumbytes[i-2] = bytes[i];
+			} else if (i >= 3) {
+				System.out.println("i=" + i);
+				carnumbytes[i-3] = bytes[i];
+			}
+		}
+    	String carnum = "0";
+		try {
+			carnum = new String(carlocalbytes, "GBK") + new String(carlocalnumbytes) + new String(carnumbytes);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+    	return carnum;
     }
 }

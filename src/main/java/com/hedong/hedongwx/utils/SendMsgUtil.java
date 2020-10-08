@@ -59,6 +59,11 @@ public class SendMsgUtil {
 //				System.out.println(JSON.toJSONString(map));
 //			}
 //		}
+//		String str = "沪";
+//		byte[] bytes = str.getBytes("GBK");
+//		for (byte b : bytes) {
+//			System.out.printf("0x%02x ", b);
+//		}
 	}
 	
 	public static byte clacSumVal(byte[] bytes) {
@@ -84,6 +89,18 @@ public class SendMsgUtil {
 		buffer.get(bytes);
 		byte sum = buffer.get();//cmd-data最后一个字节的异或值
 		logger.info(devicenum + "桩请求连接");
+		String areaAndAddress = devicenum.substring(6);
+		if (Integer.parseInt(areaAndAddress) == 0) {
+			String string = JedisUtils.get("devicenumindex");
+			String create_devicenum = DisposeUtil.completeNum(Integer.parseInt(string) + 1 + "", 10);
+			JedisUtils.set("devicenumindex", create_devicenum, 0);
+			devicenum = devicenum.substring(0, 6) + create_devicenum;
+		}
+		byte portnum = Byte.parseByte(devicenum.substring(4, 6));
+		if (portnum > 50 && portnum <= 81) {
+			portnum = (byte) (portnum - 50);
+		}
+		send_0x02(devicenum, (byte) 1, (byte) 0, portnum);
 	}
 	
 	/**
@@ -123,7 +140,7 @@ public class SendMsgUtil {
 	/**
 	 * 登录信息
 	 */
-	public static void parse_0x03(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
+	public void parse_0x03(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
 		byte[] deviceVer = new byte[16];
 		buffer.get(deviceVer);
@@ -533,20 +550,23 @@ public class SendMsgUtil {
 	 */
 	public static void parse_0x21(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
-		byte port = buffer.get();
+		byte port = (byte) (buffer.get() + 1);//枪号
 		byte[] orderBytes = new byte[32];
 		buffer.get(orderBytes);
-		String ordernum = new String(orderBytes);
+		String ordernum = new String(orderBytes);//订单号
 		byte[] useridBytes = new byte[32];
 		buffer.get(useridBytes);
-		String userid = new String(useridBytes);
-		byte userType = buffer.get();
+		String userid = new String(useridBytes);//用户id
+		byte userType = buffer.get();//用户类型
 		byte[] groupBytes = new byte[9];
 		buffer.get(groupBytes);
-		String groupCode = new String(groupBytes);
-		byte[] carBytes = new byte[9];
+		String groupCode = new String(groupBytes);//组织机构代码
+		byte[] carBytes = new byte[2];
 		buffer.get(carBytes);
-		String carNum = new String(carBytes);
+		String carNum = new String(carBytes);//车牌号
+		byte[] carLocalBytes = new byte[7];
+		buffer.get(carBytes);
+		String carLocalNum = new String(carBytes);//车牌号
 		byte ctrlWay = buffer.get();//控制方式
 		int ctrlParam = buffer.getInt();//控制参数
 		byte chargeWay = buffer.get();//充电模式

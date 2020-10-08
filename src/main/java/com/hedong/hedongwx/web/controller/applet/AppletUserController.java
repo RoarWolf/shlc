@@ -36,6 +36,7 @@ import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.thread.Server;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
+import com.hedong.hedongwx.utils.JedisUtils;
 import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.StringUtil;
 import com.hedong.hedongwx.utils.XMLUtil;
@@ -192,6 +193,22 @@ public class AppletUserController {
 			e.printStackTrace();
 		}
 		return resXml;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/getBillingInfo")
+	public Object getBillingInfo() {
+		Map<String, String> hgetAll = JedisUtils.hgetAll("billingInfo");
+		Map<String, Object> map = new HashMap<>();
+		map.putAll(hgetAll);
+		String timeInfoStr = hgetAll.get("timeInfo");
+		List<Object> timeInfoList = (List<Object>) JSON.parse(timeInfoStr);
+		map.remove("timeInfo");
+		map.put("timeInfo", timeInfoList);
+		return CommUtil.responseBuildInfo(1000, "获取成功", map);
 	}
 	
 }
