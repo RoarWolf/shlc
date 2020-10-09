@@ -61,7 +61,7 @@
 	<!-- ************************************************************************************************  -->
 
 	<sql id="User_Column_List">
-		id, username, realname, openid, unionid, openid_applet, password, phone_num, servephone, level, earnings,balance,sendmoney,feerate,
+		id, image_url, username, realname, openid, unionid, openid_applet, password, phone_num, servephone, level, earnings,balance,sendmoney,feerate,
 		create_time, update_time,agent_id,merid, aid, payhint
 	</sql>
 
@@ -70,6 +70,9 @@
 	    <trim prefix="(" suffix=")" suffixOverrides="," >
 	      <if test="username != null" >
 	        username,
+	      </if>
+	      <if test="image_url != null" >
+	        image_url,
 	      </if>
 	      <if test="realname != null" >
 	        realname,
@@ -117,6 +120,9 @@
 	    <trim prefix="values (" suffix=")" suffixOverrides="," >
 	      <if test="username != null" >
 	        #{username,jdbcType=VARCHAR},
+	      </if>
+	      <if test="imageUrl != null" >
+	        #{imageUrl,jdbcType=VARCHAR},
 	      </if>
 	      <if test="realname != null" >
 	        #{realname,jdbcType=VARCHAR},

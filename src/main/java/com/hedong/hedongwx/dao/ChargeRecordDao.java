@@ -251,6 +251,24 @@ public interface ChargeRecordDao {
 	 */
 	List<Map<String, Object>> selectChargeRecords(Parameters parameters);
 	
+	/**
+	 * 添加充电记录
+	 * @param chargeRecordCopy
+	 * @return
+	 */
 	int insertChargeRecord(ChargeRecordCopy chargeRecordCopy);
 	
+	/**
+	 * 修改充电记录
+	 * @param chargeRecordCopy
+	 * @return
+	 */
+	int updateChargeRecord(ChargeRecordCopy chargeRecordCopy);
+	
+	/**
+	 * 根据订单号查询订单id
+	 * @param ordernum
+	 * @return
+	 */
+	Integer selectOrderId(@Param("ordernum") String ordernum);
 }

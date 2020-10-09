@@ -319,7 +319,7 @@
 		<if test="distanceSort == 1">
 			order by distance 
 		</if>
-		<if test="startnum != null">
+		<if test="startnum != null and startnum != -1">
 		 	LIMIT #{startnum}, 10
 		</if>
 	</select>

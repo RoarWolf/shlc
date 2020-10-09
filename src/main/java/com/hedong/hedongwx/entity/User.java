@@ -16,6 +16,8 @@ public class User implements Serializable {
 	private Integer id;
 	/** 用户名 */
 	private String username;
+	/** 用户名 */
+	private String imageUrl;
 	/** 用户真实姓名 */
 	private String realname;
 	/** 用户微信唯一标识 */
@@ -172,6 +174,14 @@ public class User implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public String getUsername() {

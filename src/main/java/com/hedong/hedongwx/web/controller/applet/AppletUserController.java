@@ -71,8 +71,8 @@ public class AppletUserController {
 	 * @return
 	 */
 	@PostMapping("/getopenid")
-	public 	Object getopenid(String code, String username) {
-		return userService.addUserByAuth_code(code, username);
+	public 	Object getopenid(String code, String username, String imageUrl) {
+		return userService.addUserByAuth_code(code, username, imageUrl);
 	}
 	
 	/**
@@ -120,8 +120,8 @@ public class AppletUserController {
 	}
 	
 	@PostMapping("/walletCharge")
-	public Object walletCharge(Integer userid, String openid, Double money,HttpServletRequest request) {
-		return userService.walletAppointCharge(userid, openid, money, request);
+	public Object walletCharge(Integer userid, Double money,HttpServletRequest request) {
+		return userService.walletAppointCharge(userid, money, request);
 	}
 	
 	/**

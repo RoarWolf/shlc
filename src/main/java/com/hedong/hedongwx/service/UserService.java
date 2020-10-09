@@ -618,7 +618,7 @@ public interface UserService {
 	 */
 	boolean checkUserIfRich(TradeRecord tradeRecord);
 	
-	Map<String, Object> addUserByAuth_code(String auth_code,String username);
+	Map<String, Object> addUserByAuth_code(String auth_code,String username, String imageUrl);
 	
 	/**
 	 * 用户钱包充值（预订单）
@@ -628,7 +628,7 @@ public interface UserService {
 	 * @param request
 	 * @return
 	 */
-	Map<String, Object> walletAppointCharge(Integer userid, String openid, Double money,HttpServletRequest request);
+	Map<String, Object> walletAppointCharge(Integer userid, Double money,HttpServletRequest request);
 	
 	/**
 	 * 用户钱包充值（微信支付回调）

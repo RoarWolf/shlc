@@ -2371,7 +2371,7 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public Map<String, Object> addUserByAuth_code(String auth_code,String username) {
+	public Map<String, Object> addUserByAuth_code(String auth_code,String username, String imageUrl) {
 		try {
 			JSONObject userOpenid = WeixinUtil.getUserOpenid(auth_code);
 			System.out.println("授权：" + userOpenid.toString());
@@ -2384,6 +2384,7 @@ public class UserServiceImpl implements UserService {
 				User user = new User();
 				user.setOpenid(openid);
 				user.setUsername(username);
+				user.setImageUrl(imageUrl);
 				userDao.addUser(user);
 				selectUser = userDao.getUserByOpenid(openid);
 			}
@@ -2397,11 +2398,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Map<String, Object> walletAppointCharge(Integer userid, String openid, Double money,HttpServletRequest request) {
+	public Map<String, Object> walletAppointCharge(Integer userid, Double money,HttpServletRequest request) {
 		try {
 			String ordernum = HttpRequest.createOrdernum(-1);
-			Map<String, Object> payParam = WxpayUtil.payParam(openid, "applet/wolfnotify", ordernum, request, money);
 			User user = userDao.selectUserById(userid);
+			Map<String, Object> payParam = WxpayUtil.payParam(user.getOpenid(), "applet/wolfnotify", ordernum, request, money);
 			double aftermoney = CommUtil.addBig(user.getBalance(), money);
 			moneyService.payMoneys(userid, ordernum, 0, 0, money, 0.0, money, aftermoney, aftermoney, 0.0 , "钱包充值");
 			return CommUtil.responseBuildInfo(1000, "后台请求成功", payParam);

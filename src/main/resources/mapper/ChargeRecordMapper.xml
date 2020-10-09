@@ -769,6 +769,83 @@
 	      </if>
 	    </trim>
 	</insert>
+	
+	<update id="updateChargeRecord" parameterType="com.hedong.hedongwx.entity.ChargeRecordCopy" >
+    update hd_chargerecord_copy
+    <set >
+      <if test="merchantid != null" >
+        merchantid = #{merchantid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="ordernum != null" >
+        ordernum = #{ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="paytype != null" >
+        paytype = #{paytype,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="equipmentnum != null" >
+        equipmentnum = #{equipmentnum,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        port = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="paymoney != null" >
+        paymoney = #{paymoney,jdbcType=DOUBLE},
+      </if>
+      <if test="serverMoney != null" >
+        server_money = #{serverMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="refundMoney != null" >
+        refund_money = #{refundMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="ctrlWay != null" >
+        ctrl_way = #{ctrlWay,jdbcType=INTEGER},
+      </if>
+      <if test="ctrlParam != null" >
+        ctrl_param = #{ctrlParam,jdbcType=INTEGER},
+      </if>
+      <if test="chargeWay != null" >
+        charge_way = #{chargeWay,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beginTime != null" >
+        begin_time = #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resultinfo != null" >
+        resultinfo = #{resultinfo,jdbcType=INTEGER},
+      </if>
+      <if test="refundTime != null" >
+        refund_time = #{refundTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="usetime != null" >
+        usetime = #{usetime,jdbcType=INTEGER},
+      </if>
+      <if test="useelec != null" >
+        useelec = #{useelec,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectOrderId">
+  	select id from hd_chargerecord_copy where ordernum = #{ordernum}
+  </select>
 </mapper>
 
 
