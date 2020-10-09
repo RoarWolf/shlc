@@ -81,8 +81,8 @@ public class AppletUserController {
 	 * @return
 	 */
 	@PostMapping("/queryUserInfo")
-	public 	Object queryUserInfo(String code, String username, String imageUrl) {
-		return userService.addUserByAuth_code(code, username, imageUrl);
+	public 	Object queryUserInfo(Integer userid) {
+		return userService.queryUserInfo(userid);
 	}
 	
 	/**
