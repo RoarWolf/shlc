@@ -2397,6 +2397,23 @@ public class UserServiceImpl implements UserService {
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
 	}
+	
+	@Override
+	public Map<String, Object> queryUserInfo(Integer userid) {
+		try {
+			User user = userDao.selectUserById(userid);
+			Map<String,Object> map = new HashMap<>();
+			map.put("userinfo", user);
+			if (user != null) {
+				return CommUtil.responseBuildInfo(1000, "查询成功", map);
+			} else {
+				return CommUtil.responseBuildInfo(1001, "未查询到用户信息", null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
+		}
+	}
 
 	@Override
 	public Map<String, Object> walletAppointCharge(Integer userid, Double money,HttpServletRequest request) {

@@ -76,6 +76,16 @@ public class AppletUserController {
 	}
 	
 	/**
+	 * 获取用户openid
+	 * @param code
+	 * @return
+	 */
+	@PostMapping("/queryUserInfo")
+	public 	Object queryUserInfo(String code, String username, String imageUrl) {
+		return userService.addUserByAuth_code(code, username, imageUrl);
+	}
+	
+	/**
 	 * 查询用户钱包记录
 	 * @param userid
 	 * @param startnum
