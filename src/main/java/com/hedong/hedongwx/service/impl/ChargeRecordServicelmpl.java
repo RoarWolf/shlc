@@ -850,27 +850,28 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 		Map<String,Object> map = new HashMap<>();
 		try {
 			List<ChargeRecordCopy> chargelist = chargeRecordDao.queryChargeRecord(uid, status, startnum * 10);
-			for (ChargeRecordCopy chargeRecordCopy : chargelist) {
-				String equipmentnum = chargeRecordCopy.getEquipmentnum();
-				int parseInt = Integer.parseInt(equipmentnum.substring(4, 6));
-				if (parseInt >= 1 && parseInt <= 31) {
-					chargeRecordCopy.setEquipemnttype(1);
-				} else if (parseInt >= 51 && parseInt <= 81) {
-					chargeRecordCopy.setEquipemnttype(2);
-				} else {
-					chargeRecordCopy.setEquipemnttype(1);
+			if (chargelist == null) {
+				chargelist = new ArrayList<>();
+			}
+			if (chargelist != null) {
+				for (ChargeRecordCopy chargeRecordCopy : chargelist) {
+					String equipmentnum = chargeRecordCopy.getEquipmentnum();
+					int parseInt = Integer.parseInt(equipmentnum.substring(4, 6));
+					if (parseInt >= 1 && parseInt <= 31) {
+						chargeRecordCopy.setEquipemnttype(1);
+					} else if (parseInt >= 51 && parseInt <= 81) {
+						chargeRecordCopy.setEquipemnttype(2);
+					} else {
+						chargeRecordCopy.setEquipemnttype(1);
+					}
 				}
 			}
 			map.put("charginglist", chargelist);
 			map.put("startnum", startnum + 1);
 			map.put("listsize", chargelist.size());
-			if (chargelist.size() > 0) {
-				return CommUtil.responseBuildInfo(1000, "获取成功", map);
-			} else {
-				return CommUtil.responseBuild(1001, "未查询到数据", null);
-			}
+			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
-			return CommUtil.responseBuild(1002, "系统异常", null);
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
 	}
 
@@ -927,7 +928,9 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 		edituser.setBalance(balance);
 		userService.updateUserById(edituser);
 		generalDetailService.insertGenDetail(uid, 0, paymoney, 0.0, paymoney, balance, balance, 0.0, ordernum, date, 2, "充电");
-		return CommUtil.responseBuildInfo(1000, "付款成功，余额修改成功", null);
+		Map<String,Object> map = new HashMap<>();
+		map.put("ordernum", ordernum);
+		return CommUtil.responseBuildInfo(1000, "付款成功，余额修改成功", map);
 	}
 
 	@Override

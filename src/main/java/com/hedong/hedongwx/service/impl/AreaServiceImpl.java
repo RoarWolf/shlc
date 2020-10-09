@@ -895,16 +895,15 @@ public class AreaServiceImpl implements AreaService {
 		Map<String,Object> map = new HashMap<>();
 		try {
 			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum, distanceSort);
+			if (arealist == null) {
+				arealist = new ArrayList<>();
+			}
 			map.put("arealist", arealist);
 			map.put("startnum", startnum + 1);
 			map.put("listsize", arealist.size());
-			if (arealist.size() > 0) {
-				return CommUtil.responseBuildInfo(1000, "获取成功", map);
-			} else {
-				return CommUtil.responseBuild(1001, "未查询到数据", null);
-			}
+			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
-			return CommUtil.responseBuild(1002, "系统异常", null);
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
 	}
 	

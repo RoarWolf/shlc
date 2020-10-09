@@ -11,7 +11,9 @@
 //
 //import com.alibaba.fastjson.JSON;
 //import com.hedong.hedongwx.dao.AreaDao;
+//import com.hedong.hedongwx.dao.UserDao;
 //import com.hedong.hedongwx.entity.Area;
+//import com.hedong.hedongwx.entity.User;
 //import com.hedong.hedongwx.service.AreaService;
 //import com.hedong.hedongwx.service.ChargeRecordService;
 //
@@ -20,7 +22,7 @@
 //public class HedongwxApplicationTests {
 //	
 //	@Autowired
-//	public AreaDao areaDao;
+//	public UserDao userDao;
 //	@Autowired
 //	public AreaService areaService;
 //	@Autowired
@@ -28,12 +30,9 @@
 //
 //	@Test
 //    public void dealerIncomeCollect(){
-//		List<Area> queryAreaRecently = areaDao.queryAreaRecently(113.568114, 34.8149006, 10000.0, null, null);
-//		for (Area area : queryAreaRecently) {
-//			System.out.println(area.getId() + "---" + JSON.toJSONString(area));
-//		}
-//		Map<String, Object> insertChargeRecord = chargeRecordService.insertChargeRecord("0027021234561234", 1, 3, 1000, 1, 1, 1, 10.0);
-//		System.out.println(JSON.toJSONString(insertChargeRecord));
+//		User user = userDao.getUserByOpenid("Y5FxSK0bHHOOUWVEGaAPbo_A");
+//		System.out.println(JSON.toJSONString(user));
+//		
 //	}
 //	
 //}

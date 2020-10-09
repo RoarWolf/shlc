@@ -145,7 +145,7 @@ public class HttpRequest {
 			}
 		}
 		// hetengfuwu
-		sb.append("key=" + WeiXinConfigParam.KEY);// 最后加密时添加商户密钥，由于key值放在最后，所以不用添加到SortMap里面去，单独处理，编码方式采用UTF-8
+		sb.append("key=" + WeixinUtil.KEY);// 最后加密时添加商户密钥，由于key值放在最后，所以不用添加到SortMap里面去，单独处理，编码方式采用UTF-8
 		String sign = MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
 		return sign;
 	}
@@ -358,9 +358,7 @@ public class HttpRequest {
 	 * @return
 	 */
 	public static String getTimeStamp() {
-		Date date = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-		return format.format(date);
+		return System.currentTimeMillis() + "";
 	}
 
 	public static void main(String[] args) throws JDOMException,

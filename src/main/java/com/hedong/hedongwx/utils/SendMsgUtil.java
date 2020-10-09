@@ -66,6 +66,41 @@ public class SendMsgUtil {
 //		}
 	}
 	
+	public static Map<String, Object> backCahrgeInfo(String ordernum) {
+		long nowtime = System.currentTimeMillis();
+		int temp = 0;
+		boolean flag = true;
+		Map<String, Object> chargeback = (Map<String, Object>) chargeMap.get(ordernum);
+		while (flag) {
+			if (temp >= 15) {
+				return CommUtil.responseBuildInfo(1001, "连接超时", null);
+			}
+			if (chargeback == null || chargeback.size() == 0) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					System.out.println(e.getMessage());
+				}
+				temp++;
+				continue;
+			} else {
+				long updatetime = (long) chargeback.get("updatetime");
+				if (nowtime - updatetime > -5000 && nowtime - updatetime < 15000) {
+					return CommUtil.responseBuildInfo(1000, "连接成功", chargeback);
+				} else {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						System.out.println(e.getMessage());
+					}
+					temp++;
+					continue;
+				}
+			}
+		}
+		return CommUtil.responseBuildInfo(1002, "系统异常", null);
+	}
+	
 	public static byte clacSumVal(byte[] bytes) {
 		byte sum = 0x00;
 		for (int i = 0; i < bytes.length - 1; i++) {
@@ -423,7 +458,7 @@ public class SendMsgUtil {
 	/**
 	 * 平台下发充电命令
 	 */
-	public static Map<String, Object> send_0x1F(String devicenum, byte port, String ordernum, String userid, short userType,
+	public static void send_0x1F(String devicenum, byte port, String ordernum, String userid, short userType,
 			String groupCode, byte ctrlWay, int ctrlParam, byte chargeWay, byte startWay, String userOperCode,
 			byte billingWay, Map<String,String> billingParam) {
 		ByteBuffer buffer = ByteBuffer.allocate(65522);
@@ -441,13 +476,13 @@ public class SendMsgUtil {
 		buffer.put(ordernum.getBytes());//32字节
 		buffer.put(userid.getBytes());//32字节
 		buffer.put(DisposeUtil.converIntData(userType, 2));
-		buffer.put(groupCode.getBytes());//组织机构代码
+		buffer.put(DisposeUtil.completeNum(groupCode, 9).getBytes());//组织机构代码
 		buffer.put(ctrlWay);//控制模式
 		buffer.put(DisposeUtil.converIntData(ctrlParam, 4));//控制参数
 		buffer.put(chargeWay);//充电模式
 		buffer.put(startWay);//启动方式
 		buffer.put(DisposeUtil.getDateFlag(0, 0));//定时启动时间
-		buffer.put(userOperCode.getBytes());
+		buffer.put(DisposeUtil.completeNum(userOperCode, 6).getBytes());
 		buffer.put(billingWay);//计费模型选择
 		if (billingWay == 2) {
 			buffer.put(DisposeUtil.converIntData(Integer.parseInt(billingParam.get("billVer")),2));
@@ -472,38 +507,6 @@ public class SendMsgUtil {
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
 		Server.sendMsg(devicenum, buffer);
-		long nowtime = System.currentTimeMillis();
-		int temp = 0;
-		boolean flag = true;
-		Map<String, Object> chargeback = (Map<String, Object>) chargeMap.get(devicenum + port);
-		while (flag) {
-			if (temp >= 15) {
-				return CommUtil.responseBuildInfo(1001, "连接超时", null);
-			}
-			if (chargeback == null || chargeback.size() == 0) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					System.out.println(e.getMessage());
-				}
-				temp++;
-				continue;
-			} else {
-				long updatetime = (long) chargeback.get("updatetime");
-				if (nowtime - updatetime > 0 && nowtime - updatetime < 15000) {
-					return CommUtil.responseBuildInfo(1000, "连接成功", chargeback);
-				} else {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						System.out.println(e.getMessage());
-					}
-					temp++;
-					continue;
-				}
-			}
-		}
-		return CommUtil.responseBuildInfo(1002, "系统异常", null);
 	}
 	
 	/**
@@ -542,7 +545,7 @@ public class SendMsgUtil {
 		map.put("device_result", result);
 		map.put("device_reason", reason);
 		map.put("updatetime", System.currentTimeMillis());
-		chargeMap.put(devicenum + port, map);
+		chargeMap.put(ordernum, map);
 	}
 	
 	/**
