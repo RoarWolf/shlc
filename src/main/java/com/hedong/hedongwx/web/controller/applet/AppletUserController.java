@@ -76,13 +76,23 @@ public class AppletUserController {
 	}
 	
 	/**
-	 * 获取用户openid
+	 * 获取用户信息
 	 * @param code
 	 * @return
 	 */
-	@PostMapping("/queryUserInfo")
-	public 	Object queryUserInfo(Integer userid) {
+	@PostMapping("/getUserInfo")
+	public 	Object getUserInfo(Integer userid) {
 		return userService.queryUserInfo(userid);
+	}
+	
+	/**
+	 * 获取用户钱包余额
+	 * @param code
+	 * @return
+	 */
+	@PostMapping("/getUserWallet")
+	public 	Object getUserWallet(Integer userid) {
+		return userService.getUserWallet(userid);
 	}
 	
 	/**

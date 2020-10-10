@@ -29,8 +29,8 @@ public class DisposeUtil {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
 	public static void main(String[] args) {
-		byte[] bytes = new byte[]{(byte) 0xA6,(byte) 0xBB,0x41,0x31,0x32,0x33,0x34,0x35,0x36};
-		System.out.println(handleCarnum(bytes).trim());
+//		byte[] bytes = new byte[]{(byte) 0xA6,(byte) 0xBB,0x41,0x31,0x32,0x33,0x34,0x35,0x36};
+//		System.out.println(handleCarnum(bytes).trim());
 	}
 	
 	public static List<String> quChong(List<String> list) {
@@ -591,7 +591,7 @@ public class DisposeUtil {
     public static int converData(byte[] bytes) {
     	int i = 0;
     	for (int j = 0; j < bytes.length; j++) {
-			i += bytes[j] >>> (8 * j);
+			i += bytes[j] >>> (8 * j) & 0xff;
 		}
     	return i;
     }
@@ -605,7 +605,7 @@ public class DisposeUtil {
     	int temp = 0;
     	byte[] bytes = new byte[num];
     	for (int j = 0; j < num; j++) {
-    		temp += (byte) (val >>> (8 * j));
+    		temp += (byte) (val >>> (8 * j)) & 0xff;
 		}
     	return temp;
     }

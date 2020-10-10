@@ -635,6 +635,13 @@ public interface UserService {
 	Map<String, Object> queryUserInfo(Integer userid);
 	
 	/**
+	 * 查询用户钱包余额
+	 * @param userid
+	 * @return
+	 */
+	Map<String, Object> getUserWallet(Integer userid);
+	
+	/**
 	 * 用户钱包充值（预订单）
 	 * @param userid
 	 * @param openid
