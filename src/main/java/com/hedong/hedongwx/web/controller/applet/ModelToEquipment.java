@@ -38,14 +38,14 @@ public class ModelToEquipment {
 	 * @return
 	 */
 	@PostMapping("/yuyueCharge")
-	public Object yuyueCharge(String devicenum, Integer port, String userid, Integer userType,
+	public Object yuyueCharge(String devicenum, Integer port, Integer userid, Integer userType,
 			String phonenum) {
 		Equipment equipment = equipmentService.getEquipmentById(devicenum);
 		if (equipment == null) {
 			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
 		}
-		userid = DisposeUtil.completeNum(userid, 8);
-		return SendMsgUtil.send_0x1B(devicenum, port.byteValue(), userid, userType.byteValue(), phonenum);
+		String useridStr = DisposeUtil.completeNum(userid + "", 8);
+		return SendMsgUtil.send_0x1B(devicenum, port.byteValue(), useridStr, userType.byteValue(), phonenum);
 	}
 	
 	/**
@@ -62,24 +62,12 @@ public class ModelToEquipment {
 	
 	/**
 	 * 启动充电
-	 * @param devicenum 充电装编号
-	 * @param port 枪号
-	 * @param userid 用户id
-	 * @param userType 
-	 * @param groupCode
-	 * @param money
-	 * @param chargeWay
-	 * @param startWay
-	 * @param userOperCode
+	 * @param ordernum 
 	 * @return
 	 */
 	@PostMapping("/startCharge")
-	public Object startCharge(String devicenum, Integer port, Integer userid, @RequestParam(value= "userType", defaultValue="21") Integer userType,
-			@RequestParam(value= "groupCode", defaultValue="0") String groupCode, Double money, Integer chargeWay, Integer startWay, String userOperCode) {
-		String useridStr = DisposeUtil.completeNum(userid + "", 8);
-		money = money * 100;
-		return SendMsgUtil.send_0x1F(devicenum, port.byteValue(), "1", useridStr, userType.shortValue(), groupCode, (byte) 3, 
-				money.intValue(), chargeWay.byteValue(), startWay.byteValue(), userOperCode, (byte)1, null);
+	public Object startCharge(String ordernum) {
+		return SendMsgUtil.backCahrgeInfo(ordernum);
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.web.controller.webpc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -689,5 +690,30 @@ public class DeviceDataController {
 			return JSON.toJSON(result);
 		}
 		return result;
+	}
+	
+	/**
+	 * 添加桩
+	 * @param code 充电桩编号
+	 * @param hardversion 硬件版本
+	 * @param softversion 软件版本
+	 * @param subHardversion 次单元硬件版本
+	 * @param subSoftversion 次单元软件版本
+	 * @param dcModeltype 直流模块类型
+	 * @param dcModelnum 直流模块总数
+	 * @param dcModelpower 直流模块单模块功
+	 * @param location 地址详情
+	 * @param lon 经度
+	 * @param lat 纬度
+	 * @param remark 充电桩昵称
+	 * @return JSON
+	 * @return
+	 */
+	@RequestMapping("/insetDevice")
+	@ResponseBody
+	public Object insetDevice(String code, String hardversion, String softversion, String subHardversion,
+			String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location,
+			BigDecimal lon, BigDecimal lat, String remark){
+		return equipmentService.insertEquipmentNew(code, hardversion, softversion, subHardversion, subSoftversion, dcModeltype, dcModelnum, dcModelpower, location, lon, lat, remark);
 	}
 }

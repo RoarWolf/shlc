@@ -2382,15 +2382,51 @@ public class UserServiceImpl implements UserService {
 			User selectUser = userDao.getUserByOpenid(openid);
 			if (selectUser == null) {
 				User user = new User();
-				user.setOpenid(openid);
+				user.setOpenid(openid.trim());
 				user.setUsername(username);
 				user.setImageUrl(imageUrl);
+				user.setCreateTime(new Date());
 				userDao.addUser(user);
 				selectUser = userDao.getUserByOpenid(openid);
 			}
 			Map<String,Object> map = new HashMap<>();
 			map.put("userinfo", selectUser);
-			return CommUtil.responseBuildInfo(1000, "授权code已使用或未接收到微信返openid", map);
+			return CommUtil.responseBuildInfo(1000, "登陆成功", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
+		}
+	}
+	
+	@Override
+	public Map<String, Object> queryUserInfo(Integer userid) {
+		try {
+			User user = userDao.selectUserById(userid);
+			Map<String,Object> map = new HashMap<>();
+			map.put("userinfo", user);
+			if (user != null) {
+				return CommUtil.responseBuildInfo(1000, "查询成功", map);
+			} else {
+				return CommUtil.responseBuildInfo(1001, "未查询到用户信息", null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
+		}
+	}
+	
+	@Override
+	public Map<String, Object> getUserWallet(Integer userid) {
+		try {
+			User user = userDao.selectUserById(userid);
+			Map<String,Object> map = new HashMap<>();
+			if (user != null) {
+				map.put("balance", user.getBalance());
+				return CommUtil.responseBuildInfo(1000, "查询成功", map);
+			} else {
+				map.put("balance", 0.0);
+				return CommUtil.responseBuildInfo(1001, "未查询到用户信息", null);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);

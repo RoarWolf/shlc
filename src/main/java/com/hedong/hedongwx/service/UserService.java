@@ -618,7 +618,28 @@ public interface UserService {
 	 */
 	boolean checkUserIfRich(TradeRecord tradeRecord);
 	
+	/**
+	 * 用户登陆
+	 * @param auth_code
+	 * @param username
+	 * @param imageUrl
+	 * @return
+	 */
 	Map<String, Object> addUserByAuth_code(String auth_code,String username, String imageUrl);
+	
+	/**
+	 * 查询用户信息
+	 * @param userid
+	 * @return
+	 */
+	Map<String, Object> queryUserInfo(Integer userid);
+	
+	/**
+	 * 查询用户钱包余额
+	 * @param userid
+	 * @return
+	 */
+	Map<String, Object> getUserWallet(Integer userid);
 	
 	/**
 	 * 用户钱包充值（预订单）

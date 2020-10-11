@@ -2,7 +2,6 @@ package com.hedong.hedongwx.utils;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,15 +9,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.hedong.hedongwx.service.EquipmentService;
 import com.hedong.hedongwx.thread.Server;
 
-@Service
+@Component
 public class SendMsgUtil {
 	
 	private static final String DOMAIN = "http://ck.taifengkeji.com/";
+	
+	@Autowired
+	private EquipmentService equipmentService;
 	
 	/** 预约map*/
 	public static ConcurrentHashMap<String, Object> yuyueMap = new ConcurrentHashMap<>(); 
@@ -64,6 +68,42 @@ public class SendMsgUtil {
 //		for (byte b : bytes) {
 //			System.out.printf("0x%02x ", b);
 //		}
+		send_0x02("0027021234561234", (byte) 1, (byte) 0, (byte) 2);
+	}
+	
+	public static Map<String, Object> backCahrgeInfo(String ordernum) {
+		long nowtime = System.currentTimeMillis();
+		int temp = 0;
+		boolean flag = true;
+		Map<String, Object> chargeback = (Map<String, Object>) chargeMap.get(ordernum);
+		while (flag) {
+			if (temp >= 15) {
+				return CommUtil.responseBuildInfo(1001, "连接超时", null);
+			}
+			if (chargeback == null || chargeback.size() == 0) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					System.out.println(e.getMessage());
+				}
+				temp++;
+				continue;
+			} else {
+				long updatetime = (long) chargeback.get("updatetime");
+				if (nowtime - updatetime > -5000 && nowtime - updatetime < 15000) {
+					return CommUtil.responseBuildInfo(1000, "连接成功", chargeback);
+				} else {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						System.out.println(e.getMessage());
+					}
+					temp++;
+					continue;
+				}
+			}
+		}
+		return CommUtil.responseBuildInfo(1002, "系统异常", null);
 	}
 	
 	public static byte clacSumVal(byte[] bytes) {
@@ -114,6 +154,7 @@ public class SendMsgUtil {
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = (short) (108 + portnum * 20);
+		System.out.println("datalen===" + datalen);
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0,0));
 		buffer.put((byte) 0x01);//0x01-允许；0x02-不允许
@@ -129,8 +170,9 @@ public class SendMsgUtil {
 			}
 			buffer.put(DisposeUtil.complateBytes(devicenumAndPort.getBytes(), 20));
 		}
-		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		buffer.position(2);
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
+		
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -184,6 +226,7 @@ public class SendMsgUtil {
 		buffer.get(latBytes);
 		double lon = lon1 + DisposeUtil.bytes2Double(lonBytes)/10000;
 		byte sum = buffer.get();//校验码
+		
 	}
 	
 	/**
@@ -199,7 +242,6 @@ public class SendMsgUtil {
 	 */
 	public static void send_0x06(String devicenum) {
 		ByteBuffer buffer = ByteBuffer.allocate(65522);
-		String str = DOMAIN + "scanDevice?devicenum=";//二维码固定段
 		buffer.putShort(framestart);
 		buffer.put((byte) 0x06);//cmd
 		buffer.put(AESUtil.String_BCD(devicenum));
@@ -211,7 +253,7 @@ public class SendMsgUtil {
 		byte[] sendTime = new byte[12];
 		buffer.put(DisposeUtil.complateBytes(dateFlag, sendTime.length));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -303,7 +345,7 @@ public class SendMsgUtil {
 			byte encryptionWay, int datalen, String deviceDataTime) {
 		byte timeoutnum = buffer.get();//平台心跳超时次数
 		byte portnum = buffer.get();//充电枪总数
-		if (portnum > 0) {
+		if (portnum > 0 && portnum <= 30) {
 			byte portStatus = buffer.get();//充电枪状态
 			byte workWay = buffer.get();//工作模式
 		}
@@ -328,7 +370,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(6, 15));//6字节
 		buffer.put(DisposeUtil.convertPhonenum(phonenum).getBytes());//11字节
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -404,7 +446,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0,0));//6字节
 		buffer.put((byte) (port - 1));//1字节
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -423,7 +465,7 @@ public class SendMsgUtil {
 	/**
 	 * 平台下发充电命令
 	 */
-	public static Map<String, Object> send_0x1F(String devicenum, byte port, String ordernum, String userid, short userType,
+	public static void send_0x1F(String devicenum, byte port, String ordernum, String userid, short userType,
 			String groupCode, byte ctrlWay, int ctrlParam, byte chargeWay, byte startWay, String userOperCode,
 			byte billingWay, Map<String,String> billingParam) {
 		ByteBuffer buffer = ByteBuffer.allocate(65522);
@@ -441,13 +483,13 @@ public class SendMsgUtil {
 		buffer.put(ordernum.getBytes());//32字节
 		buffer.put(userid.getBytes());//32字节
 		buffer.put(DisposeUtil.converIntData(userType, 2));
-		buffer.put(groupCode.getBytes());//组织机构代码
+		buffer.put(DisposeUtil.completeNum(groupCode, 9).getBytes());//组织机构代码
 		buffer.put(ctrlWay);//控制模式
 		buffer.put(DisposeUtil.converIntData(ctrlParam, 4));//控制参数
 		buffer.put(chargeWay);//充电模式
 		buffer.put(startWay);//启动方式
 		buffer.put(DisposeUtil.getDateFlag(0, 0));//定时启动时间
-		buffer.put(userOperCode.getBytes());
+		buffer.put(DisposeUtil.completeNum(userOperCode, 6).getBytes());
 		buffer.put(billingWay);//计费模型选择
 		if (billingWay == 2) {
 			buffer.put(DisposeUtil.converIntData(Integer.parseInt(billingParam.get("billVer")),2));
@@ -467,43 +509,11 @@ public class SendMsgUtil {
 			}
 		}
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
 		Server.sendMsg(devicenum, buffer);
-		long nowtime = System.currentTimeMillis();
-		int temp = 0;
-		boolean flag = true;
-		Map<String, Object> chargeback = (Map<String, Object>) chargeMap.get(devicenum + port);
-		while (flag) {
-			if (temp >= 15) {
-				return CommUtil.responseBuildInfo(1001, "连接超时", null);
-			}
-			if (chargeback == null || chargeback.size() == 0) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					System.out.println(e.getMessage());
-				}
-				temp++;
-				continue;
-			} else {
-				long updatetime = (long) chargeback.get("updatetime");
-				if (nowtime - updatetime > 0 && nowtime - updatetime < 15000) {
-					return CommUtil.responseBuildInfo(1000, "连接成功", chargeback);
-				} else {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						System.out.println(e.getMessage());
-					}
-					temp++;
-					continue;
-				}
-			}
-		}
-		return CommUtil.responseBuildInfo(1002, "系统异常", null);
 	}
 	
 	/**
@@ -542,7 +552,7 @@ public class SendMsgUtil {
 		map.put("device_result", result);
 		map.put("device_reason", reason);
 		map.put("updatetime", System.currentTimeMillis());
-		chargeMap.put(devicenum + port, map);
+		chargeMap.put(ordernum, map);
 	}
 	
 	/**
@@ -595,7 +605,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put(port);
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -605,7 +615,7 @@ public class SendMsgUtil {
 	/**
 	 * 桩充电停止
 	 */
-	public static void parse_0x23(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
+	public static void parse_0x26(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
 		byte port = buffer.get();
 		int chargeV = buffer.getShort() & 0xffff;
@@ -614,7 +624,7 @@ public class SendMsgUtil {
 	/**
 	 * 平台回复桩充电停止
 	 */
-	public static void send_0x24(String devicenum,byte port) {
+	public static void send_0x27(String devicenum,byte port) {
 		ByteBuffer buffer = ByteBuffer.allocate(65522);
 		buffer.putShort(framestart);
 		buffer.put((byte) 0x24);//cmd+
@@ -624,7 +634,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put(port);
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -640,12 +650,20 @@ public class SendMsgUtil {
 		if (port < 0 || port > 29) {
 			return;
 		}
-		int chargeV = buffer.getShort() & 0xffff;//充电电压0.1v
-		int chargeA = buffer.getShort() & 0xffff;//充电电流0.1A
-		int chargeElec = buffer.getInt();//充电电量0.01kWh
-		int chargeTime = buffer.getInt();//充电时长1s
-		int chargeMoney = buffer.getInt();//充电金额0.01 元
+		int chargeV = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//充电电压0.1v
+		int chargeA = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//充电电流0.1A
+		int chargeElec = DisposeUtil.converIntDataBackInt(buffer.getInt(), 4);//充电电量0.01kWh
+		int chargeTime = DisposeUtil.converIntDataBackInt(buffer.getInt(), 4);//充电时长1s
+		int chargeMoney = DisposeUtil.converIntDataBackInt(buffer.getInt(), 4);//充电金额0.01 元
 		byte chargenum = buffer.get();//充电模块接入数量
+		Map<Object,Object> map = new HashMap<>();
+		map.put("chargeV", CommUtil.toDouble(chargeV)/10);
+		map.put("chargeA", CommUtil.toDouble(chargeA)/10);
+		map.put("chargeElec", CommUtil.toDouble(chargeElec)/100);
+		map.put("chargeTime", CommUtil.toDouble(chargeTime)/60);
+		map.put("chargeMoney", CommUtil.toDouble(chargeMoney)/100);
+		map.put("chargenum", chargenum);
+		logger.info("充电桩工作信息：" + JSON.toJSONString(map));
 	}
 	
 	/**
@@ -661,7 +679,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put((byte) (port - 1));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -735,6 +753,81 @@ public class SendMsgUtil {
 	/**
 	 * 桩上送充电订单
 	 */
+	public static void parse_0x23(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
+			byte encryptionWay, int datalen, String deviceDataTime) {
+		byte port = buffer.get();//
+		int recordIndex = buffer.getInt();//
+		byte[] orderBytes = new byte[32];
+		buffer.get(orderBytes);
+		String ordernum = new String(orderBytes);//
+		byte[] useridBytes = new byte[32];
+		buffer.get(useridBytes);
+		String userid = new String(useridBytes);//
+		byte userType = buffer.get();
+		byte[] groupBytes = new byte[9];
+		buffer.get(groupBytes);//
+		String groupCode = new String(groupBytes);//
+		int cardMoney = buffer.getInt();
+		byte[] VINBytes = new byte[17];
+		buffer.get(VINBytes);
+		String VIN = new String(VINBytes);//
+		byte[] startBytes = new byte[6];
+		buffer.get(startBytes);
+		String startTime = DisposeUtil.disposeDate(startBytes);//
+		byte[] endBytes = new byte[6];
+		buffer.get(endBytes);
+		String endTime = DisposeUtil.disposeDate(endBytes);//
+		int startElec = DisposeUtil.converIntDataBackInt(buffer.getInt(), 4);//开始充电电量
+		int endElec = DisposeUtil.converIntDataBackInt(buffer.getInt(), 4);//结束充电电量
+		byte startSOC = buffer.get();//
+		byte endSOC = buffer.get();//
+		byte ctrlWay = buffer.get();//
+		int ctrlParam = buffer.getInt();//
+		byte startType = buffer.get();//
+		byte[] timingBytes = new byte[6];
+		buffer.get(timingBytes);
+		String timingTime = DisposeUtil.disposeDate(timingBytes);//
+		byte chargeType = buffer.get();//
+		short stopReason = buffer.getShort();//
+		byte billingType = buffer.get();//
+		short billingVer = buffer.getShort();//计费模型版本
+		int chargeMoney = buffer.getInt();//电能费用
+		int serverMoney = buffer.getInt();//服务费费用
+		int parkMoney = buffer.getInt();//停车费费用
+		int timenum = buffer.get() & 0xff;
+		for (int i = 0; i < timenum; i++) {
+			byte timeIndex = buffer.get();//段 N 计费模型索引
+			short timeElec = buffer.getShort();//段 N 电量
+		}
+		
+		send_0x24(devicenum, port, recordIndex);
+		
+	}
+	
+	/**
+	 * 平台确认充电订单
+	 */
+	public static void send_0x24(String devicenum, byte port, int recordIndex) {
+		ByteBuffer buffer = ByteBuffer.allocate(65522);
+		buffer.putShort(framestart);
+		buffer.put((byte) 0x24);//cmd+
+		buffer.put(AESUtil.String_BCD(devicenum));
+		buffer.put((byte) 0x01);//数据加密方式
+		short datalen = 11;
+		buffer.put(DisposeUtil.getDateFlag(0, 0));
+		buffer.put(port);
+		buffer.put(DisposeUtil.converIntData(recordIndex,2));
+		buffer.position(1);
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
+		buffer.get(bytes);
+		buffer.put(clacSumVal(bytes));
+		buffer.flip();
+		Server.sendMsg(devicenum, buffer);
+	}
+	
+	/**
+	 * 桩上送充电订单
+	 */
 	public static void parse_0x33(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
 		byte port = buffer.get();//
@@ -800,7 +893,7 @@ public class SendMsgUtil {
 		buffer.put(port);
 		buffer.put(DisposeUtil.converIntData(recordIndex,2));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -821,7 +914,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.complateBytes(serverIP.getBytes(), 50));
 		buffer.put(DisposeUtil.converIntData(serverPort,2));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -908,7 +1001,7 @@ public class SendMsgUtil {
 			buffer.put(DisposeUtil.converIntData(serverfee.intValue(), 4));
 		}
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();

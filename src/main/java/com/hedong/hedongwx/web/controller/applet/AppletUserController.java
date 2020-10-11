@@ -76,6 +76,26 @@ public class AppletUserController {
 	}
 	
 	/**
+	 * 获取用户信息
+	 * @param code
+	 * @return
+	 */
+	@PostMapping("/getUserInfo")
+	public 	Object getUserInfo(Integer userid) {
+		return userService.queryUserInfo(userid);
+	}
+	
+	/**
+	 * 获取用户钱包余额
+	 * @param code
+	 * @return
+	 */
+	@PostMapping("/getUserWallet")
+	public 	Object getUserWallet(Integer userid) {
+		return userService.getUserWallet(userid);
+	}
+	
+	/**
 	 * 查询用户钱包记录
 	 * @param userid
 	 * @param startnum
@@ -119,6 +139,26 @@ public class AppletUserController {
 		return areaService.queryAreaRecently(lon, lat, distance, startnum, distanceSort);
 	}
 	
+	@PostMapping("/payChargerecord")
+	public Object payChargerecord(String devicenum, Integer port, Integer userid, Double paymoney) {
+		try {
+			Double ctrlParamVal = paymoney * 100;
+			String useridStr = DisposeUtil.completeNum(userid + "", 8);
+			SendMsgUtil.send_0x1F(devicenum, port.byteValue(), "1", useridStr, (short) 21, "0", (byte) 3, 
+					ctrlParamVal.intValue(), (byte) 1, (byte) 1, "0", (byte)1, null);
+			return chargeService.insertChargeRecord(devicenum, port, 3, ctrlParamVal.intValue(), 1, userid, 1, paymoney);
+		} catch (Exception e) {
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
+		}
+	}
+	
+	/**
+	 * 用户钱包充值预订单
+	 * @param userid
+	 * @param money
+	 * @param request
+	 * @return
+	 */
 	@PostMapping("/walletCharge")
 	public Object walletCharge(Integer userid, Double money,HttpServletRequest request) {
 		return userService.walletAppointCharge(userid, money, request);

@@ -32,6 +32,7 @@ import com.hedong.hedongwx.dao.CodeSystemParamDao;
 import com.hedong.hedongwx.dao.CodeoperatelogDao;
 import com.hedong.hedongwx.dao.CodestatisticsDao;
 import com.hedong.hedongwx.dao.EquipmentDao;
+import com.hedong.hedongwx.dao.EquipmentNewDao;
 import com.hedong.hedongwx.dao.InCoinsDao;
 import com.hedong.hedongwx.dao.MerchantDetailDao;
 import com.hedong.hedongwx.dao.OfflineCardDao;
@@ -48,6 +49,7 @@ import com.hedong.hedongwx.entity.CodeSystemParam;
 import com.hedong.hedongwx.entity.Codeoperatelog;
 import com.hedong.hedongwx.entity.Codestatistics;
 import com.hedong.hedongwx.entity.Equipment;
+import com.hedong.hedongwx.entity.EquipmentNew;
 import com.hedong.hedongwx.entity.PageBean;
 import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.Realchargerecord;
@@ -65,12 +67,10 @@ import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.JedisUtils;
 import com.hedong.hedongwx.utils.PageUtils;
-import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.StringUtil;
 import com.hedong.hedongwx.utils.TempMsgUtil;
 import com.hedong.hedongwx.utils.WeiXinConfigParam;
 import com.hedong.hedongwx.utils.yinlian.SignUtils;
-import com.hedong.hedongwx.web.controller.EquipmentController;
 
 import net.sf.json.JSONObject;
 
@@ -121,6 +121,8 @@ public class EquipmentServiceImpl implements EquipmentService {
 	private UserEquipmentService userEquipmentService;
 	@Autowired
 	private Server server;
+	@Autowired
+	private EquipmentNewDao equipmentNewDao;
 	
 	@Transactional
 	@Override
@@ -2761,6 +2763,32 @@ public class EquipmentServiceImpl implements EquipmentService {
 		}
 		return resultdata;
 		
+	}
+
+	@Override
+	public Map<String, Object> insertEquipmentNew(String code, String hardversion, String softversion, String subHardversion,
+			String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location,
+			BigDecimal lon, BigDecimal lat, String remark) {
+		try {
+			EquipmentNew equ = new EquipmentNew();
+			equ.setCode(code);
+			equ.setHardversion(hardversion);
+			equ.setSoftversion(softversion);
+			equ.setSubHardversion(subHardversion);
+			equ.setSubSoftversion(subSoftversion);
+			equ.setDcModeltype(dcModeltype);
+			equ.setDcModelnum(dcModelnum);
+			equ.setDcModelpower(dcModelpower);
+			equ.setLocation(location);
+			equ.setLon(lon);
+			equ.setLat(lat);
+			equ.setRemark(remark);
+			equ.setCreateTime(new Date());
+			equipmentNewDao.insertEquipmentNew(equ);
+			return CommUtil.responseBuildInfo(200, "添加成功", null);
+		} catch (Exception e) {
+			return CommUtil.responseBuildInfo(201, "添加失败", null);
+		}
 	}
 
 }

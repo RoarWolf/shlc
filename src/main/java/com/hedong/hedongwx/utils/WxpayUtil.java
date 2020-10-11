@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jdom.JDOMException;
 
+import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
 
 public class WxpayUtil {
@@ -38,8 +39,10 @@ public class WxpayUtil {
 		params.put("sign", sign);
 		String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 		String canshu = HttpRequest.getRequestXml(params);
+		System.out.println("转xml：" + canshu);
 		String sr = HttpRequest.sendPost(url, canshu);
 		Map<String, String> map = XMLUtil.doXMLParse(sr);
+		System.out.println("预订单返回信息：" + JSON.toJSONString(map));
 		SortedMap<String, String> seconde = new TreeMap<>();
 		seconde.put("appId", appId);
 		String time = HttpRequest.getTimeStamp();
@@ -56,7 +59,7 @@ public class WxpayUtil {
 		
 		paramMap.put("appId", appId);
 		paramMap.put("prepay_id", map.get("prepay_id"));
-		paramMap.put("date", time);
+		paramMap.put("timeStamp", time);
 		paramMap.put("paySign", sign2);
 		paramMap.put("packagess", "prepay_id=" + (String) map.get("prepay_id"));
 		paramMap.put("nonceStr", sjzf);

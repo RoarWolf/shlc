@@ -71,7 +71,7 @@
 	      <if test="username != null" >
 	        username,
 	      </if>
-	      <if test="image_url != null" >
+	      <if test="imageUrl != null" >
 	        image_url,
 	      </if>
 	      <if test="realname != null" >
@@ -92,8 +92,8 @@
 	      <if test="phoneNum != null" >
 	        phone_num,
 	      </if>
-	      <if test="rank != null" >
-	        rank,
+	      <if test="level != null" >
+	        level,
 	      </if>
 	      <if test="earnings != null" >
 	        earnings,
@@ -142,8 +142,8 @@
 	      <if test="phoneNum != null" >
 	        #{phoneNum,jdbcType=VARCHAR},
 	      </if>
-	      <if test="rank != null" >
-	        #{rank,jdbcType=INTEGER},
+	      <if test="level != null" >
+	        #{level,jdbcType=INTEGER},
 	      </if>
 	      <if test="earnings != null" >
 	        #{earnings,jdbcType=DOUBLE},
@@ -209,7 +209,7 @@
 		where rank = #{rank,jdbcType=INTEGER}
 	</select>
 	
-	<select id="getUserByOpenid" resultType="com.hedong.hedongwx.entity.User">
+	<select id="getUserByOpenid" resultType="com.hedong.hedongwx.entity.User" parameterType="java.lang.String">
 		select
 		<include refid="User_Column_List" />
 		from hd_user
