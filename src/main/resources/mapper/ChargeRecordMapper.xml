@@ -551,9 +551,9 @@
 	<select id="selectChargeRecordNumber" parameterType="com.hedong.hedongwx.entity.Parameters" 
 			resultType="java.lang.Integer">
 		SELECT COUNT(*) 
-		FROM hd_chargerecord c
-		LEFT JOIN hd_user m
-		ON c.merchantid=m.id
+		FROM hd_chargerecord_copy c
+		/*LEFT JOIN hd_user m
+		ON c.merchantid=m.id*/
 		LEFT JOIN hd_user u
 		ON c.uid=u.id
 		<where>
@@ -563,9 +563,9 @@
 			</if>
 			<if test="order!=null and order!=''">AND c.ordernum=#{order}</if>
 			<if test="nickname!=null and nickname!=''">AND u.username LIKE '${nickname}%'</if>
-			<if test="dealer!=null and dealer!=''">AND m.username LIKE '${dealer}%'</if>
+			<!--<if test="dealer!=null and dealer!=''">AND m.username LIKE '${dealer}%'</if>
 			<if test="realname!=null and realname!=''"> and m.realname LIKE '${realname}%'</if>
-			<if test="phone!=null and phone!=''">AND m.phone_num LIKE '${phone}%'</if>
+			<if test="phone!=null and phone!=''">AND m.phone_num LIKE '${phone}%'</if>-->
 		    <if test="code!=null and code!=''">AND c.equipmentnum LIKE '${code}%'</if>
 		    <if test="payType!=null and payType!=0">AND c.paytype=#{payType}</if>
 		    <if test="resultInfo!=null">AND c.resultinfo=#{resultInfo}</if>
@@ -576,15 +576,9 @@
 	<!-- 查询充电记录信息 -->
 	<select id="selectChargeRecords" parameterType="com.hedong.hedongwx.entity.Parameters" 
 	        resultType="java.util.Map">
-		SELECT c.ordernum,c.equipmentnum,c.port,c.uid,
-	           c.expenditure,c.paytype,c.number,c.merchantid,
-			   c.consume_quantity,c.consume_time,
-			   c.ifcontinue,c.begintime,c.endtime,
-			   c.resultinfo,c.refund_time,
-			   u.username,m.username AS dealer
-		FROM hd_chargerecord c
-		LEFT JOIN hd_user m
-		ON c.merchantid=m.id
+		SELECT c.*
+			   u.username
+		FROM hd_chargerecord_copy c
 		LEFT JOIN hd_user u
 		ON c.uid=u.id
 		<where>
@@ -594,16 +588,20 @@
 			</if>
 			<if test="order!=null and order!=''">AND c.ordernum=#{order}</if>
 			<if test="nickname!=null and nickname!=''">AND u.username LIKE '${nickname}%'</if>
-			<if test="dealer!=null and dealer!=''">AND m.username LIKE '${dealer}%'</if>
+			<!--<if test="dealer!=null and dealer!=''">AND m.username LIKE '${dealer}%'</if>
 			<if test="realname!=null and realname!=''">AND m.realname LIKE '${realname}%'</if>
-			<if test="phone!=null and phone!=''">AND m.phone_num LIKE '${phone}%'</if>
+			<if test="phone!=null and phone!=''">AND m.phone_num LIKE '${phone}%'</if>-->
 		    <if test="code!=null and code!=''">AND c.equipmentnum LIKE '${code}%'</if>
 		    <if test="payType!=null and payType!=0">AND c.paytype=#{payType}</if>
 		    <if test="resultInfo!=null">AND c.resultinfo=#{resultInfo}</if>
 		    <if test="orderStatus!=null"> AND c.number=#{orderStatus}</if>
-	    		ORDER BY c.id DESC
+
 		</where>
-		LIMIT #{startnumber},#{pages}
+		ORDER BY c.id DESC
+		<if test="startnumber!=null">
+			LIMIT #{startnumber},#{pages}
+		</if>
+
 	</select>
 	
 	<!-- 查询用户订单列表 -->

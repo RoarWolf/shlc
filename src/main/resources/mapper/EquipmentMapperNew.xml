@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hedong.hedongwx.dao.EquipmentNewDao">
+
+	<!-- 查询设备列表 (跳转设备列表) -->
+	<select id="selectEquList"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT  e.*,a.address
+		FROM hd_equipment_new  e  LEFT JOIN
+		hd_area a ON e.aid = a.id
+		<where>
+			<if test=" uid!=null and uid!=''"> AND t.user_id = #{uid} </if>
+			<if test=" code!=null and  code!=''"> AND e.`code` LIKE '%${code}%' </if>
+			<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
+			<if test=" username!=null and  username!=''"> AND u.realname LIKE '%${username}%' </if>
+			<if test=" phone!=null and  phone!=''"> AND u.phone_num LIKE '%#{phone}%' </if>
+			<if test=" sort!=null and  sort!=''"> AND e.imei LIKE '%${sort}%' </if>
+			<if test=" state!=null and  state!=''"> AND e.ccid LIKE '%${state}%' </if>
+			<if test=" statement!=null and statement!=''"> AND  e.hardversion = #{statement}</if>
+			<if test=" number!=null and number!=''"> AND  e.softversionnum = #{number}</if>
+			<if test=" order!=null and order!=''"> AND  e.hardversionnum = #{order}</if>
+			<if test=" type!=null and  type!='' and type!=-1"> AND e.bindtype = #{type} </if>
+			<if test=" status!=null and status!='' and status!=-1"> AND e.state = #{status}</if>
+			<if test=" level!=null and level!=''"> AND e.several IN (${level}) </if>
+			<if test=" source!=null and source!=''"> AND e.aid = #{source} </if>
+			<if test=" paramete!=null and paramete!=''"> AND a.name LIKE '%${paramete}%' </if>
+			<if test=" deviceType!=null and deviceType!=''"> AND e.device_type = #{deviceType} </if>
+		</where>
+		<if test=" remark!=null and remark!=''"> ORDER BY ${remark} </if>
+		<!-- <if test=" remark==0"> ORDER BY e.csq  ASC </if>
+        <if test=" remark==1"> ORDER BY e.csq DESC </if> -->
+		<if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+
 	<insert id="insertEquipmentNew" parameterType="com.hedong.hedongwx.entity.EquipmentNew">
 		insert into hd_equipment_new
 		<trim prefix="(" suffix=")" suffixOverrides=",">

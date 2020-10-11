@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONArray;
+import com.hedong.hedongwx.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +24,6 @@ import com.hedong.hedongwx.service.MoneyService;
 import com.hedong.hedongwx.service.OperateRecordService;
 import com.hedong.hedongwx.service.TradeRecordService;
 import com.hedong.hedongwx.service.UserService;
-import com.hedong.hedongwx.utils.CommUtil;
-import com.hedong.hedongwx.utils.HttpRequest;
-import com.hedong.hedongwx.utils.PageUtils;
-import com.hedong.hedongwx.utils.StringUtil;
 
 @Service
 public class MoneyServiceImpl implements MoneyService{
@@ -444,7 +442,8 @@ public class MoneyServiceImpl implements MoneyService{
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			User user = CommonConfig.getAdminReq(request);
+			//User user = CommonConfig.getAdminReq(request);
+			User user = JSONArray.parseObject(JedisUtils.get("admin"), User.class);
 			Parameters parameters = new Parameters();
 			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id

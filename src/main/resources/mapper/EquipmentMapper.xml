@@ -511,7 +511,7 @@
 		SELECT  e.*,u.id AS merid,u.username,u.phone_num,a.name,a.address
 		FROM hd_equipment e LEFT JOIN hd_user_equipment t ON e.`code` = t.equipment_code LEFT JOIN  hd_user u ON t.user_id = u.id LEFT JOIN
 		hd_area a ON e.aid = a.id
-	    <where> 
+	    <where>
 	        <if test=" uid!=null and uid!=''"> AND t.user_id = #{uid} </if>
 			<if test=" code!=null and  code!=''"> AND e.`code` LIKE '%${code}%' </if>
 			<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
@@ -524,7 +524,7 @@
 		    <if test=" order!=null and order!=''"> AND  e.hardversionnum = #{order}</if>
 			<if test=" type!=null and  type!='' and type!=-1"> AND e.bindtype = #{type} </if>
 	        <if test=" status!=null and status!='' and status!=-1"> AND e.state = #{status}</if>
-	        <if test=" rank!=null and rank!=''"> AND e.several IN (${rank}) </if>
+	        <if test=" level!=null and level!=''"> AND e.several IN (${level}) </if>
 	        <if test=" source!=null and source!=''"> AND e.aid = #{source} </if>
 		    <if test=" paramete!=null and paramete!=''"> AND a.name LIKE '%${paramete}%' </if>
 		    <if test=" deviceType!=null and deviceType!=''"> AND e.device_type = #{deviceType} </if>
