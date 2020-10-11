@@ -311,10 +311,10 @@ public class Server {
 				String deviceDataTime = DisposeUtil.disposeDate(dateBytes);
 				//有无回复 1-有、2无
 				if (cmd == 0x01) {//桩请求连接 1
+					clientMap.put(devicenum, client);
 					SendMsgUtil.parse_0x01(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x03) {//登录信息 2桩回复对时命令
 					sendMsgUtil.parse_0x03(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
-					clientMap.put(devicenum, client);
 				} else if (cmd == 0x03) {//登录信息 2桩回复对时命令
 					SendMsgUtil.parse_0x05(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x07) {//桩回复对时命令

@@ -2,7 +2,6 @@ package com.hedong.hedongwx.utils;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,15 +9,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.hedong.hedongwx.service.EquipmentService;
 import com.hedong.hedongwx.thread.Server;
 
-@Service
+@Component
 public class SendMsgUtil {
 	
 	private static final String DOMAIN = "http://ck.taifengkeji.com/";
+	
+	@Autowired
+	private EquipmentService equipmentService;
 	
 	/** 预约map*/
 	public static ConcurrentHashMap<String, Object> yuyueMap = new ConcurrentHashMap<>(); 
@@ -64,6 +68,7 @@ public class SendMsgUtil {
 //		for (byte b : bytes) {
 //			System.out.printf("0x%02x ", b);
 //		}
+		send_0x02("0027021234561234", (byte) 1, (byte) 0, (byte) 2);
 	}
 	
 	public static Map<String, Object> backCahrgeInfo(String ordernum) {
@@ -149,6 +154,7 @@ public class SendMsgUtil {
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = (short) (108 + portnum * 20);
+		System.out.println("datalen===" + datalen);
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0,0));
 		buffer.put((byte) 0x01);//0x01-允许；0x02-不允许
@@ -164,8 +170,9 @@ public class SendMsgUtil {
 			}
 			buffer.put(DisposeUtil.complateBytes(devicenumAndPort.getBytes(), 20));
 		}
-		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		buffer.position(2);
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
+		
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -219,6 +226,7 @@ public class SendMsgUtil {
 		buffer.get(latBytes);
 		double lon = lon1 + DisposeUtil.bytes2Double(lonBytes)/10000;
 		byte sum = buffer.get();//校验码
+		
 	}
 	
 	/**
@@ -245,7 +253,7 @@ public class SendMsgUtil {
 		byte[] sendTime = new byte[12];
 		buffer.put(DisposeUtil.complateBytes(dateFlag, sendTime.length));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -362,7 +370,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(6, 15));//6字节
 		buffer.put(DisposeUtil.convertPhonenum(phonenum).getBytes());//11字节
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -438,7 +446,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0,0));//6字节
 		buffer.put((byte) (port - 1));//1字节
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -501,7 +509,7 @@ public class SendMsgUtil {
 			}
 		}
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -597,7 +605,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put(port);
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -626,7 +634,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put(port);
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -648,6 +656,14 @@ public class SendMsgUtil {
 		int chargeTime = DisposeUtil.converIntDataBackInt(buffer.getInt(), 4);//充电时长1s
 		int chargeMoney = DisposeUtil.converIntDataBackInt(buffer.getInt(), 4);//充电金额0.01 元
 		byte chargenum = buffer.get();//充电模块接入数量
+		Map<Object,Object> map = new HashMap<>();
+		map.put("chargeV", CommUtil.toDouble(chargeV)/10);
+		map.put("chargeA", CommUtil.toDouble(chargeA)/10);
+		map.put("chargeElec", CommUtil.toDouble(chargeElec)/100);
+		map.put("chargeTime", CommUtil.toDouble(chargeTime)/60);
+		map.put("chargeMoney", CommUtil.toDouble(chargeMoney)/100);
+		map.put("chargenum", chargenum);
+		logger.info("充电桩工作信息：" + JSON.toJSONString(map));
 	}
 	
 	/**
@@ -663,7 +679,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put((byte) (port - 1));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -802,7 +818,7 @@ public class SendMsgUtil {
 		buffer.put(port);
 		buffer.put(DisposeUtil.converIntData(recordIndex,2));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -877,7 +893,7 @@ public class SendMsgUtil {
 		buffer.put(port);
 		buffer.put(DisposeUtil.converIntData(recordIndex,2));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -898,7 +914,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.complateBytes(serverIP.getBytes(), 50));
 		buffer.put(DisposeUtil.converIntData(serverPort,2));
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -985,7 +1001,7 @@ public class SendMsgUtil {
 			buffer.put(DisposeUtil.converIntData(serverfee.intValue(), 4));
 		}
 		buffer.position(1);
-		byte[] bytes = new byte[datalen & 0xffff + 12];
+		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();

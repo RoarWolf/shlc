@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -434,5 +435,5 @@ public interface EquipmentService {
 	 */
 	Map<String, Object> getWarnParamsInfo(String code, Integer merid, Integer opertype, Integer type);
 	
-	
+	Map<String, Object> insertEquipmentNew(String code, String hardversion, String softversion, String subHardversion, String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location, BigDecimal lon, BigDecimal lat,String remark);
 }
