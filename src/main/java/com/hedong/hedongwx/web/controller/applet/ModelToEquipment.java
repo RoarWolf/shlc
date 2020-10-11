@@ -38,14 +38,19 @@ public class ModelToEquipment {
 	 * @return
 	 */
 	@PostMapping("/yuyueCharge")
-	public Object yuyueCharge(String devicenum, Integer port, Integer userid, Integer userType,
+	public Object yuyueCharge(String devicenum, String port, Integer userid, String userType,
 			String phonenum) {
-		Equipment equipment = equipmentService.getEquipmentById(devicenum);
-		if (equipment == null) {
-			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
-		}
+		System.out.println("devicenum:" + devicenum);
+		System.out.println("port:" + port);
+		System.out.println("userid:" + userid);
+		System.out.println("userType:" + userType);
+		System.out.println("phonenum:" + phonenum);
+//		Equipment equipment = equipmentService.getEquipmentById(devicenum);
+//		if (equipment == null) {
+//			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
+//		}
 		String useridStr = DisposeUtil.completeNum(userid + "", 8);
-		return SendMsgUtil.send_0x1B(devicenum, port.byteValue(), useridStr, userType.byteValue(), phonenum);
+		return SendMsgUtil.send_0x1B(devicenum, Byte.parseByte(port), useridStr, Byte.parseByte(userType), phonenum);
 	}
 	
 	/**

@@ -7,4 +7,6 @@ public interface EquipmentNewDao {
 	int insertEquipmentNew(EquipmentNew equipmentNew);
 	
 	int updateEquipmentNew(EquipmentNew equipmentNew);
+	
+	String selectDeviceExsit(String devicenum);
 }

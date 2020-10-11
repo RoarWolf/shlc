@@ -435,5 +435,28 @@ public interface EquipmentService {
 	 */
 	Map<String, Object> getWarnParamsInfo(String code, Integer merid, Integer opertype, Integer type);
 	
+	/**
+	 * 添加充电桩
+	 * @param code
+	 * @param hardversion
+	 * @param softversion
+	 * @param subHardversion
+	 * @param subSoftversion
+	 * @param dcModeltype
+	 * @param dcModelnum
+	 * @param dcModelpower
+	 * @param location
+	 * @param lon
+	 * @param lat
+	 * @param remark
+	 * @return
+	 */
 	Map<String, Object> insertEquipmentNew(String code, String hardversion, String softversion, String subHardversion, String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location, BigDecimal lon, BigDecimal lat,String remark);
+	
+	/**
+	 * 查询充电桩是否存在
+	 * @param devicenum
+	 * @return
+	 */
+	String selectDeviceExsit(String devicenum);
 }

@@ -2791,4 +2791,9 @@ public class EquipmentServiceImpl implements EquipmentService {
 		}
 	}
 
+	@Override
+	public String selectDeviceExsit(String devicenum) {
+		return equipmentNewDao.selectDeviceExsit(devicenum);
+	}
+
 }

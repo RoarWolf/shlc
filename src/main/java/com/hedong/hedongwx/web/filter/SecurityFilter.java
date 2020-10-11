@@ -102,6 +102,7 @@ public class SecurityFilter implements Filter {
 	 * @return
 	 */
 	private boolean isWeChPassMethod(String url) {
+		System.out.println("url.indexOf('/deviceConnect') != -1" + (url.indexOf("/deviceConnect") != -1));
 		if (url.endsWith(".css") || url.endsWith(".js") || url.endsWith(".jpg") || url.endsWith(".png")
 				|| url.endsWith(".ttf") || url.endsWith(".icon")) {
 			return true;

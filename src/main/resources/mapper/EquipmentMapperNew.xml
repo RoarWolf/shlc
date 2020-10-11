@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hedong.hedongwx.dao.EquipmentDao">
+<mapper namespace="com.hedong.hedongwx.dao.EquipmentNewDao">
 	<insert id="insertEquipmentNew" parameterType="com.hedong.hedongwx.entity.EquipmentNew">
 		insert into hd_equipment_new
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -196,4 +196,7 @@
 		where code = #{code,jdbcType=VARCHAR}
 	</update>
 
+	<select id="selectDeviceExsit">
+		select code from hd_equipment_new where code = #{devicenum}
+	</select>
 </mapper>

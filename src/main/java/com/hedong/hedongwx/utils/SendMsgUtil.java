@@ -326,11 +326,11 @@ public class SendMsgUtil {
 		buffer.put((byte) 0x0B);//cmd
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
-		short datalen = 0x08;
+		short datalen = 0x09;
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0,0));
 		buffer.put((byte) 0x00);//桩心跳超时次数
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[21];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
@@ -369,7 +369,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.converIntData(userType,2));//2字节
 		buffer.put(DisposeUtil.getDateFlag(6, 15));//6字节
 		buffer.put(DisposeUtil.convertPhonenum(phonenum).getBytes());//11字节
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
@@ -445,7 +445,7 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0,0));//6字节
 		buffer.put((byte) (port - 1));//1字节
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
@@ -508,7 +508,7 @@ public class SendMsgUtil {
 				}
 			}
 		}
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
