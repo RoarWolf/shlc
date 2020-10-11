@@ -1294,7 +1294,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 			}else if(teststatus.equals(3)){
 				parameters.setLevel("10");
 			}
-			List<Map<String, Object>> deviceData = CommUtil.isListMapEmpty(equipmentDao.selectEquList(parameters));
+			List<Map<String, Object>> deviceData = CommUtil.isListMapEmpty(equipmentNewDao.selectEquList(parameters));
 
 			Integer export =  CommUtil.toInteger(maparam.get("export"));
 			if(export.equals(1)){
@@ -1319,7 +1319,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 				page.setEnd();
 				parameters.setPages(page.getNumPerPage());
 				parameters.setStartnumber(page.getStartIndex());
-				List<Map<String, Object>> deviceInfo = CommUtil.isListMapEmpty(equipmentDao.selectEquList(parameters));
+				List<Map<String, Object>> deviceInfo = CommUtil.isListMapEmpty(equipmentNewDao.selectEquList(parameters));
 				datamap.put("listdata", deviceInfo);
 				datamap.put("totalRows", page.getTotalRows());
 				datamap.put("totalPages", page.getTotalPages());

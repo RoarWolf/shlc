@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hedong.hedongwx.utils.JedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -327,11 +328,11 @@ public class DeviceDataController {
 	@ResponseBody
     public Object getDeviceData(HttpServletRequest request, HttpServletResponse response) {
 		Object result = null;
-		if(CommonConfig.isExistSessionUser(request)){
+		/*if(JedisUtils.get("admin")==null){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else{
+		}else{*/
 			result = equipmentService.getDeviceData(request, 1);
-		}
+		//}
 		return JSON.toJSON(result);
 	}
 	
@@ -660,7 +661,7 @@ public class DeviceDataController {
 	public Object transpositionImei(HttpServletRequest request){
 		Object result = null;
 		User user=CommonConfig.getAdminReq(request);
-		if(CommonConfig.isExistSessionUser(request)){
+		if(JedisUtils.get("admin")==null){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
 		}else if(user!=null){
 			result = equipmentService.transpositionImei(request);
