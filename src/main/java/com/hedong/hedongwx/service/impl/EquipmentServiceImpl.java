@@ -1232,19 +1232,19 @@ public class EquipmentServiceImpl implements EquipmentService {
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			User user = CommonConfig.getAdminReq(request);
+			//User user = CommonConfig.getAdminReq(request);
 			//===========================================
 			//前端传递代理商名下某一个商家的id
-			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
+		/*	Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
 				user.setLevel(2);
 				user.setId(agentSelectmerid);
-			}
+			}*/
 			//====================================================
-			Integer rank = CommUtil.toInteger(user.getLevel());
+			/*Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
-			parameters.setDeviceType(CommUtil.toInteger(type));
+			parameters.setDeviceType(CommUtil.toInteger(type));*/
 			
 			parameters.setCode(CommUtil.toString(maparam.get("devicenum")));
 			parameters.setNickname(CommUtil.toString(maparam.get("nick")));
@@ -2766,28 +2766,24 @@ public class EquipmentServiceImpl implements EquipmentService {
 	}
 
 	@Override
-	public Map<String, Object> insertEquipmentNew(String code, String hardversion, String softversion, String subHardversion,
-			String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location,
-			BigDecimal lon, BigDecimal lat, String remark) {
+	public Map<String, Object> insertEquipmentNew(EquipmentNew equ) {
 		try {
-			EquipmentNew equ = new EquipmentNew();
-			equ.setCode(code);
-			equ.setHardversion(hardversion);
-			equ.setSoftversion(softversion);
-			equ.setSubHardversion(subHardversion);
-			equ.setSubSoftversion(subSoftversion);
-			equ.setDcModeltype(dcModeltype);
-			equ.setDcModelnum(dcModelnum);
-			equ.setDcModelpower(dcModelpower);
-			equ.setLocation(location);
-			equ.setLon(lon);
-			equ.setLat(lat);
-			equ.setRemark(remark);
+
 			equ.setCreateTime(new Date());
 			equipmentNewDao.insertEquipmentNew(equ);
 			return CommUtil.responseBuildInfo(200, "添加成功", null);
 		} catch (Exception e) {
 			return CommUtil.responseBuildInfo(201, "添加失败", null);
+		}
+	}
+
+	@Override
+	public Map<String, Object> updateEquipmentNew(EquipmentNew equ) {
+		try {
+			equipmentNewDao.insertEquipmentNew(equ);
+			return CommUtil.responseBuildInfo(200, "修改成功", null);
+		} catch (Exception e) {
+			return CommUtil.responseBuildInfo(201, "失败失败", null);
 		}
 	}
 

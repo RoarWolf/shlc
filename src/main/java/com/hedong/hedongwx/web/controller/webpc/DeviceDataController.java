@@ -9,21 +9,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hedong.hedongwx.entity.*;
 import com.hedong.hedongwx.utils.JedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
-import com.hedong.hedongwx.entity.CodeSystemParam;
-import com.hedong.hedongwx.entity.Equipment;
-import com.hedong.hedongwx.entity.TemplateParent;
-import com.hedong.hedongwx.entity.TemplateSon;
-import com.hedong.hedongwx.entity.User;
-import com.hedong.hedongwx.entity.UserEquipment;
 import com.hedong.hedongwx.service.AllPortRecordService;
 import com.hedong.hedongwx.service.AllPortStatusService;
 import com.hedong.hedongwx.service.BasicsService;
@@ -710,11 +703,32 @@ public class DeviceDataController {
 	 * @return JSON
 	 * @return
 	 */
-	@RequestMapping("/insetDevice")
+	@RequestMapping(value = "/insetDevice",method = RequestMethod.POST)
 	@ResponseBody
-	public Object insetDevice(String code, String hardversion, String softversion, String subHardversion,
-			String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location,
-			BigDecimal lon, BigDecimal lat, String remark){
-		return equipmentService.insertEquipmentNew(code, hardversion, softversion, subHardversion, subSoftversion, dcModeltype, dcModelnum, dcModelpower, location, lon, lat, remark);
+	public Object insetDevice(@RequestBody EquipmentNew equ){
+		return equipmentService.insertEquipmentNew(equ);
+	}
+
+	/**
+	 * 修改充电桩信息
+	 * @param code 充电桩编号
+	 * @param hardversion 硬件版本
+	 * @param softversion 软件版本
+	 * @param subHardversion 次单元硬件版本
+	 * @param subSoftversion 次单元软件版本
+	 * @param dcModeltype 直流模块类型
+	 * @param dcModelnum 直流模块总数
+	 * @param dcModelpower 直流模块单模块功
+	 * @param location 地址详情
+	 * @param lon 经度
+	 * @param lat 纬度
+	 * @param remark 充电桩昵称
+	 * @return JSON
+	 * @return
+	 */
+	@RequestMapping(value = "/updateDevice",method = RequestMethod.POST)
+	@ResponseBody
+	public Object updateDevice(@RequestBody EquipmentNew equ){
+		return equipmentService.updateEquipmentNew(equ);
 	}
 }
