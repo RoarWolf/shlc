@@ -413,7 +413,7 @@
 	<!-- 查询普通用户信息 -->
 	<select id="selectGeneralUserInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
 		SELECT  u.*,mu.id AS merid,mu.username AS muusername,mu.realname AS murealname,mu.phone_num AS muphone_num,a.`name` AS arename, p.id AS montid, p.uid AS montuid
-		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id LEFT JOIN hd_area a ON u.aid = a.id LEFT JOIN hd_packagemonth p ON u.id = p.uid 
+		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id LEFT JOIN hd_area a ON u.aid = a.id LEFT JOIN hd_packagemonth p ON u.id = p.uid
 	    <where>
 		    <if test=" order!=null and order!=''"> and u.id = #{order} </if>
 		    <if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>

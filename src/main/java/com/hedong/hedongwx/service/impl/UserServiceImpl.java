@@ -1331,10 +1331,10 @@ public class UserServiceImpl implements UserService {
 			parameters.setMobile(CommUtil.toString(maparam.get("mobile")));
 //			parameters.setSource(CommUtil.toString(maparam.get("income")));//归属小区
 			Integer rankwallet = CommUtil.toInteger(maparam.get("moneySort"));
-			
+
 			/*Integer startID = CommUtil.toInteger(maparam.get("startID"));//会员id
 			Integer endID = CommUtil.toInteger(maparam.get("endID"));//会员id*/
-			
+
 			/*StringBuffer idsort = new StringBuffer();
 			if(!startID.equals(0)){
 				idsort.append("u.id >= " + startID );

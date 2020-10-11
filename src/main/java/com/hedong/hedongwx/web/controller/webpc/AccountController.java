@@ -213,7 +213,7 @@ public class AccountController {
 	@ResponseBody
     public Object getAccountListInfo(HttpServletRequest request, HttpServletResponse response) {
 		Object result = null;
-		if(CommonConfig.isExistSessionUser(request)){
+		if(JedisUtils.get("admin")==null){
 			result = CommUtil.responseBuild(901, "缓存失效", "");
 		}else{
 			result = userService.getAccountListInfo(request);
