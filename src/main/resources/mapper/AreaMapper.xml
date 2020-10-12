@@ -18,7 +18,7 @@
 		FROM hd_area a LEFT JOIN hd_user u ON a.merid = u.id LEFT JOIN hd_user mu ON a.manid = mu.id LEFT JOIN hd_templateparent t ON a.tempid = t.id
 		WHERE a.id = #{id,jdbcType=INTEGER}
 	 </select>
-	 
+
  	<select id="selectByParame" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
 		SELECT name
 		FROM hd_area a
@@ -29,10 +29,8 @@
 			<if test="dealer!=null and dealer!=''"> AND u.username LIKE '%${dealer}%' </if>
 			<if test="realname!=null and realname!=''"> AND u.realname LIKE '%${realname}%' </if>
 			<if test="mobile!=null and mobile!=''"> AND u.phone_num LIKE '%${mobile}%' </if>
-			
 			<if test="username!=null and username!=''"> AND mu.realname LIKE '%${username}%' </if>
 			<if test="phone!=null and phone!=''"> AND mu.phone_num LIKE '%${phone}%' </if>
-			
 			<if test="startTime!=null and startTime!=''"> AND a.create_time &gt;= #{startTime}</if>
 			<if test="endTime!=null and endTime!=''"> AND a.create_time &lt;= #{endTime}</if>
 		</where>
