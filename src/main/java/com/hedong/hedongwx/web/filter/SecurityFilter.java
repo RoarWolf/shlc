@@ -237,7 +237,7 @@ public class SecurityFilter implements Filter {
 			return true;
 		}else if(url.indexOf("/AccountInfo")!=-1){
 			return true;
-		} else if(url.indexOf("/deviceData")!=-1){
+		} else if(url.indexOf("/areaData")!=-1){
 			return true;
 		}
 		else {

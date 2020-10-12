@@ -34,11 +34,18 @@ public interface AreaDao {
 	Area selectByAreaId(Integer id);
 
 	/**
-	 *
+	 *pc端分页获取小区列表
 	 * @param parame
 	 * @return
 	 */
 	List<Map<String, Object>> selectByParame(Parameters parame);
+
+	/**
+	 *pc端根据条件获取小区数量
+	 * @param parame
+	 * @return
+	 */
+	int getTotalAreaByparam(Parameters parame);
 
 	/**
 	 *

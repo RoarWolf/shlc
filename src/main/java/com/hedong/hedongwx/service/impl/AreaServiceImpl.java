@@ -571,25 +571,10 @@ public class AreaServiceImpl implements AreaService {
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			User user = CommonConfig.getAdminReq(request);
-			//===========================================
-			//前端传递代理商名下某一个商家的id
-			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
-			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
-				user = new User();
-				user.setLevel(2);
-				user.setId(agentSelectmerid);
-			}
 			//====================================================
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getLevel());
-			if(!rank.equals(0)) parameters.setUid(user.getId());
-			
 			parameters.setRemark(CommUtil.toString(maparam.get("areaname")));//小区名称
 			parameters.setSource(CommUtil.toString(maparam.get("address")));//小区地址
-			parameters.setDealer(CommUtil.toString(maparam.get("dealernick")));//关联商户名称
-			parameters.setRealname(CommUtil.toString(maparam.get("realname")));//关联商户名称
-			parameters.setMobile(CommUtil.toString(maparam.get("phone")));//商户电话
 //			parameters.setRealname(CommUtil.toString(maparam.get("manarealname")));//副号名称
 //			parameters.setPhone(CommUtil.toString(maparam.get("manaphonenum")));//副号点
 			parameters.setStartTime(CommUtil.toString(maparam.get("startTime")));
@@ -604,32 +589,40 @@ public class AreaServiceImpl implements AreaService {
 			List<Map<String, Object>> areaManageInfo = CommUtil.isListMapEmpty(areaDao.selectByParame(parameters));
 			for(Map<String, Object> item : areaManageInfo){
 				Integer aid = CommUtil.toInteger(item.get("id"));
-				
+				String areaOnlyCode = StringUtil.StringNumer(CommUtil.toString(item.get("id")));//生成站点唯一编号
+				item.put("area_only_code",areaManageInfo);
+				Area area = new Area();
+				area.setId(Integer.parseInt(item.get("id").toString()));
+				area.setAreaOnlyCode(areaOnlyCode);
+				areaDao.updateByArea(area);
+
+
+
 				Map<String, Object>  areaonline = areaDao.inquireAreaOnlineCard(aid);
 				Integer devicenum =  areaDao.inquireAreaDevicenum(aid);
 				Map<String, Object>  areauser =  areaDao.inquireAreaUser(aid);
 				
-				Integer onlinenum = CommUtil.toInteger(areaonline.get("count"));
-				Double ctopupbalance = CommUtil.toDouble(areaonline.get("topupbalance"));
-				Double csendmoney = CommUtil.toDouble(areaonline.get("sendmoney"));
+				Integer onlinenum = CommUtil.toInteger(areaonline.get("count"));//在线卡表数
+				Double ctopupbalance = CommUtil.toDouble(areaonline.get("topupbalance"));//金额
+				Double csendmoney = CommUtil.toDouble(areaonline.get("sendmoney"));//赠送金额
 				
-				Integer areausernum = CommUtil.toInteger(areauser.get("count"));
-				Double utopupbalance = CommUtil.toDouble(areauser.get("topupbalance"));
-				Double usendmoney = CommUtil.toDouble(areauser.get("sendmoney"));
+				Integer areausernum = CommUtil.toInteger(areauser.get("count"));//小区用户数
+				Double utopupbalance = CommUtil.toDouble(areauser.get("topupbalance"));//金额
+				Double usendmoney = CommUtil.toDouble(areauser.get("sendmoney"));//赠送金额
 				
-				item.put("devicenum", devicenum);
-				item.put("onlinenum", onlinenum);
-				item.put("ctopupbalance", ctopupbalance);
-				item.put("csendmoney", csendmoney);
-				item.put("areausernum", areausernum);
-				item.put("utopupbalance", utopupbalance);
-				item.put("usendmoney", usendmoney);
-				Parameters pareme = new Parameters();
+				item.put("devicenum", devicenum);//设备数
+				item.put("onlinenum", onlinenum);//在线数
+				item.put("ctopupbalance", ctopupbalance);//金额
+				item.put("csendmoney", csendmoney);//赠送金额
+				item.put("areausernum", areausernum);//小区人数
+				item.put("utopupbalance", utopupbalance);//金额
+				item.put("usendmoney", usendmoney);//赠送用户金额
+			/*	Parameters pareme = new Parameters();
 				pareme.setState(aid.toString());
-				pareme.setType("2");
-				List<Map<String, Object>> arearelevanceData = CommUtil.isListMapEmpty(areaDao.selectaRearelInfo(pareme));
+				pareme.setType("2");*/
+				/*List<Map<String, Object>> arearelevanceData = CommUtil.isListMapEmpty(areaDao.selectaRearelInfo(pareme));
 				item.put("partnersize", arearelevanceData.size());
-				item.put("partner", arearelevanceData);
+				item.put("partner", arearelevanceData);*/
 			}
 			datamap.put("listdata", CommUtil.isListMapEmpty(areaManageInfo));
 			datamap.put("totalRows", page.getTotalRows());

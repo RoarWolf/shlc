@@ -69,8 +69,17 @@ public class Area {
 	private BigDecimal distance;
 	//空闲端口数
 	private Integer freenum;
-	
-	
+
+	/**站点唯一编号**/
+	private String  areaOnlyCode;
+
+	public String getAreaOnlyCode() {
+		return areaOnlyCode;
+	}
+
+	public void setAreaOnlyCode(String areaOnlyCode) {
+		this.areaOnlyCode = areaOnlyCode;
+	}
 
 	public Integer getExpiredEquNum() {
 		return expiredEquNum;
