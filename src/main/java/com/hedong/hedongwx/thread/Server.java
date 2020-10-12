@@ -98,6 +98,8 @@ public class Server {
 
 	public static int sendMsg(String clientId, ByteBuffer buffer) {
 		System.out.println("clientId===" + clientId);
+		DisposeUtil.printDeviceDataInfo(clientId, buffer, false);
+		buffer.position(0);
 		try {
 			if (clientId != null) {
 				if (clientMap.get(clientId) != null) {
