@@ -37,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class Server {
 	public static void main(String[] args) throws IOException {
-
 	}
 	
 	@Autowired
@@ -327,7 +326,9 @@ public class Server {
 				//有无回复 1-有、2无
 				if (cmd == 0x01) {//桩请求连接 1
 					clientMap.put(devicenum, client);
-					devicenumList.add(devicenum);
+					if (!devicenumList.contains(devicenum)) {
+						devicenumList.add(devicenum);
+					}
 					SendMsgUtil.parse_0x01(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x03) {//登录信息
 					sendMsgUtil.parse_0x03(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);

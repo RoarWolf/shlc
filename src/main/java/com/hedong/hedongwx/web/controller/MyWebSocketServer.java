@@ -62,9 +62,12 @@ public class MyWebSocketServer {
 		// 获取服务端到客户端的通道
 		MyWebSocketServer myWebSocket = webSocketMap.get(session.getId());
 		logger.info("收到来自" + session.getId() + "的消息" + params);
-		String result = "收到来自" + session.getId() + "的消息" + params;
+//		String result = "收到来自" + session.getId() + "的消息" + params;
 		// 返回消息给Web Socket客户端（浏览器）
-		myWebSocket.sendMessage(session, 1, "connect true", result);
+//		myWebSocket.sendMessage(session, 1, "connect true", result);
+		if (params.contains("shzylc")) {
+			
+		}
 	}
 
 	/**
