@@ -2775,14 +2775,22 @@ public class EquipmentServiceImpl implements EquipmentService {
 
 	@Override
 	public Map<String, Object> insertEquipmentNew(EquipmentNew equ) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			equipmentNewDao.insertEquipmentNew(equ);
+			return CommUtil.responseBuildInfo(200, "添加成功", null);
+		} catch (Exception e) {
+			return CommUtil.responseBuildInfo(201, "添加失败", null);
+		}
 	}
 
 	@Override
 	public Map<String, Object> updateEquipmentNew(EquipmentNew equ) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			equipmentNewDao.updateEquipmentNew(equ);
+			return CommUtil.responseBuildInfo(200, "添加成功", null);
+		} catch (Exception e) {
+			return CommUtil.responseBuildInfo(201, "添加失败", null);
+		}
 	}
 
 	@Override
