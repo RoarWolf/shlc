@@ -67,6 +67,15 @@ public class Area {
 	
 	//距离（km）
 	private BigDecimal distance;
+	//空闲端口数
+	private Integer freenum;
+
+	/**站点唯一编号**/
+	private String  areaOnlyCode;
+
+	public String getAreaOnlyCode() {
+		return areaOnlyCode;
+	}
 	//直流空闲端口数
 	private Integer DCfreenum;
 	//直流端口总数
@@ -395,5 +404,4 @@ public class Area {
 				+ ", expiredEquNum=" + expiredEquNum + ", almostExEquNum=" + almostExEquNum + ", distance=" + distance
 				+ ", DCfreenum=" + DCfreenum + ", DCAllnum=" + DCAllnum + "]";
 	}
-
 }

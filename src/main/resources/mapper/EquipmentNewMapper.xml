@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hedong.hedongwx.dao.EquipmentNewDao">
 
-	<!-- 查询设备列表 (跳转设备列表) -->
-	<select id="selectEquList"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+
+	<select id="selectEquList"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="map">
 		SELECT  e.*,a.address
 		FROM hd_equipment_new  e  LEFT JOIN
 		hd_area a ON e.aid = a.id
@@ -225,6 +225,7 @@
 		</set>
 		where code = #{code,jdbcType=VARCHAR}
 	</update>
+
 
 	<select id="selectDeviceExsit" resultType="java.lang.String" parameterType="java.lang.String">
 		select code from hd_equipment_new where code = #{devicenum}

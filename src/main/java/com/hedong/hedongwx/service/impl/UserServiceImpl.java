@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
+import com.hedong.hedongwx.utils.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +53,6 @@ import com.hedong.hedongwx.entity.UserBankcard;
 import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.service.MoneyService;
 import com.hedong.hedongwx.service.UserService;
-import com.hedong.hedongwx.utils.CommUtil;
-import com.hedong.hedongwx.utils.HttpRequest;
-import com.hedong.hedongwx.utils.MD5Util;
-import com.hedong.hedongwx.utils.PageUtils;
-import com.hedong.hedongwx.utils.StringUtil;
-import com.hedong.hedongwx.utils.WeixinUtil;
-import com.hedong.hedongwx.utils.WxpayUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -943,6 +938,7 @@ public class UserServiceImpl implements UserService {
 			datamap.put("token", account.getId());
 			request.getSession().setAttribute("user", account);
 			request.getSession().setAttribute("admin", account);
+			JedisUtils.set("admin", JSON.toJSONString(account),18000);
 			return CommUtil.responseBuildInfo(200, "登录成功", datamap);
 		} catch (Exception e) {
 			e.printStackTrace();

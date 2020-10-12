@@ -1232,19 +1232,19 @@ public class EquipmentServiceImpl implements EquipmentService {
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			//User user = CommonConfig.getAdminReq(request);
+			User user = CommonConfig.getAdminReq(request);
 			//===========================================
 			//前端传递代理商名下某一个商家的id
-		/*	Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
+			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
 			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
 				user = new User();
 				user.setLevel(2);
 				user.setId(agentSelectmerid);
-			}*/
+			}
 			//====================================================
-			/*Integer rank = CommUtil.toInteger(user.getLevel());
+			Integer rank = CommUtil.toInteger(user.getLevel());
 			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
-			parameters.setDeviceType(CommUtil.toInteger(type));*/
+			parameters.setDeviceType(CommUtil.toInteger(type));
 			
 			parameters.setCode(CommUtil.toString(maparam.get("devicenum")));
 			parameters.setNickname(CommUtil.toString(maparam.get("nick")));
@@ -1294,7 +1294,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 			}else if(teststatus.equals(3)){
 				parameters.setLevel("10");
 			}
-			List<Map<String, Object>> deviceData = CommUtil.isListMapEmpty(equipmentNewDao.selectEquList(parameters));
+			List<Map<String, Object>> deviceData = CommUtil.isListMapEmpty(equipmentDao.selectEquList(parameters));
 
 			Integer export =  CommUtil.toInteger(maparam.get("export"));
 			if(export.equals(1)){
@@ -1319,7 +1319,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 				page.setEnd();
 				parameters.setPages(page.getNumPerPage());
 				parameters.setStartnumber(page.getStartIndex());
-				List<Map<String, Object>> deviceInfo = CommUtil.isListMapEmpty(equipmentNewDao.selectEquList(parameters));
+				List<Map<String, Object>> deviceInfo = CommUtil.isListMapEmpty(equipmentDao.selectEquList(parameters));
 				datamap.put("listdata", deviceInfo);
 				datamap.put("totalRows", page.getTotalRows());
 				datamap.put("totalPages", page.getTotalPages());
@@ -2766,20 +2766,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 	}
 
 	@Override
-	public Map<String, Object> insertEquipmentNew(EquipmentNew equ) {
-		try {
-
-			equ.setCreateTime(new Date());
-			looger.info("设备信息：" + equ);
-//			equipmentNewDao.insertEquipmentNew(equ);
-			return CommUtil.responseBuildInfo(200, "添加成功", null);
-		} catch (Exception e) {
-			return CommUtil.responseBuildInfo(201, "添加失败", null);
-		}
-	}
-	
-	@Override
-	public Map<String, Object> insertEquipmentNewData(String code, String hardversion, String softversion, String subHardversion,
+	public Map<String, Object> insertEquipmentNew(String code, String hardversion, String softversion, String subHardversion,
 			String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location,
 			BigDecimal lon, BigDecimal lat, String remark) {
 		try {
@@ -2797,8 +2784,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 			equ.setLat(lat);
 			equ.setRemark(remark);
 			equ.setCreateTime(new Date());
-			looger.info("设备信息：" + equ);
-//			equipmentNewDao.insertEquipmentNew(equ);
+			equipmentNewDao.insertEquipmentNew(equ);
 			return CommUtil.responseBuildInfo(200, "添加成功", null);
 		} catch (Exception e) {
 			return CommUtil.responseBuildInfo(201, "添加失败", null);
@@ -2806,18 +2792,8 @@ public class EquipmentServiceImpl implements EquipmentService {
 	}
 
 	@Override
-	public boolean selectDeviceExsit(String devicenum) {
-		String selectDeviceExsit = equipmentNewDao.selectDeviceExsit(devicenum);
-		if (selectDeviceExsit != null) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public Map<String, Object> updateEquipmentNew(EquipmentNew equ) {
-		// TODO Auto-generated method stub
-		return null;
+	public String selectDeviceExsit(String devicenum) {
+		return equipmentNewDao.selectDeviceExsit(devicenum);
 	}
 
 }
