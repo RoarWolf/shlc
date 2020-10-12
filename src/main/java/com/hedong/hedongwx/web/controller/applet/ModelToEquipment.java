@@ -1,14 +1,17 @@
 package com.hedong.hedongwx.web.controller.applet;
 
+import java.util.List;
+
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hedong.hedongwx.entity.Equipment;
 import com.hedong.hedongwx.service.EquipmentService;
+import com.hedong.hedongwx.thread.Server;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.SendMsgUtil;
@@ -21,12 +24,33 @@ import com.hedong.hedongwx.utils.SendMsgUtil;
  */
 @RestController
 @RequestMapping("/deviceConnect")
+@EnableScheduling
 public class ModelToEquipment {
 	
 	@Autowired
 	private HttpServletRequest request;
 	@Autowired
 	private EquipmentService equipmentService;
+	
+	@Scheduled(cron = "0 0/1 * * * *")
+	public void hartTask() {
+		List<String> devicelist = Server.devicenumList;
+		if (devicelist.size() > 0) {
+			for (String devicenum : devicelist) {
+				SendMsgUtil.send_0x0B(devicenum);
+			}
+		}
+	}
+	
+	@Scheduled(cron = "0 0 3 * * *")
+	public void setTimeTask() {
+		List<String> devicelist = Server.devicenumList;
+		if (devicelist.size() > 0) {
+			for (String devicenum : devicelist) {
+				SendMsgUtil.send_0x06(devicenum);
+			}
+		}
+	}
 	
 	/**
 	 * 预约

@@ -23,15 +23,24 @@ public class Client {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Client client = new Client();
-//		client.connect("127.0.0.1", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
-		client.connect("121.196.187.251", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
+		client.connect("127.0.0.1", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
+//		client.connect("121.196.187.251", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
 
 			@Override
 			public void completed(Void result, AsynchronousSocketChannel channel) {
 				client.read(channel, client);
 
 				ByteBuffer buffer = client.cmd_25();
-				client.writeBuffer(buffer);
+				for (int i = 0; i < 50; i++) {
+					client.writeBuffer(buffer);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					System.out.println("send_25");
+				}
 
 				System.out.println("连接成功");
 			}

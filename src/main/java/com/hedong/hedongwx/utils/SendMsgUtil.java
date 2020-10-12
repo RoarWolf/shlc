@@ -1,7 +1,9 @@
 package com.hedong.hedongwx.utils;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,16 +61,31 @@ public class SendMsgUtil {
 //		if (timenum > 0) {
 //			String timeInfoStr = billingParam.get("timeInfo");
 //			List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
-//			for (Map<String, Object> map : timeInfo) {
-//				System.out.println(JSON.toJSONString(map));
+//			timeInfo.clear();
+//			for (int i = 0; i < 12; i+=2) {
+//				Map<String,Object> map = new HashMap<>();
+//				Double chargefee = 0.1 + (i)/10;
+//				Double serverfee = 0.02;
+//				map.put("chargefee", chargefee);
+//				map.put("serverfee", serverfee);
+//				map.put("hour", i);
+//				map.put("minute", 0);
+//				map.put("type", 1);
+//				timeInfo.add(map);
 //			}
+//			billingParam.put("timeInfo", JSON.toJSONString(timeInfo));
 //		}
-//		String str = "沪";
-//		byte[] bytes = str.getBytes("GBK");
-//		for (byte b : bytes) {
-//			System.out.printf("0x%02x ", b);
-//		}
-		send_0x02("0027021234561234", (byte) 1, (byte) 0, (byte) 2);
+//		JedisUtils.hmset("billingInfo", billingParam);
+//		send_0x37("1", billingParam);
+		byte[] bytes = new byte[]{0x4a, 0x58, 0x26, 0x10, 0x27, 0x52, 0x01, 0x02, 0x03, 0x00, 0x01, 0x01, 0x14, 0x0a, 0x0b, 0x16, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x4a};
+		byte sum = 0;
+		for (int i = 2; i < bytes.length-1; i++) {
+			System.out.printf("0x%02x ", bytes[i]);
+			sum ^= bytes[i];
+		}
+		System.out.println();
+		System.out.printf("0x%02x ", sum);
+		
 	}
 	
 	public static Map<String, Object> backCahrgeInfo(String ordernum) {
@@ -108,7 +125,7 @@ public class SendMsgUtil {
 	
 	public static byte clacSumVal(byte[] bytes) {
 		byte sum = 0x00;
-		for (int i = 0; i < bytes.length - 1; i++) {
+		for (int i = 0; i < bytes.length; i++) {
 			sum ^= bytes[i];
 		}
 		return sum;
@@ -204,6 +221,7 @@ public class SendMsgUtil {
 		byte DCTypeNum = buffer.get();//直流模块总数
 		String DCTypeNumStr = DisposeUtil.intToHex(DCTypeNum & 0xff);
 		int DCOnePower = buffer.get() & 0xff;//直流模块总数直流模块单模块功率
+		String DCOnePowerStr = DisposeUtil.intToHex(DCOnePower & 0xff);
 		int chargingModelVer = buffer.getShort() & 0xffff;//计费模型版本
 		int beginNum = buffer.getShort() & 0xffff;//启动次数
 		byte[] dateBytes = new byte[6];
@@ -220,13 +238,18 @@ public class SendMsgUtil {
 		int lat1 = buffer.get() & 0xff;//纬度（度）
 		byte[] latBytes = new byte[3];
 		buffer.get(latBytes);
-		double lat = lat1 + DisposeUtil.bytes2Double(latBytes)/10000;
+		Double lat = lat1 + DisposeUtil.bytes2Double(latBytes)/10000;
 		int lon1 = buffer.get() & 0xff;//经度（度）
 		byte[] lonBytes = new byte[3];
 		buffer.get(latBytes);
-		double lon = lon1 + DisposeUtil.bytes2Double(lonBytes)/10000;
+		Double lon = lon1 + DisposeUtil.bytes2Double(lonBytes)/10000;
 		byte sum = buffer.get();//校验码
-		
+		if (!equipmentService.selectDeviceExsit(devicenum)) {
+			equipmentService.insertEquipmentNewData(devicenum, hardverStr, softverStr, subHardverStr, subSoftverStr, DCType & 0xff, DCTypeNum & 0xff, DCOnePower & 0xff, null, new BigDecimal(lon.toString()), new BigDecimal(lat.toString()), null);
+		}
+		send_0x06(devicenum);
+		send_0x0B(devicenum);
+		send_0x37(devicenum, JedisUtils.hgetAll("billingInfo"));
 	}
 	
 	/**
@@ -252,12 +275,13 @@ public class SendMsgUtil {
 		buffer.put(dateFlag);
 		byte[] sendTime = new byte[12];
 		buffer.put(DisposeUtil.complateBytes(dateFlag, sendTime.length));
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
 		Server.sendMsg(devicenum, buffer);
+		logger.info("对时命令已发送");
 	}
 	
 	/**
@@ -326,12 +350,12 @@ public class SendMsgUtil {
 		buffer.put((byte) 0x0B);//cmd
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
-		short datalen = 0x09;
+		short datalen = 0x07;
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0,0));
 		buffer.put((byte) 0x00);//桩心跳超时次数
 		buffer.position(2);
-		byte[] bytes = new byte[21];
+		byte[] bytes = new byte[19];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
@@ -344,11 +368,19 @@ public class SendMsgUtil {
 	public static void parse_0x0C(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
 		byte timeoutnum = buffer.get();//平台心跳超时次数
+		Map<String,Object> map = new HashMap<>();
 		byte portnum = buffer.get();//充电枪总数
+		map.put("portnum", portnum);
+		List<Object> portStatusList = new ArrayList<>();
 		if (portnum > 0 && portnum <= 30) {
+			Map<String,Object> map2 = new HashMap<>();
 			byte portStatus = buffer.get();//充电枪状态
 			byte workWay = buffer.get();//工作模式
+			map2.put("portStatus", DisposeUtil.getPortStatus(portStatus));
+			map2.put("workWay", DisposeUtil.getWorkWayInfo(workWay));
+			portStatusList.add(map2);
 		}
+		logger.info("桩心跳：" + JSON.toJSONString(map));
 		byte sum = buffer.get();
 	}
 	
@@ -468,15 +500,16 @@ public class SendMsgUtil {
 	public static void send_0x1F(String devicenum, byte port, String ordernum, String userid, short userType,
 			String groupCode, byte ctrlWay, int ctrlParam, byte chargeWay, byte startWay, String userOperCode,
 			byte billingWay, Map<String,String> billingParam) {
+		System.out.println("开始调用接口");
 		ByteBuffer buffer = ByteBuffer.allocate(65522);
 		buffer.putShort(framestart);
 		buffer.put((byte) 0x1F);//cmd+
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = 102;
-		if (billingWay == 2) {
-			datalen = (short) (datalen + Integer.parseInt(billingParam.get("billnum")) * 11 + 7);
-		}
+//		if (billingWay == 2) {
+//			datalen = (short) (datalen + Integer.parseInt(billingParam.get("billnum")) * 11 + 7);
+//		}
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0,0));//6字节
 		buffer.put((byte) (port - 1));//1字节
@@ -490,30 +523,38 @@ public class SendMsgUtil {
 		buffer.put(startWay);//启动方式
 		buffer.put(DisposeUtil.getDateFlag(0, 0));//定时启动时间
 		buffer.put(DisposeUtil.completeNum(userOperCode, 6).getBytes());
-		buffer.put(billingWay);//计费模型选择
-		if (billingWay == 2) {
-			buffer.put(DisposeUtil.converIntData(Integer.parseInt(billingParam.get("billVer")),2));
-			buffer.put(DisposeUtil.converIntData(Integer.parseInt(billingParam.get("parkingfee")),2));
-			int timenum = Integer.parseInt(billingParam.get("timenum"));
-			buffer.put((byte) timenum);
-			if (timenum > 0) {
-				String timeInfoStr = billingParam.get("timeInfo");
-				List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
-				for (Map<String, Object> map : timeInfo) {
-					buffer.put((byte)(map.get("hour")));//段 N 起始-时
-					buffer.put((byte)(map.get("minute")));//段 N 起始-分
-					buffer.put((byte)(map.get("type")));//段 N 类型
-					buffer.put(DisposeUtil.converIntData((int)(map.get("chargefee")),2));//段 N 电价费率
-					buffer.put(DisposeUtil.converIntData((int)(map.get("serverfee")),2));//段 N 服务费率
-				}
-			}
-		}
+		buffer.put((byte) 1);//计费模型选择
+//		if (billingWay == 2) {
+//			buffer.put(DisposeUtil.converIntData(Integer.parseInt(billingParam.get("billVer")),2));
+//			buffer.put(DisposeUtil.converIntData(Integer.parseInt(billingParam.get("parkingfee")),2));
+//			int timenum = Integer.parseInt(billingParam.get("timenum"));
+//			buffer.put((byte) timenum);
+//			if (timenum > 0) {
+//				String timeInfoStr = billingParam.get("timeInfo");
+//				List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
+//				for (Map<String, Object> map : timeInfo) {
+//					buffer.put((byte)(map.get("hour")));//段 N 起始-时
+//					buffer.put((byte)(map.get("minute")));//段 N 起始-分
+//					buffer.put((byte)(map.get("type")));//段 N 类型
+//					buffer.put(DisposeUtil.converIntData((int)(map.get("chargefee")),2));//段 N 电价费率
+//					buffer.put(DisposeUtil.converIntData((int)(map.get("serverfee")),2));//段 N 服务费率
+//				}
+//			}
+//		}
 		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
+		int temp = 0;
+		while (buffer.hasRemaining()) {
+			buffer.get();
+			temp++;
+		}
+		System.out.println("temp===" + temp);
+		buffer.position(0);
 		Server.sendMsg(devicenum, buffer);
+		logger.info("充电信息已发送");
 	}
 	
 	/**
@@ -602,38 +643,10 @@ public class SendMsgUtil {
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = 0x07;
+		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put(port);
-		buffer.position(1);
-		byte[] bytes = new byte[(datalen & 0xffff) + 12];
-		buffer.get(bytes);
-		buffer.put(clacSumVal(bytes));
-		buffer.flip();
-		Server.sendMsg(devicenum, buffer);
-	}
-	
-	/**
-	 * 桩充电停止
-	 */
-	public static void parse_0x26(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
-			byte encryptionWay, int datalen, String deviceDataTime) {
-		byte port = buffer.get();
-		int chargeV = buffer.getShort() & 0xffff;
-	}
-	
-	/**
-	 * 平台回复桩充电停止
-	 */
-	public static void send_0x27(String devicenum,byte port) {
-		ByteBuffer buffer = ByteBuffer.allocate(65522);
-		buffer.putShort(framestart);
-		buffer.put((byte) 0x24);//cmd+
-		buffer.put(AESUtil.String_BCD(devicenum));
-		buffer.put((byte) 0x01);//数据加密方式
-		short datalen = 0x07;
-		buffer.put(DisposeUtil.getDateFlag(0, 0));
-		buffer.put(port);
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
@@ -676,45 +689,51 @@ public class SendMsgUtil {
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = 0x07;
+		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put((byte) (port - 1));
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
+		System.out.println("bytes" + bytes.length);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
-		Server.sendMsg(devicenum, buffer);
-		long nowtime = System.currentTimeMillis();
-		int temp = 0;
-		boolean flag = true;
-		long updatetime = (long) chargeMap.get(devicenum + port);
-		while (flag) {
-			if (temp >= 15) {
-				return CommUtil.responseBuildInfo(1001, "连接超时", null);
-			}
-			if (updatetime != 0) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					System.out.println(e.getMessage());
-				}
-				temp++;
-				continue;
-			} else {
-				if (nowtime - updatetime > 0 && nowtime - updatetime < 15000) {
-					return CommUtil.responseBuildInfo(1000, "停止成功", null);
-				} else {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						System.out.println(e.getMessage());
-					}
-					temp++;
-					continue;
-				}
-			}
+		while (buffer.hasRemaining()) {
+			System.out.printf("0x%02x, ", buffer.get());
 		}
-		return CommUtil.responseBuildInfo(1002, "系统异常", null);
+		buffer.position(0);
+		Server.sendMsg(devicenum, buffer);
+//		long nowtime = System.currentTimeMillis();
+//		int temp = 0;
+//		boolean flag = true;
+//		long updatetime = (long) chargeMap.get(devicenum + port);
+//		while (flag) {
+//			if (temp >= 15) {
+//				return CommUtil.responseBuildInfo(1001, "连接超时", null);
+//			}
+//			if (updatetime != 0) {
+//				try {
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//					System.out.println(e.getMessage());
+//				}
+//				temp++;
+//				continue;
+//			} else {
+//				if (nowtime - updatetime > 0 && nowtime - updatetime < 15000) {
+					return CommUtil.responseBuildInfo(1000, "停止成功", null);
+//				} else {
+//					try {
+//						Thread.sleep(1000);
+//					} catch (InterruptedException e) {
+//						System.out.println(e.getMessage());
+//					}
+//					temp++;
+//					continue;
+//				}
+//			}
+//		}
+//		return CommUtil.responseBuildInfo(1002, "系统异常", null);
 	}
 	
 	/**
@@ -791,9 +810,13 @@ public class SendMsgUtil {
 		short stopReason = buffer.getShort();//
 		byte billingType = buffer.get();//
 		short billingVer = buffer.getShort();//计费模型版本
-		int chargeMoney = buffer.getInt();//电能费用
-		int serverMoney = buffer.getInt();//服务费费用
-		int parkMoney = buffer.getInt();//停车费费用
+		Double chargeMoney = (DisposeUtil.converIntDataBackInt(buffer.getInt(), 4) + 0.0)/100;//电能费用
+		Double serverMoney = (DisposeUtil.converIntDataBackInt(buffer.getInt(), 4) + 0.0)/100;//服务费费用
+		int useElec = startElec - endElec;
+		if (useElec < 0) {
+			useElec = 0;
+		}
+		int parkMoney = DisposeUtil.converIntDataBackInt(buffer.getInt(), 4);//停车费费用
 		int timenum = buffer.get() & 0xff;
 		for (int i = 0; i < timenum; i++) {
 			byte timeIndex = buffer.get();//段 N 计费模型索引
@@ -814,10 +837,11 @@ public class SendMsgUtil {
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = 11;
+		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put(port);
 		buffer.put(DisposeUtil.converIntData(recordIndex,2));
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
@@ -826,7 +850,7 @@ public class SendMsgUtil {
 	}
 	
 	/**
-	 * 桩上送充电订单
+	 * 历史充电订单
 	 */
 	public static void parse_0x33(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
@@ -889,10 +913,11 @@ public class SendMsgUtil {
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = 11;
+		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put(port);
 		buffer.put(DisposeUtil.converIntData(recordIndex,2));
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
@@ -910,10 +935,11 @@ public class SendMsgUtil {
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = 58;
+		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		buffer.put(DisposeUtil.complateBytes(serverIP.getBytes(), 50));
 		buffer.put(DisposeUtil.converIntData(serverPort,2));
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
 		buffer.put(clacSumVal(bytes));
@@ -980,29 +1006,39 @@ public class SendMsgUtil {
 		buffer.put((byte) 0x01);//数据加密方式
 		byte timenum = Byte.parseByte( billMap.get("timenum"));//时段数
 		short datalen = (short) (13 + (timenum * 11));
+		System.out.println("data");
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
 		short billver = Short.parseShort( billMap.get("billver"));//计费模型版本
 		buffer.put(DisposeUtil.converIntData(billver, 2));
-		int parkingfee = Integer.parseInt( billMap.get("parkingfee"));//停车费费率
-		buffer.put(DisposeUtil.converIntData(parkingfee, 4));
+		Double parkingfee = Double.parseDouble( billMap.get("parkingfee"));//停车费费率
+		parkingfee= parkingfee * 100;
+		buffer.put(DisposeUtil.converIntData(parkingfee.intValue(), 4));
 		buffer.put(timenum);
 		String timeInfoStr = billMap.get("timeInfo");
 		List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
 		for (Map<String, Object> timeMap : timeInfo) {
-			buffer.put((byte) timeMap.get("hour"));//时
-			buffer.put((byte) timeMap.get("minute"));//分
-			buffer.put((byte) timeMap.get("type"));//类型
-			Double chargefee = (Double) timeMap.get("chargefee");//电能费
-			chargefee = chargefee * 10000;
-			buffer.put(DisposeUtil.converIntData(chargefee.intValue(), 4));
-			Double serverfee = (Double) timeMap.get("serverfee");//服务费
-			serverfee = serverfee * 10000;
-			buffer.put(DisposeUtil.converIntData(serverfee.intValue(), 4));
+			Integer hour = (int) timeMap.get("hour");
+			Integer minute = (int) timeMap.get("minute");
+			Integer type = (int) timeMap.get("type");
+			buffer.put(hour.byteValue());//时
+			buffer.put(minute.byteValue());//分
+			buffer.put(type.byteValue());//类型
+			BigDecimal bigDecimal = new BigDecimal("100");
+			BigDecimal chargefee = (BigDecimal) timeMap.get("chargefee");//电能费
+			buffer.put(DisposeUtil.converIntData(bigDecimal.multiply(chargefee).intValue(), 4));
+			BigDecimal serverfee = (BigDecimal) timeMap.get("serverfee");//服务费
+			buffer.put(DisposeUtil.converIntData(bigDecimal.multiply(serverfee).intValue(), 4));
 		}
-		buffer.position(1);
+		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
+		System.out.println(bytes.length);
+		System.out.println("开始");
+		for (byte b : bytes) {
+			System.out.printf("0x%02x ", b);
+		}
+		System.out.println("结束");
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
 		Server.sendMsg(devicenum, buffer);

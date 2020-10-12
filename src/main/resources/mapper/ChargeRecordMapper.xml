@@ -844,6 +844,10 @@
   <select id="selectOrderId">
   	select id from hd_chargerecord_copy where ordernum = #{ordernum}
   </select>
+  
+  <select id="selectChargeRecordInfo" resultType="com.hedong.hedongwx.entity.ChargeRecordCopy">
+  	select id,paymoney from hd_chargerecord_copy where ordernum = #{ordernum}
+  </select>
 </mapper>
 
 

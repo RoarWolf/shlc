@@ -626,7 +626,7 @@ public class DisposeUtil {
      * @param val
      * @return
      */
-    public static String getPrtStatus(int val) {
+    public static String getPortStatus(int val) {
     	String str = "";
     	switch (val) {
 		case 1:

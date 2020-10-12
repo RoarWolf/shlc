@@ -2,10 +2,10 @@ package com.hedong.hedongwx.dao;
 
 import com.hedong.hedongwx.entity.EquipmentNew;
 import com.hedong.hedongwx.entity.Parameters;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
-
 
 public interface EquipmentNewDao {
 	

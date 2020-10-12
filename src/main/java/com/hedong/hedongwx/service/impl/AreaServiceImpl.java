@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
 import com.hedong.hedongwx.dao.AreaDao;
 import com.hedong.hedongwx.dao.EquipmentDao;
@@ -26,6 +28,7 @@ import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.service.AreaService;
 import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.utils.CommUtil;
+import com.hedong.hedongwx.utils.JedisUtils;
 import com.hedong.hedongwx.utils.PageUtils;
 import com.hedong.hedongwx.utils.StringUtil;
 
@@ -890,12 +893,48 @@ public class AreaServiceImpl implements AreaService {
 			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum, distanceSort);
 			if (arealist == null) {
 				arealist = new ArrayList<>();
+			} else {
+				for (Area area : arealist) {
+					area.setDCchargeMoney(1.2);
+					area.setDCserverMoney(0.0);
+				}
 			}
 			map.put("arealist", arealist);
 			map.put("startnum", startnum + 1);
 			map.put("listsize", arealist.size());
 			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
+		}
+	}
+
+	@Override
+	public Map<String, Object> queryAreaInfo(Double lon, Double lat, Integer id) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			Area area = areaDao.queryAreaInfo(lon, lat, id);
+			if (area != null) {
+				area.setExAllnum(0);
+				area.setExfreenum(0);
+				area.setDCchargeMoney(1.0);
+				area.setDCserverMoney(0.2);
+				area.setExchargeMoney(0.8);
+				area.setExserverMoney(0.1);
+			}
+			map.put("areainfo", area);
+			Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
+			int timenum = Integer.parseInt(billingParam.get("timenum"));
+			if (timenum > 0) {
+				String timeInfoStr = billingParam.get("timeInfo");
+				List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
+				for (Map<String, Object> map2 : timeInfo) {
+					int hour = (int) map2.get("hour");
+					int minute = (int) map2.get("minute");
+				}
+			}
+			return CommUtil.responseBuildInfo(1000, "获取成功", map);
+		} catch (Exception e) {
+			e.printStackTrace();
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
 	}
