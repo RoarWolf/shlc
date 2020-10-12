@@ -269,7 +269,7 @@ public interface ChargeRecordService {
 	
 	/** 添加订单*/
 	Map<String, Object> insertChargeRecord(String equipmentnum, int port, int ctrlWay, int ctrlParam, int chargeWay,
-			Integer uid, Integer paytype, Double paymoney);
+			Integer uid, Integer paytype, Double paymoney, String ordernum);
 	
 	/** 结束订单*/
 	Map<String, Object> stopChargeRecord(String ordernum, String begintime, String endtime,

@@ -77,15 +77,16 @@ public class SendMsgUtil {
 //		}
 //		JedisUtils.hmset("billingInfo", billingParam);
 //		send_0x37("1", billingParam);
-		byte[] bytes = new byte[]{0x4a, 0x58, 0x26, 0x10, 0x27, 0x52, 0x01, 0x02, 0x03, 0x00, 0x01, 0x01, 0x14, 0x0a, 0x0b, 0x16, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x4a};
-		byte sum = 0;
-		for (int i = 2; i < bytes.length-1; i++) {
-			System.out.printf("0x%02x ", bytes[i]);
-			sum ^= bytes[i];
-		}
-		System.out.println();
-		System.out.printf("0x%02x ", sum);
-		
+//		byte[] bytes = new byte[]{0x4a, 0x58, 0x26, 0x10, 0x27, 0x52, 0x01, 0x02, 0x03, 0x00, 0x01, 0x01, 0x14, 0x0a, 0x0b, 0x16, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x4a};
+//		byte sum = 0;
+//		for (int i = 2; i < bytes.length-1; i++) {
+//			System.out.printf("0x%02x ", bytes[i]);
+//			sum ^= bytes[i];
+//		}
+//		System.out.println();
+//		System.out.printf("0x%02x ", sum);
+		send_0x1F("1027520102030001", (byte) 1, HttpRequest.createNewOrdernum("1027520102030001"), "00000001", (short) 21, "0", (byte) 3, 
+				1000, (byte) 1, (byte) 1, "0", (byte)1, null);
 	}
 	
 	public static Map<String, Object> backChargeInfo(String ordernum) {
@@ -549,10 +550,12 @@ public class SendMsgUtil {
 		buffer.put(DisposeUtil.getDateFlag(0,0));//6字节
 		buffer.put((byte) (port - 1));//1字节
 		buffer.put(ordernum.getBytes());//32字节
-		buffer.put(userid.getBytes());//32字节
+		buffer.put(DisposeUtil.complateBytes(userid.getBytes(), 32));//32字节
 		buffer.put(DisposeUtil.converIntData(userType, 2));
 		buffer.put(DisposeUtil.completeNum(groupCode, 9).getBytes());//组织机构代码
+		System.out.println("groupCode===" + groupCode);
 		buffer.put(ctrlWay);//控制模式
+		System.out.println("ctrlWay===" + ctrlWay);
 		buffer.put(DisposeUtil.converIntData(ctrlParam, 4));//控制参数
 		buffer.put(chargeWay);//充电模式
 		buffer.put(startWay);//启动方式
@@ -579,6 +582,11 @@ public class SendMsgUtil {
 		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
+		for (byte b : bytes) {
+			System.out.printf("0x%02x ",b);
+		}
+		System.out.println();
+		System.out.println("length===" + bytes.length);
 		buffer.put(clacSumVal(bytes));
 		buffer.flip();
 		int temp = 0;
@@ -711,6 +719,7 @@ public class SendMsgUtil {
 		map.put("chargeTime", CommUtil.toDouble(chargeTime)/60);
 		map.put("chargeMoney", CommUtil.toDouble(chargeMoney)/100);
 		map.put("chargenum", chargenum);
+		map.put("infotype", 1);
 		logger.info("充电桩工作信息：" + JSON.toJSONString(map));
 	}
 	
@@ -765,6 +774,9 @@ public class SendMsgUtil {
 		int BCS_time = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//BCS-剩余充电时间
 		int BSM_topnum = buffer.get();//BSM-最高单体电压所在编号
 		System.out.println("已充=" + BCS_SOC + "%");
+		Map<Object,Object> map = new HashMap<>();
+		map.put("soc", BCS_SOC);
+		map.put("infotype", 1);
 	}
 	
 	/**

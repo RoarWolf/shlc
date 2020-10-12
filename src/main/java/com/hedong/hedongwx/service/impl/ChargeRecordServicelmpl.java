@@ -906,13 +906,12 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 	@Transactional
 	@Override
 	public Map<String, Object> insertChargeRecord(String equipmentnum, int port, int ctrlWay, int ctrlParam, int chargeWay,
-			Integer uid, Integer paytype, Double paymoney) {
+			Integer uid, Integer paytype, Double paymoney, String ordernum) {
 		User user = userService.selectUserById(uid);
 		if (user == null || user.getBalance() < paymoney) {
 			return CommUtil.responseBuildInfo(1001, "余额不足", null);
 		}
 		ChargeRecordCopy charge = new ChargeRecordCopy();
-		String ordernum = HttpRequest.createNewOrdernum(equipmentnum);
 		charge.setOrdernum(ordernum);
 		charge.setUid(uid);
 		charge.setEquipmentnum(equipmentnum);

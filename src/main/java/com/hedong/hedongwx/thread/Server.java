@@ -263,7 +263,7 @@ public class Server {
 				short framestart = buffer.getShort();//帧起始
 				if (framestart != 0x4a58) {
 					try {
-						logger.warn("ip:" + channel.getLocalAddress().toString() + "---桢起始上传有误");
+						logger.warn("ip:" + channel.getRemoteAddress() + "---桢起始上传有误");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

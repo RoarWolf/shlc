@@ -36,6 +36,7 @@ import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.thread.Server;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
+import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.JedisUtils;
 import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.StringUtil;
@@ -155,9 +156,10 @@ public class AppletUserController {
 		try {
 			Double ctrlParamVal = paymoney * 100;
 			String useridStr = DisposeUtil.completeNum(userid + "", 8);
-			SendMsgUtil.send_0x1F(devicenum, port.byteValue(), "1", useridStr, (short) 21, "0", (byte) 3, 
+			String ordernum = HttpRequest.createNewOrdernum(devicenum);
+			SendMsgUtil.send_0x1F(devicenum, port.byteValue(), ordernum, useridStr, (short) 21, "0", (byte) 3, 
 					ctrlParamVal.intValue(), (byte) 1, (byte) 1, "0", (byte)1, null);
-			return chargeService.insertChargeRecord(devicenum, port, 3, ctrlParamVal.intValue(), 1, userid, 1, paymoney);
+			return chargeService.insertChargeRecord(devicenum, port, 3, ctrlParamVal.intValue(), 1, userid, 1, paymoney,ordernum);
 		} catch (Exception e) {
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
