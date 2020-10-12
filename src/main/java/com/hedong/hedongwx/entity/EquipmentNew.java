@@ -195,4 +195,15 @@ public class EquipmentNew {
         this.remark = remark == null ? null : remark.trim();
     }
 
+	@Override
+	public String toString() {
+		return "EquipmentNew [code=" + code + ", bindtype=" + bindtype + ", state=" + state + ", hardversion="
+				+ hardversion + ", softversion=" + softversion + ", subHardversion=" + subHardversion
+				+ ", subSoftversion=" + subSoftversion + ", dcModeltype=" + dcModeltype + ", dcModelnum=" + dcModelnum
+				+ ", dcModelpower=" + dcModelpower + ", billtype=" + billtype + ", location=" + location + ", lon="
+				+ lon + ", lat=" + lat + ", createTime=" + createTime + ", registTime=" + registTime + ", tempid="
+				+ tempid + ", aid=" + aid + ", remark=" + remark + "]";
+	}
+
+    
 }

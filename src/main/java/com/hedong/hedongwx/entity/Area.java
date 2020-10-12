@@ -67,10 +67,33 @@ public class Area {
 	
 	//距离（km）
 	private BigDecimal distance;
-	//空闲端口数
-	private Integer freenum;
-	
-	
+	//直流空闲端口数
+	private Integer DCfreenum;
+	//直流端口总数
+	private Integer DCAllnum;
+	//直流电能费
+	private Double DCchargeMoney;
+	//直流服务费
+	private Double DCserverMoney;
+	//交流空闲端口数
+	private Integer exfreenum;
+	//交流端口总数
+	private Integer exAllnum;
+	//交流电能费
+	private Double exchargeMoney;
+	//交流服务费
+	private Double exserverMoney;
+
+	/**站点唯一编号**/
+	private String  areaOnlyCode;
+
+	public String getAreaOnlyCode() {
+		return areaOnlyCode;
+	}
+
+	public void setAreaOnlyCode(String areaOnlyCode) {
+		this.areaOnlyCode = areaOnlyCode;
+	}
 
 	public Integer getExpiredEquNum() {
 		return expiredEquNum;
@@ -296,23 +319,81 @@ public class Area {
 		this.distance = distance;
 	}
 
-	public Integer getFreenum() {
-		return freenum;
+	public Integer getDCfreenum() {
+		return DCfreenum;
 	}
 
-	public void setFreenum(Integer freenum) {
-		this.freenum = freenum;
+	public void setDCfreenum(Integer dCfreenum) {
+		DCfreenum = dCfreenum;
+	}
+
+	public Integer getDCAllnum() {
+		return DCAllnum;
+	}
+
+	public void setDCAllnum(Integer dCAllnum) {
+		DCAllnum = dCAllnum;
+	}
+
+	public Integer getExfreenum() {
+		return exfreenum;
+	}
+
+	public void setExfreenum(Integer exfreenum) {
+		this.exfreenum = exfreenum;
+	}
+
+	public Integer getExAllnum() {
+		return exAllnum;
+	}
+
+	public void setExAllnum(Integer exAllnum) {
+		this.exAllnum = exAllnum;
+	}
+
+	public Double getDCchargeMoney() {
+		return DCchargeMoney;
+	}
+
+	public void setDCchargeMoney(Double dCchargeMoney) {
+		DCchargeMoney = dCchargeMoney;
+	}
+
+	public Double getDCserverMoney() {
+		return DCserverMoney;
+	}
+
+	public void setDCserverMoney(Double dCserverMoney) {
+		DCserverMoney = dCserverMoney;
+	}
+
+	public Double getExchargeMoney() {
+		return exchargeMoney;
+	}
+
+	public void setExchargeMoney(Double exchargeMoney) {
+		this.exchargeMoney = exchargeMoney;
+	}
+
+	public Double getExserverMoney() {
+		return exserverMoney;
+	}
+
+	public void setExserverMoney(Double exserverMoney) {
+		this.exserverMoney = exserverMoney;
 	}
 
 	@Override
 	public String toString() {
 		return "Area [id=" + id + ", name=" + name + ", tempid=" + tempid + ", tempid2=" + tempid2 + ", merid=" + merid
-				+ ", manid=" + manid + ", divideinto=" + divideinto + ", address=" + address + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + ", totalOnlineEarn=" + totalOnlineEarn
-				+ ", nowOnlineEarn=" + nowOnlineEarn + ", totalCoinsEarn=" + totalCoinsEarn + ", nowCoinsEarn="
-				+ nowCoinsEarn + ", walletEarn=" + walletEarn + ", equEarn=" + equEarn + ", cardEarn=" + cardEarn
-				+ ", dealer=" + dealer + ", uphonenum=" + uphonenum + ", manarealname=" + manarealname
-				+ ", manaphonenum=" + manaphonenum + ", temname=" + temname + ", equcount=" + equcount
-				+ ", expiredEquNum=" + expiredEquNum + ", almostExEquNum=" + almostExEquNum + "]";
+				+ ", manid=" + manid + ", divideinto=" + divideinto + ", address=" + address + ", lon=" + lon + ", lat="
+				+ lat + ", createTime=" + createTime + ", updateTime=" + updateTime + ", totalOnlineEarn="
+				+ totalOnlineEarn + ", nowOnlineEarn=" + nowOnlineEarn + ", totalCoinsEarn=" + totalCoinsEarn
+				+ ", nowCoinsEarn=" + nowCoinsEarn + ", walletEarn=" + walletEarn + ", equEarn=" + equEarn
+				+ ", cardEarn=" + cardEarn + ", dealer=" + dealer + ", uphonenum=" + uphonenum + ", manarealname="
+				+ manarealname + ", manaphonenum=" + manaphonenum + ", temname=" + temname + ", equcount=" + equcount
+				+ ", expiredEquNum=" + expiredEquNum + ", almostExEquNum=" + almostExEquNum + ", distance=" + distance
+				+ ", DCfreenum=" + DCfreenum + ", DCAllnum=" + DCAllnum + "]";
 	}
+
 }

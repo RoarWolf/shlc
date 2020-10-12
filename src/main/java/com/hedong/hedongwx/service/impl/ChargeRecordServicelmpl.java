@@ -1,5 +1,7 @@
 package com.hedong.hedongwx.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
 import com.hedong.hedongwx.dao.AreaDao;
 import com.hedong.hedongwx.dao.ChargeRecordDao;
@@ -934,8 +937,44 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 	}
 
 	@Override
-	public Map<String, Object> stopChargeRecord(String ordernum, String begintime, String endtime) {
-		// TODO Auto-generated method stub
+	public Map<String, Object> stopChargeRecord(String ordernum, String begintime, String endtime,
+			Double chargeMoney,Double serverMoney, Integer resultInfo, Integer useElec) {
+		try {
+			ChargeRecordCopy chargeRecordCopy = chargeRecordDao.selectChargeRecordInfo(ordernum);
+			if (chargeRecordCopy != null) {
+				Double paymoney = chargeRecordCopy.getPaymoney();
+				double chargeAllMoney = CommUtil.addBig(chargeMoney, serverMoney);
+				ChargeRecordCopy chargeRecord = new ChargeRecordCopy();
+				chargeRecord.setId(chargeRecordCopy.getId());
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date begintimeDate = sdf.parse(begintime);
+				Date endtimeDate = sdf.parse(endtime);
+				chargeRecord.setBeginTime(begintimeDate);
+				chargeRecord.setEndTime(endtimeDate);
+				chargeRecord.setChargemoney(chargeMoney);
+				chargeRecord.setServerMoney(serverMoney);
+				chargeRecord.setResultinfo(resultInfo);
+				int usetime = (int) ((endtimeDate.getTime() - begintimeDate.getTime())/60/1000);
+				chargeRecord.setUsetime(usetime);
+				chargeRecord.setUseelec(useElec);
+				chargeRecord.setStatus(1);
+				System.out.println("chargeRecord===" + JSON.toJSONString(chargeRecord));
+//				if (paymoney > chargeAllMoney) {
+//					Double refundMoney = CommUtil.subBig(paymoney, chargeAllMoney);
+//					Integer uid = chargeRecordCopy.getUid();
+//					User user = userService.selectUserById(uid);
+//					User edituser = new User();
+//					edituser.setId(uid);
+//					double balance = CommUtil.addBig(user.getBalance(), refundMoney);
+//					edituser.setBalance(balance);
+//					userService.updateUserById(edituser);
+//					generalDetailService.insertGenDetail(uid, 0, refundMoney, 0.0, refundMoney, balance, balance, 0.0, ordernum, new Date(), 5, "充电");
+//				}
+//				chargeRecordDao.updateChargeRecord(chargeRecordCopy);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

@@ -5,15 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.hedong.hedongwx.entity.*;
 import org.springframework.ui.Model;
 
-import com.hedong.hedongwx.entity.CodeSystemParam;
-import com.hedong.hedongwx.entity.Codestatistics;
-import com.hedong.hedongwx.entity.Equipment;
-import com.hedong.hedongwx.entity.PageBean;
-import com.hedong.hedongwx.entity.Parameters;
-import com.hedong.hedongwx.entity.Realchargerecord;
-import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.utils.PageUtils;
 
 public interface EquipmentService {
@@ -437,26 +432,32 @@ public interface EquipmentService {
 	
 	/**
 	 * 添加充电桩
-	 * @param code
-	 * @param hardversion
-	 * @param softversion
-	 * @param subHardversion
-	 * @param subSoftversion
-	 * @param dcModeltype
-	 * @param dcModelnum
-	 * @param dcModelpower
-	 * @param location
-	 * @param lon
-	 * @param lat
-	 * @param remark
+
 	 * @return
 	 */
-	Map<String, Object> insertEquipmentNew(String code, String hardversion, String softversion, String subHardversion, String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location, BigDecimal lon, BigDecimal lat,String remark);
+	Map<String, Object> insertEquipmentNew(EquipmentNew equ);
+	
+	/**
+	 * 添加充电桩(设备主动上传)
+
+	 * @return
+	 */
+	Map<String, Object> insertEquipmentNewData(String code, String hardversion, String softversion, String subHardversion,
+			String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location,
+			BigDecimal lon, BigDecimal lat, String remark);
+
+	/**
+	 * @Author 修改充电桩信息
+	 * @Description
+	 * @Date 2020/10/11 19:33
+	 * @Param [equ]
+	 **/
+	public Map<String, Object> updateEquipmentNew(EquipmentNew equ);
 	
 	/**
 	 * 查询充电桩是否存在
 	 * @param devicenum
 	 * @return
 	 */
-	String selectDeviceExsit(String devicenum);
+	boolean selectDeviceExsit(String devicenum);
 }

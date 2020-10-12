@@ -34,11 +34,18 @@ public interface AreaDao {
 	Area selectByAreaId(Integer id);
 
 	/**
-	 *
+	 *pc端分页获取小区列表
 	 * @param parame
 	 * @return
 	 */
 	List<Map<String, Object>> selectByParame(Parameters parame);
+
+	/**
+	 *pc端根据条件获取小区数量
+	 * @param parame
+	 * @return
+	 */
+	int getTotalAreaByparam(Parameters parame);
 
 	/**
 	 *
@@ -242,6 +249,8 @@ public interface AreaDao {
 	Map<String, Object> inquireAreaOnlineCard(@Param("aid")Integer aid);
 	
 	List<Area> queryAreaRecently(@Param("lon")Double lon,@Param("lat")Double lat,@Param("distance")Double distance, @Param("startnum")Integer startnum, @Param("distanceSort")Integer distanceSort);
+	
+	Area queryAreaInfo(@Param("lon")Double lon,@Param("lat")Double lat,@Param("id")Integer id);
 	
 	List<Map<String, Object>> queryAreaRecently2(@Param("lon")Double lon,@Param("lat")Double lat,@Param("distance")Double distance, @Param("startnum")Integer startnum, @Param("distanceSort")Integer distanceSort);
 }

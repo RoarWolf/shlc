@@ -43,8 +43,9 @@ public class Server {
 	@Autowired
 	private SendMsgUtil sendMsgUtil;
 	private static Logger logger = LoggerFactory.getLogger(Server.class);
-	private static final List<Client> connections = Collections.synchronizedList(new ArrayList<Client>());
-	private static ConcurrentHashMap<String, Client> clientMap = new ConcurrentHashMap<String, Client>();
+	public static List<String> devicenumList = new ArrayList<>();
+	public static final List<Client> connections = Collections.synchronizedList(new ArrayList<Client>());
+	public static ConcurrentHashMap<String, Client> clientMap = new ConcurrentHashMap<String, Client>();
 	public static ConcurrentHashMap<String, String> codeAndIPMap = new ConcurrentHashMap<String, String>();
 	private AsynchronousServerSocketChannel listener;
 	private AsynchronousChannelGroup channelGroup;
@@ -96,6 +97,7 @@ public class Server {
 	}
 
 	public static int sendMsg(String clientId, ByteBuffer buffer) {
+		System.out.println("clientId===" + clientId);
 		try {
 			if (clientId != null) {
 				if (clientMap.get(clientId) != null) {
@@ -106,9 +108,11 @@ public class Server {
 					//equ.updateState((byte) 0, clientId);
 					//sql更新
 					System.out.println("连接已断开");
+					devicenumList.remove(clientId);
 					return 0;
 				}
 			} else {
+				devicenumList.remove(clientId);
 				System.out.println("无此连接");
 				return 0;
 			} 
@@ -265,13 +269,15 @@ public class Server {
 				}
 				logger.info("桢起始上传没毛病");
 				byte cmd = buffer.get();//命令
-				logger.info("cmd=" + cmd);
+				logger.info("cmd=" + DisposeUtil.intToHex(cmd));
 				
 				//-----桩号 start 编码BCD-----
 				byte[] deviceDateBytes = new byte[8];
 				buffer.get(deviceDateBytes);
 				String devicenum = AESUtil.BCD_String(deviceDateBytes);
-				System.out.println("devicenum===" + devicenum);
+				buffer.position(0);
+				DisposeUtil.printDeviceDataInfo(devicenum, buffer, true);
+				buffer.position(11);
 //				short operatorNum = buffer.getShort();//运营商编号
 //				String operatorStr = DisposeUtil.completeNumIntHex((operatorNum & 0xffff), 4);
 //				byte gunNum = buffer.get();//枪数
@@ -299,23 +305,31 @@ public class Server {
 				} catch (Exception e) {
 					return;
 				}
+				buffer.position(2);
+				byte[] sumdatas = new byte[datalen + 12];
+				try {
+					buffer.get(sumdatas);
+				} catch (Exception e) {
+					return;
+				}
+				byte clacSumVal = SendMsgUtil.clacSumVal(sumdatas);
+				byte sum = buffer.get();
+				if ((sum & 0xff) != (clacSumVal & 0xff)) {
+					System.out.println("校验码错误");
+					return ;
+				}
 				buffer.position(14);
 				byte[] dateBytes = new byte[6];
 				buffer.get(dateBytes);
-//				byte year = buffer.get();//年
-//				byte month = buffer.get();//月
-//				byte day = buffer.get();//日
-//				byte hour = buffer.get();//时
-//				byte minute = buffer.get();//分
-//				byte second = buffer.get();//秒
 				String deviceDataTime = DisposeUtil.disposeDate(dateBytes);
 				//有无回复 1-有、2无
 				if (cmd == 0x01) {//桩请求连接 1
 					clientMap.put(devicenum, client);
+					devicenumList.add(devicenum);
 					SendMsgUtil.parse_0x01(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
-				} else if (cmd == 0x03) {//登录信息 2桩回复对时命令
+				} else if (cmd == 0x03) {//登录信息
 					sendMsgUtil.parse_0x03(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
-				} else if (cmd == 0x03) {//登录信息 2桩回复对时命令
+				} else if (cmd == 0x05) {//桩请求对时命令
 					SendMsgUtil.parse_0x05(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x07) {//桩回复对时命令
 					SendMsgUtil.parse_0x07(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
@@ -329,7 +343,22 @@ public class Server {
 					SendMsgUtil.parse_0x1C(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x1E) {//桩回复取消预约
 					SendMsgUtil.parse_0x1E(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
-					
+				} else if (cmd == 0x20) {//桩回复充电命令
+					SendMsgUtil.parse_0x20(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else if (cmd == 0x21) {//桩启动充电结果
+					SendMsgUtil.parse_0x21(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else if (cmd == 0x25) {//充电桩工作信息
+					SendMsgUtil.parse_0x25(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else if (cmd == 0x23) {//桩上送充电订单
+					SendMsgUtil.parse_0x23(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else if (cmd == 0x33) {//历史充电订单
+					SendMsgUtil.parse_0x33(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else if (cmd == 0x36) {//桩回复新 IP 地址设置
+					SendMsgUtil.parse_0x36(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else if (cmd == 0x38) {//桩回复计费模型设置
+					SendMsgUtil.parse_0x38(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+				} else {
+					return;
 				}
 			}
 
@@ -420,6 +449,9 @@ class Client {
 
 			@Override
 			public void failed(Throwable exc, ByteBuffer buffer) {
+				if (Server.clientMap.containsValue(client)) {
+					Server.clientMap.remove(client);
+				}
 				System.out.println("client close.");
 			}
 		});

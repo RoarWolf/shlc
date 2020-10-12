@@ -139,14 +139,26 @@ public class AppletUserController {
 		return areaService.queryAreaRecently(lon, lat, distance, startnum, distanceSort);
 	}
 	
+	/**
+	 * 查询站点信息
+	 * @param userid
+	 * @return
+	 */
+	@PostMapping("/getAreaInfo")
+	public 	Object getAreaInfo(Double lon, Double lat, Integer areaid) {
+		return areaService.queryAreaInfo(lon, lat, areaid);
+	}
+	
 	@PostMapping("/payChargerecord")
 	public Object payChargerecord(String devicenum, Integer port, Integer userid, Double paymoney) {
+		System.out.println("传入devicenum===" + devicenum);
 		try {
 			Double ctrlParamVal = paymoney * 100;
 			String useridStr = DisposeUtil.completeNum(userid + "", 8);
 			SendMsgUtil.send_0x1F(devicenum, port.byteValue(), "1", useridStr, (short) 21, "0", (byte) 3, 
 					ctrlParamVal.intValue(), (byte) 1, (byte) 1, "0", (byte)1, null);
-			return chargeService.insertChargeRecord(devicenum, port, 3, ctrlParamVal.intValue(), 1, userid, 1, paymoney);
+//			return chargeService.insertChargeRecord(devicenum, port, 3, ctrlParamVal.intValue(), 1, userid, 1, paymoney);
+			return "111";
 		} catch (Exception e) {
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}

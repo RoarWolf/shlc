@@ -271,4 +271,11 @@ public interface ChargeRecordDao {
 	 * @return
 	 */
 	Integer selectOrderId(@Param("ordernum") String ordernum);
+	
+	/**
+	 * 根据订单号查询订单信息
+	 * @param ordernum
+	 * @return
+	 */
+	ChargeRecordCopy selectChargeRecordInfo(@Param("ordernum") String ordernum);
 }
