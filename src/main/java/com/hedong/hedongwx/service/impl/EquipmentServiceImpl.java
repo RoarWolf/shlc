@@ -2787,9 +2787,9 @@ public class EquipmentServiceImpl implements EquipmentService {
 	public Map<String, Object> updateEquipmentNew(EquipmentNew equ) {
 		try {
 			equipmentNewDao.updateEquipmentNew(equ);
-			return CommUtil.responseBuildInfo(200, "添加成功", null);
+			return CommUtil.responseBuildInfo(200, "修改成功", null);
 		} catch (Exception e) {
-			return CommUtil.responseBuildInfo(201, "添加失败", null);
+			return CommUtil.responseBuildInfo(201, "修改失败", null);
 		}
 	}
 
