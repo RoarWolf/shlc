@@ -958,8 +958,13 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 				chargeRecord.setUsetime(usetime);
 				chargeRecord.setUseelec(useElec);
 				chargeRecord.setStatus(1);
+				if (chargeAllMoney == 0) {
+					chargeRecord.setNumber(1);
+				} else {
+					chargeRecord.setNumber(2);
+				}
 				System.out.println("chargeRecord===" + JSON.toJSONString(chargeRecord));
-//				if (paymoney > chargeAllMoney) {
+//				if (paymoney > chargeAllMoney && chargeAllMoney >= 0) {
 //					Double refundMoney = CommUtil.subBig(paymoney, chargeAllMoney);
 //					Integer uid = chargeRecordCopy.getUid();
 //					User user = userService.selectUserById(uid);

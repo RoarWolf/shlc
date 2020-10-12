@@ -306,6 +306,7 @@ public class SendMsgUtil {
 	 */
 	public static void parse_0x09(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
+		
 	}
 	
 	/**
@@ -750,7 +751,17 @@ public class SendMsgUtil {
 	 */
 	public static void parse_0x30(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
-		
+		byte port = (byte) (buffer.get() + 1);
+		int BCLV = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//BCL-电压需求
+		int BCLA = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//BCL-电流需求
+		int BCLChargeWay = buffer.get();//BCL-充电模式
+		int BCSV = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//BCS-充电电压
+		int BCSA = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//BCS-充电电流
+		int BCS_top_v = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//BCS-最高单体电压、BCS-最高单体所在组号
+		int BCS_SOC = buffer.get();//BCS-SOC
+		int BCS_time = DisposeUtil.converIntDataBackInt(buffer.getShort() & 0xffff, 2);//BCS-剩余充电时间
+		int BSM_topnum = buffer.get();//BSM-最高单体电压所在编号
+		System.out.println("已充=" + BCS_SOC + "%");
 	}
 	
 	/**

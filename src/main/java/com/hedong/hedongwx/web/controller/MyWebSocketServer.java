@@ -64,7 +64,7 @@ public class MyWebSocketServer {
 		logger.info("收到来自" + session.getId() + "的消息" + params);
 		String result = "收到来自" + session.getId() + "的消息" + params;
 		// 返回消息给Web Socket客户端（浏览器）
-		myWebSocket.sendMessage(session, 1, "success", result);
+		myWebSocket.sendMessage(session, 1, "connect true", result);
 	}
 
 	/**
