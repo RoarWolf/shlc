@@ -2818,5 +2818,31 @@ public class EquipmentServiceImpl implements EquipmentService {
 			return CommUtil.responseBuildInfo(201, "添加失败", null);
 		}
 	}
+	
+	@Override
+	public Map<String, Object> updateEquipmentNewData(String code, String hardversion, String softversion,
+			String subHardversion, String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower,
+			String location, BigDecimal lon, BigDecimal lat, String remark) {
+		try {
+			EquipmentNew equ = new EquipmentNew();
+			equ.setCode(code);
+			equ.setHardversion(hardversion);
+			equ.setSoftversion(softversion);
+			equ.setSubHardversion(subHardversion);
+			equ.setSubSoftversion(subSoftversion);
+			equ.setDcModeltype(dcModeltype);
+			equ.setDcModelnum(dcModelnum);
+			equ.setDcModelpower(dcModelpower);
+			equ.setLocation(location);
+			equ.setLon(lon);
+			equ.setLat(lat);
+			equ.setRemark(remark);
+			equ.setCreateTime(new Date());
+			equipmentNewDao.insertEquipmentNew(equ);
+			return CommUtil.responseBuildInfo(200, "添加成功", null);
+		} catch (Exception e) {
+			return CommUtil.responseBuildInfo(201, "添加失败", null);
+		}
+	}
 
 }

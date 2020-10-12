@@ -157,8 +157,7 @@ public class AppletUserController {
 			String useridStr = DisposeUtil.completeNum(userid + "", 8);
 			SendMsgUtil.send_0x1F(devicenum, port.byteValue(), "1", useridStr, (short) 21, "0", (byte) 3, 
 					ctrlParamVal.intValue(), (byte) 1, (byte) 1, "0", (byte)1, null);
-//			return chargeService.insertChargeRecord(devicenum, port, 3, ctrlParamVal.intValue(), 1, userid, 1, paymoney);
-			return "111";
+			return chargeService.insertChargeRecord(devicenum, port, 3, ctrlParamVal.intValue(), 1, userid, 1, paymoney);
 		} catch (Exception e) {
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}

@@ -453,7 +453,6 @@ public interface EquipmentService {
 
 	/**
 	 * 添加充电桩(设备主动上传)
-
 	 * @return
 	 */
 	Map<String, Object> insertEquipmentNewData(String code, String hardversion, String softversion, String subHardversion,
@@ -466,4 +465,8 @@ public interface EquipmentService {
 	 * @return
 	 */
 	boolean selectDeviceExsit(String devicenum);
+	
+	public Map<String, Object> updateEquipmentNewData(String code, String hardversion, String softversion,
+			String subHardversion, String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower,
+			String location, BigDecimal lon, BigDecimal lat, String remark);
 }

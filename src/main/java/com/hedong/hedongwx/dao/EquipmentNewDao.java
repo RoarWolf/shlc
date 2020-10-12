@@ -17,4 +17,6 @@ public interface EquipmentNewDao {
 
 	//查询设备列表 (跳转设备列表)
 	List<Map<String, Object>> selectEquList(Parameters parameters);
+	
+	EquipmentNew selectDeviceInfo(String code);
 }

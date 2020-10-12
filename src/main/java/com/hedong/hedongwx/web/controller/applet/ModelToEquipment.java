@@ -96,7 +96,7 @@ public class ModelToEquipment {
 	 */
 	@PostMapping("/startCharge")
 	public Object startCharge(String ordernum) {
-		return SendMsgUtil.backCahrgeInfo(ordernum);
+		return SendMsgUtil.backChargeInfo(ordernum);
 	}
 	
 	/**
@@ -107,7 +107,8 @@ public class ModelToEquipment {
 	 */
 	@PostMapping("/stopCharge")
 	public Object stopCharge(String devicenum, Integer port) {
-		return SendMsgUtil.send_0x26(devicenum, port.byteValue());
+		SendMsgUtil.send_0x26(devicenum, port.byteValue());
+		return SendMsgUtil.backStopCahrgeInfo(devicenum, port);
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -273,4 +274,5 @@ public interface ChargeRecordService {
 	/** 结束订单*/
 	Map<String, Object> stopChargeRecord(String ordernum, String begintime, String endtime,
 			Double chargeMoney,Double serverMoney, Integer resultInfo, Integer useElec);
+	
 }

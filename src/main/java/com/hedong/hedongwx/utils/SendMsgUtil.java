@@ -88,7 +88,7 @@ public class SendMsgUtil {
 		
 	}
 	
-	public static Map<String, Object> backCahrgeInfo(String ordernum) {
+	public static Map<String, Object> backChargeInfo(String ordernum) {
 		long nowtime = System.currentTimeMillis();
 		int temp = 0;
 		boolean flag = true;
@@ -109,6 +109,40 @@ public class SendMsgUtil {
 				long updatetime = (long) chargeback.get("updatetime");
 				if (nowtime - updatetime > -5000 && nowtime - updatetime < 15000) {
 					return CommUtil.responseBuildInfo(1000, "连接成功", chargeback);
+				} else {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						System.out.println(e.getMessage());
+					}
+					temp++;
+					continue;
+				}
+			}
+		}
+		return CommUtil.responseBuildInfo(1002, "系统异常", null);
+	}
+	
+	public static Map<String, Object> backStopCahrgeInfo(String devicenum, Integer port) {
+		long nowtime = System.currentTimeMillis();
+		int temp = 0;
+		boolean flag = true;
+		long updatetime = (long) chargeMap.get(devicenum + port);
+		while (flag) {
+			if (temp >= 15) {
+				return CommUtil.responseBuildInfo(1001, "连接超时", null);
+			}
+			if (updatetime != 0) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					System.out.println(e.getMessage());
+				}
+				temp++;
+				continue;
+			} else {
+				if (nowtime - updatetime > 0 && nowtime - updatetime < 15000) {
+					return CommUtil.responseBuildInfo(1000, "停止成功", null);
 				} else {
 					try {
 						Thread.sleep(1000);
@@ -306,7 +340,7 @@ public class SendMsgUtil {
 	 */
 	public static void parse_0x09(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
-//		byte b = buffer.get();/风机控制、加热器控制
+		byte b = buffer.get();//风机控制、加热器控制
 	}
 	
 	/**
@@ -683,7 +717,7 @@ public class SendMsgUtil {
 	/**
 	 * 平台下发停止充电命令
 	 */
-	public static Map<String, Object> send_0x26(String devicenum, byte port) {
+	public static void send_0x26(String devicenum, byte port) {
 		ByteBuffer buffer = ByteBuffer.allocate(65522);
 		buffer.putShort(framestart);
 		buffer.put((byte) 0x26);//cmd+
@@ -704,37 +738,6 @@ public class SendMsgUtil {
 		}
 		buffer.position(0);
 		Server.sendMsg(devicenum, buffer);
-//		long nowtime = System.currentTimeMillis();
-//		int temp = 0;
-//		boolean flag = true;
-//		long updatetime = (long) chargeMap.get(devicenum + port);
-//		while (flag) {
-//			if (temp >= 15) {
-//				return CommUtil.responseBuildInfo(1001, "连接超时", null);
-//			}
-//			if (updatetime != 0) {
-//				try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {
-//					System.out.println(e.getMessage());
-//				}
-//				temp++;
-//				continue;
-//			} else {
-//				if (nowtime - updatetime > 0 && nowtime - updatetime < 15000) {
-					return CommUtil.responseBuildInfo(1000, "停止成功", null);
-//				} else {
-//					try {
-//						Thread.sleep(1000);
-//					} catch (InterruptedException e) {
-//						System.out.println(e.getMessage());
-//					}
-//					temp++;
-//					continue;
-//				}
-//			}
-//		}
-//		return CommUtil.responseBuildInfo(1002, "系统异常", null);
 	}
 	
 	/**
