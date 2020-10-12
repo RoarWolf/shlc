@@ -306,7 +306,7 @@ public class SendMsgUtil {
 	 */
 	public static void parse_0x09(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
-		
+//		byte b = buffer.get();/风机控制、加热器控制
 	}
 	
 	/**

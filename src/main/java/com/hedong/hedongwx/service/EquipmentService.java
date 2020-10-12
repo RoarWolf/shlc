@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import com.hedong.hedongwx.entity.CodeSystemParam;
 import com.hedong.hedongwx.entity.Codestatistics;
 import com.hedong.hedongwx.entity.Equipment;
+import com.hedong.hedongwx.entity.EquipmentNew;
 import com.hedong.hedongwx.entity.PageBean;
 import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.Realchargerecord;
@@ -449,7 +450,6 @@ public interface EquipmentService {
 	 * @Param [equ]
 	 **/
 	public Map<String, Object> updateEquipmentNew(EquipmentNew equ);
-	Map<String, Object> insertEquipmentNew(EquipmentNew equ);
 
 	/**
 	 * 添加充电桩(设备主动上传)
@@ -461,17 +461,9 @@ public interface EquipmentService {
 			BigDecimal lon, BigDecimal lat, String remark);
 
 	/**
-	 * @Author 修改充电桩信息
-	 * @Description
-	 * @Date 2020/10/11 19:33
-	 * @Param [equ]
-	 **/
-	public Map<String, Object> updateEquipmentNew(EquipmentNew equ);
-
-	/**
 	 * 查询充电桩是否存在
 	 * @param devicenum
 	 * @return
 	 */
-	String selectDeviceExsit(String devicenum);
+	boolean selectDeviceExsit(String devicenum);
 }

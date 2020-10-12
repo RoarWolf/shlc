@@ -93,13 +93,6 @@ public class Area {
 	//交流服务费
 	private Double exserverMoney;
 
-	/**站点唯一编号**/
-	private String  areaOnlyCode;
-
-	public String getAreaOnlyCode() {
-		return areaOnlyCode;
-	}
-
 	public void setAreaOnlyCode(String areaOnlyCode) {
 		this.areaOnlyCode = areaOnlyCode;
 	}

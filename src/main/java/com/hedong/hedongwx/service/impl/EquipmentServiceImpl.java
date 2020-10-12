@@ -2766,9 +2766,29 @@ public class EquipmentServiceImpl implements EquipmentService {
 	}
 
 	@Override
-	public Map<String, Object> insertEquipmentNew(String code, String hardversion, String softversion, String subHardversion,
-			String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower, String location,
-			BigDecimal lon, BigDecimal lat, String remark) {
+	public boolean selectDeviceExsit(String devicenum) {
+		if (equipmentNewDao.selectDeviceExsit(devicenum) != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public Map<String, Object> insertEquipmentNew(EquipmentNew equ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> updateEquipmentNew(EquipmentNew equ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> insertEquipmentNewData(String code, String hardversion, String softversion,
+			String subHardversion, String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower,
+			String location, BigDecimal lon, BigDecimal lat, String remark) {
 		try {
 			EquipmentNew equ = new EquipmentNew();
 			equ.setCode(code);
@@ -2789,11 +2809,6 @@ public class EquipmentServiceImpl implements EquipmentService {
 		} catch (Exception e) {
 			return CommUtil.responseBuildInfo(201, "添加失败", null);
 		}
-	}
-
-	@Override
-	public String selectDeviceExsit(String devicenum) {
-		return equipmentNewDao.selectDeviceExsit(devicenum);
 	}
 
 }
