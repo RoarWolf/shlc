@@ -1,23 +1,21 @@
 package com.hedong.hedongwx.service.impl;
 
-import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.codec.binary.Base64;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.github.wxpay.sdk.WXPayUtil;
+
 import com.hedong.hedongwx.config.CommonConfig;
 import com.hedong.hedongwx.dao.WithdrawDao;
 import com.hedong.hedongwx.entity.MerchantDetail;
@@ -28,15 +26,13 @@ import com.hedong.hedongwx.service.MerchantDetailService;
 import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.service.WithdrawService;
 import com.hedong.hedongwx.utils.CommUtil;
-import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.PageUtils;
-import com.hedong.hedongwx.utils.RSAUtil;
 import com.hedong.hedongwx.utils.StringUtil;
 import com.hedong.hedongwx.utils.TempMsgUtil;
 import com.hedong.hedongwx.utils.WeChatWithdrawUtils;
-import com.hedong.hedongwx.utils.WeiXinConfigParam;
 import com.hedong.hedongwx.utils.WeixinUtil;
 import com.hedong.hedongwx.utils.XMLUtil;
+
 import net.sf.json.JSONObject;
 
 @Service
@@ -542,69 +538,69 @@ public class WithdrawServiceImpl implements WithdrawService {
 			String openid = CommUtil.toString(withdraw.get("openid"));
 			// 付款金额(提现的钱减去手续费)
 			Double merUseMoney = CommUtil.subBig(money*100.00, serviceCharge*100.00);
-            if(merRealName != null && bankName != null){
-				// 调用微信接口进行企业打款到银行卡
-				SortedMap<String, String> params = new TreeMap<String,String>();
-				params.put("mch_id", WeiXinConfigParam.SUBMCHID);
-				params.put("partner_trade_no", withDrawNum);
-				params.put("nonce_str", HttpRequest.getRandomStringByLength(30));
-				//定义自己公钥的路径
-				String keyfile = "/usr/local/elk/9951publicPKCS8.pem"; 
-				PublicKey pub = RSAUtil.getPubKey(keyfile,"RSA"); 
-				//rsa是微信付款到银行卡要求我们填充的字符串
-				String rsa ="RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING";
-				// 进行加密
-				byte[] estr=RSAUtil.encrypt(bankcardnum.getBytes(),pub,2048, 11,rsa);   //对银行账号进行base加密
-				String bankNum = Base64.encodeBase64String(estr);
-				byte[] useName = RSAUtil.encrypt(merRealName.getBytes(),pub,2048, 11,rsa);
-				String realName = Base64.encodeBase64String(useName);
-				// 加密的银行卡号
-	            params.put("enc_bank_no", bankNum);
-				// 加密后的收款人姓名
-	            params.put("enc_true_name", realName);
-				// 收款方开户行(微信对银行的编码)
-				params.put("bank_code", WXPayUtil.getBankCode(bankName));
-				// 商家提现的钱
-				params.put("amount", merUseMoney.intValue()+"");
-				// 描述
-				params.put("desc", "自动提现到银行卡");
-				String sign = HttpRequest.createWithdrawSign("UTF-8", params);
-				params.put("sign", sign);
-				// 发送带有证书的post请求
-				String result = WeChatWithdrawUtils.withdrawToPersonBank(params, 3000, 3000, true);
-				// 提现的信息转成Map
-				Map<String, String> resultMap = XMLUtil.doXMLParse(result);
-				// 请求成功获取微信返回的信息
-				if(resultMap.get("result_code").toString().equalsIgnoreCase("SUCCESS")){
-					// 开始处理业务
-					Withdraw withdrawData = new Withdraw();
-					Date date = new Date();
-					withdrawData.setId(withDrawId);
-					withdrawData.setStatus(1);
-					withdrawData.setAccountTime(date);
-					withdrawDao.updateWithdraw(withdrawData);
-					// 发送提现信息
-					String info = "您的提现申请已受理,预计1~3个工作日到账,周末节假日顺延,请以实际到账时间为准。";
-					String url = TempMsgUtil.TEMP_MSG_URL.replace("ACCESS_TOKEN", WeixinUtil.getBasicAccessToken());
-					JSONObject jsonbj = TempMsgUtil.information2(openid, TempMsgUtil.TEMP_ID2, CommonConfig.ZIZHUCHARGE+"/checkOrderDetail?ordernum=" + withDrawNum, 
-							info ,  bankName+ "(" + bankcardnum.substring(bankcardnum.length()-4, bankcardnum.length()) + ")", merUseMoney/100+"(元)", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), "如有疑问，请尽快联系客服");
-					TempMsgUtil.PostSendMsg(jsonbj, url);
-					logger.info("商家:"+merRealName+"完成提现到银行=====时间:"+System.currentTimeMillis()+"钱=="+merUseMoney/100);
-					return CommUtil.responseBuildInfo(200, "成功", datamap);
-				}else{
-					// 发送提现信息
-					logger.info("用户:" + merRealName + "---微信提现银行卡失败---");
-					logger.info("错误信息=="+resultMap.get("err_code_des"));
-					String url = TempMsgUtil.TEMP_MSG_URL.replace("ACCESS_TOKEN", WeixinUtil.getBasicAccessToken());
-					JSONObject jsonbj = TempMsgUtil.information2(openid, TempMsgUtil.TEMP_ID2, CommonConfig.ZIZHUCHARGE+"/oauth2login", 
-							"自动提现失败-"+resultMap.get("err_code_des"),  bankName+ "(" + bankcardnum.substring(bankcardnum.length()-4, bankcardnum.length()) + ")",  merUseMoney/100+"(元)", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), "如有疑问，请尽快联系客服");
-					TempMsgUtil.PostSendMsg(jsonbj, url);
-					logger.info("商家:"+merRealName+"发送微信请求结束=====时间:"+System.currentTimeMillis());
-					return CommUtil.responseBuildInfo(102, "请求微信错误", datamap);
-				}
-			}else{
+//            if(merRealName != null && bankName != null){
+//				// 调用微信接口进行企业打款到银行卡
+//				SortedMap<String, String> params = new TreeMap<String,String>();
+//				params.put("mch_id", WeiXinConfigParam.SUBMCHID);
+//				params.put("partner_trade_no", withDrawNum);
+//				params.put("nonce_str", HttpRequest.getRandomStringByLength(30));
+//				//定义自己公钥的路径
+//				String keyfile = "/usr/local/elk/9951publicPKCS8.pem"; 
+//				PublicKey pub = RSAUtil.getPubKey(keyfile,"RSA"); 
+//				//rsa是微信付款到银行卡要求我们填充的字符串
+//				String rsa ="RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING";
+//				// 进行加密
+//				byte[] estr=RSAUtil.encrypt(bankcardnum.getBytes(),pub,2048, 11,rsa);   //对银行账号进行base加密
+//				String bankNum = Base64.encodeBase64String(estr);
+//				byte[] useName = RSAUtil.encrypt(merRealName.getBytes(),pub,2048, 11,rsa);
+//				String realName = Base64.encodeBase64String(useName);
+//				// 加密的银行卡号
+//	            params.put("enc_bank_no", bankNum);
+//				// 加密后的收款人姓名
+//	            params.put("enc_true_name", realName);
+//				// 收款方开户行(微信对银行的编码)
+//				params.put("bank_code", WXPayUtil.getBankCode(bankName));
+//				// 商家提现的钱
+//				params.put("amount", merUseMoney.intValue()+"");
+//				// 描述
+//				params.put("desc", "自动提现到银行卡");
+//				String sign = HttpRequest.createWithdrawSign("UTF-8", params);
+//				params.put("sign", sign);
+//				// 发送带有证书的post请求
+//				String result = WeChatWithdrawUtils.withdrawToPersonBank(params, 3000, 3000, true);
+//				// 提现的信息转成Map
+//				Map<String, String> resultMap = XMLUtil.doXMLParse(result);
+//				// 请求成功获取微信返回的信息
+//				if(resultMap.get("result_code").toString().equalsIgnoreCase("SUCCESS")){
+//					// 开始处理业务
+//					Withdraw withdrawData = new Withdraw();
+//					Date date = new Date();
+//					withdrawData.setId(withDrawId);
+//					withdrawData.setStatus(1);
+//					withdrawData.setAccountTime(date);
+//					withdrawDao.updateWithdraw(withdrawData);
+//					// 发送提现信息
+//					String info = "您的提现申请已受理,预计1~3个工作日到账,周末节假日顺延,请以实际到账时间为准。";
+//					String url = TempMsgUtil.TEMP_MSG_URL.replace("ACCESS_TOKEN", WeixinUtil.getBasicAccessToken());
+//					JSONObject jsonbj = TempMsgUtil.information2(openid, TempMsgUtil.TEMP_ID2, CommonConfig.ZIZHUCHARGE+"/checkOrderDetail?ordernum=" + withDrawNum, 
+//							info ,  bankName+ "(" + bankcardnum.substring(bankcardnum.length()-4, bankcardnum.length()) + ")", merUseMoney/100+"(元)", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), "如有疑问，请尽快联系客服");
+//					TempMsgUtil.PostSendMsg(jsonbj, url);
+//					logger.info("商家:"+merRealName+"完成提现到银行=====时间:"+System.currentTimeMillis()+"钱=="+merUseMoney/100);
+//					return CommUtil.responseBuildInfo(200, "成功", datamap);
+//				}else{
+//					// 发送提现信息
+//					logger.info("用户:" + merRealName + "---微信提现银行卡失败---");
+//					logger.info("错误信息=="+resultMap.get("err_code_des"));
+//					String url = TempMsgUtil.TEMP_MSG_URL.replace("ACCESS_TOKEN", WeixinUtil.getBasicAccessToken());
+//					JSONObject jsonbj = TempMsgUtil.information2(openid, TempMsgUtil.TEMP_ID2, CommonConfig.ZIZHUCHARGE+"/oauth2login", 
+//							"自动提现失败-"+resultMap.get("err_code_des"),  bankName+ "(" + bankcardnum.substring(bankcardnum.length()-4, bankcardnum.length()) + ")",  merUseMoney/100+"(元)", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), "如有疑问，请尽快联系客服");
+//					TempMsgUtil.PostSendMsg(jsonbj, url);
+//					logger.info("商家:"+merRealName+"发送微信请求结束=====时间:"+System.currentTimeMillis());
+//					return CommUtil.responseBuildInfo(102, "请求微信错误", datamap);
+//				}
+//			}else{
 				return CommUtil.responseBuildInfo(102, "商家信息错误", datamap);
-			}
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return CommUtil.responseBuildInfo(102, "捕获异常", datamap);

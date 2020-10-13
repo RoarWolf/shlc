@@ -15,9 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.hedong.hedongwx.service.ChargeRecordService;
 import com.hedong.hedongwx.service.EquipmentService;
 import com.hedong.hedongwx.thread.Server;
-
+/**
+ * 
+ * @author RoarWolf
+ * @description 设备收发数据包的处理
+ *
+ * @param  所有含parse方法encryptionWay为加密方式，datalen为数据域长度
+ */
 @Component
 public class SendMsgUtil {
 	
@@ -25,6 +32,8 @@ public class SendMsgUtil {
 	
 	@Autowired
 	private EquipmentService equipmentService;
+	@Autowired
+	private ChargeRecordService chargeRecordService;
 	
 	/** 预约map*/
 	public static ConcurrentHashMap<String, Object> yuyueMap = new ConcurrentHashMap<>(); 
@@ -85,8 +94,19 @@ public class SendMsgUtil {
 //		}
 //		System.out.println();
 //		System.out.printf("0x%02x ", sum);
-		send_0x1F("1027520102030001", (byte) 1, HttpRequest.createNewOrdernum("1027520102030001"), "00000001", (short) 21, "0", (byte) 3, 
-				1000, (byte) 1, (byte) 1, "0", (byte)1, null);
+//		send_0x1F("1027520102030001", (byte) 1, HttpRequest.createNewOrdernum("1027520102030001"), "00000001", (short) 21, "0", (byte) 3, 
+//				1000, (byte) 1, (byte) 1, "0", (byte)1, null);
+//		String str = "4a5823102752010203000101b200140a0d1319060001000000313032373532303130323033303030313230313031333139323231383636303730303030303030310000000000000000000000000000000000000000000000001500303030303030303030000000004c4e425343553348334a47333031323637140a0d13161100000000000000000000000000000000006400000001140a0d13161201000001010000000000000000000000000006010000010000010000010000010000010000eb";
+//		String str1 = "";
+//		System.out.println("总长：" + str.length());
+//		int temp = 0;
+//		for (int i = 0; i < str.length(); i+=2) {
+//			str1+=  "(byte) 0x" +str.substring(i, i + 2) + ",";
+//			temp++;
+//		}
+//		System.out.println("计算长度：" + temp);
+//		System.out.println(str1);
+		WolfHttpRequest.sendYuyueChargedata("111", "1", 1, "1", "1");
 	}
 	
 	public static Map<String, Object> backChargeInfo(String ordernum) {
@@ -206,7 +226,6 @@ public class SendMsgUtil {
 		buffer.put(AESUtil.String_BCD(devicenum));
 		buffer.put((byte) 0x01);//数据加密方式
 		short datalen = (short) (108 + portnum * 20);
-		System.out.println("datalen===" + datalen);
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0,0));
 		buffer.put((byte) 0x01);//0x01-允许；0x02-不允许
@@ -416,6 +435,7 @@ public class SendMsgUtil {
 			map2.put("workWay", DisposeUtil.getWorkWayInfo(workWay));
 			portStatusList.add(map2);
 		}
+		map.put("portStatusList", portStatusList);
 		logger.info("桩心跳：" + JSON.toJSONString(map));
 		byte sum = buffer.get();
 	}
@@ -597,7 +617,7 @@ public class SendMsgUtil {
 		System.out.println("temp===" + temp);
 		buffer.position(0);
 		Server.sendMsg(devicenum, buffer);
-		logger.info("充电信息已发送");
+		logger.info("订单号：" + ordernum + "充电信息已发送");
 	}
 	
 	/**
@@ -637,6 +657,7 @@ public class SendMsgUtil {
 		map.put("device_reason", reason);
 		map.put("updatetime", System.currentTimeMillis());
 		chargeMap.put(ordernum, map);
+		logger.info("订单号：" + ordernum + "充电信息已接收");
 	}
 	
 	/**
@@ -651,7 +672,7 @@ public class SendMsgUtil {
 		byte[] useridBytes = new byte[32];
 		buffer.get(useridBytes);
 		String userid = new String(useridBytes);//用户id
-		byte userType = buffer.get();//用户类型
+		short userType = buffer.getShort();//用户类型
 		byte[] groupBytes = new byte[9];
 		buffer.get(groupBytes);
 		String groupCode = new String(groupBytes);//组织机构代码
@@ -666,6 +687,7 @@ public class SendMsgUtil {
 		byte chargeWay = buffer.get();//充电模式
 		byte deviceType = buffer.get();//充电桩类型1-交流；2-直流
 		byte result = buffer.get();//启动结果1-成功；2-失败
+		System.out.println("result===" + result);
 		short reason = buffer.getShort();
 		if (reason == 1) {
 			byte[] dateBytes = new byte[6];
@@ -673,6 +695,7 @@ public class SendMsgUtil {
 			String chargeTime = DisposeUtil.disposeDate(dateBytes);
 			int startElec = buffer.getInt();
 		}
+		logger.info("订单号：" + ordernum + "启动充电结果：" + (result == 1 ? "成功" : "失败"));
 		send_0x22(devicenum, port);
 	}
 	
@@ -688,7 +711,7 @@ public class SendMsgUtil {
 		short datalen = 0x07;
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
-		buffer.put(port);
+		buffer.put((byte) (port - 1));
 		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
 		buffer.get(bytes);
@@ -777,6 +800,7 @@ public class SendMsgUtil {
 		Map<Object,Object> map = new HashMap<>();
 		map.put("soc", BCS_SOC);
 		map.put("infotype", 1);
+		System.out.println(JSON.toJSONString(map));
 	}
 	
 	/**
@@ -798,9 +822,9 @@ public class SendMsgUtil {
 	/**
 	 * 桩上送充电订单
 	 */
-	public static void parse_0x23(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
+	public void parse_0x23(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
-		byte port = buffer.get();//
+		byte port = (byte) (buffer.get() + 1);//
 		int recordIndex = buffer.getInt();//
 		byte[] orderBytes = new byte[32];
 		buffer.get(orderBytes);
@@ -808,7 +832,7 @@ public class SendMsgUtil {
 		byte[] useridBytes = new byte[32];
 		buffer.get(useridBytes);
 		String userid = new String(useridBytes);//
-		byte userType = buffer.get();
+		int userType = buffer.getShort() & 0xffff;
 		byte[] groupBytes = new byte[9];
 		buffer.get(groupBytes);//
 		String groupCode = new String(groupBytes);//
@@ -833,7 +857,7 @@ public class SendMsgUtil {
 		buffer.get(timingBytes);
 		String timingTime = DisposeUtil.disposeDate(timingBytes);//
 		byte chargeType = buffer.get();//
-		short stopReason = buffer.getShort();//
+		int stopReason = buffer.getShort() & 0xffff;//
 		byte billingType = buffer.get();//
 		short billingVer = buffer.getShort();//计费模型版本
 		Double chargeMoney = (DisposeUtil.converIntDataBackInt(buffer.getInt(), 4) + 0.0)/100;//电能费用
@@ -848,7 +872,7 @@ public class SendMsgUtil {
 			byte timeIndex = buffer.get();//段 N 计费模型索引
 			short timeElec = buffer.getShort();//段 N 电量
 		}
-		
+		chargeRecordService.stopChargeRecord(ordernum, startTime, endTime, chargeMoney, serverMoney, stopReason, useElec);
 		send_0x24(devicenum, port, recordIndex);
 		
 	}
@@ -865,7 +889,7 @@ public class SendMsgUtil {
 		short datalen = 11;
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
-		buffer.put(port);
+		buffer.put((byte) (port - 1));
 		buffer.put(DisposeUtil.converIntData(recordIndex,2));
 		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];
@@ -880,7 +904,7 @@ public class SendMsgUtil {
 	 */
 	public static void parse_0x33(String devicenum,AsynchronousSocketChannel channel,ByteBuffer buffer,
 			byte encryptionWay, int datalen, String deviceDataTime) {
-		byte port = buffer.get();//
+		byte port = (byte) (buffer.get() + 1);//
 		int recordIndex = buffer.getInt();//
 		byte[] orderBytes = new byte[32];
 		buffer.get(orderBytes);
@@ -888,7 +912,7 @@ public class SendMsgUtil {
 		byte[] useridBytes = new byte[32];
 		buffer.get(useridBytes);
 		String userid = new String(useridBytes);//
-		byte userType = buffer.get();
+		int userType = buffer.getShort() & 0xffff;
 		byte[] groupBytes = new byte[9];
 		buffer.get(groupBytes);//
 		String groupCode = new String(groupBytes);//
@@ -941,7 +965,7 @@ public class SendMsgUtil {
 		short datalen = 11;
 		buffer.put(DisposeUtil.converIntData(datalen, 2));
 		buffer.put(DisposeUtil.getDateFlag(0, 0));
-		buffer.put(port);
+		buffer.put((byte) (port + 1));
 		buffer.put(DisposeUtil.converIntData(recordIndex,2));
 		buffer.position(2);
 		byte[] bytes = new byte[(datalen & 0xffff) + 12];

@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hedong.hedongwx.entity.Equipment;
 import com.hedong.hedongwx.service.EquipmentService;
 import com.hedong.hedongwx.thread.Server;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.SendMsgUtil;
+import com.hedong.hedongwx.utils.WolfHttpRequest;
 
 /**
  * 通信模块到设备
@@ -32,25 +34,25 @@ public class ModelToEquipment {
 	@Autowired
 	private EquipmentService equipmentService;
 	
-	@Scheduled(cron = "0 0/1 * * * *")
-	public void hartTask() {
-		List<String> devicelist = Server.devicenumList;
-		if (devicelist.size() > 0) {
-			for (String devicenum : devicelist) {
-				SendMsgUtil.send_0x0B(devicenum);
-			}
-		}
-	}
-	
-	@Scheduled(cron = "0 0 3 * * *")
-	public void setTimeTask() {
-		List<String> devicelist = Server.devicenumList;
-		if (devicelist.size() > 0) {
-			for (String devicenum : devicelist) {
-				SendMsgUtil.send_0x06(devicenum);
-			}
-		}
-	}
+//	@Scheduled(cron = "0/10 * * * * *")
+//	public void hartTask() {
+//		List<String> devicelist = Server.devicenumList;
+//		if (devicelist.size() > 0) {
+//			for (String devicenum : devicelist) {
+//				SendMsgUtil.send_0x0B(devicenum);
+//			}
+//		}
+//	}
+//	
+//	@Scheduled(cron = "0 0 3 * * *")
+//	public void setTimeTask() {
+//		List<String> devicelist = Server.devicenumList;
+//		if (devicelist.size() > 0) {
+//			for (String devicenum : devicelist) {
+//				SendMsgUtil.send_0x06(devicenum);
+//			}
+//		}
+//	}
 	
 	/**
 	 * 预约
@@ -64,16 +66,12 @@ public class ModelToEquipment {
 	@PostMapping("/yuyueCharge")
 	public Object yuyueCharge(String devicenum, String port, Integer userid, String userType,
 			String phonenum) {
-		System.out.println("devicenum:" + devicenum);
-		System.out.println("port:" + port);
-		System.out.println("userid:" + userid);
-		System.out.println("userType:" + userType);
-		System.out.println("phonenum:" + phonenum);
-//		Equipment equipment = equipmentService.getEquipmentById(devicenum);
-//		if (equipment == null) {
-//			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
-//		}
+		Equipment equipment = equipmentService.getEquipmentById(devicenum);
+		if (equipment == null) {
+			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
+		}
 		String useridStr = DisposeUtil.completeNum(userid + "", 8);
+		WolfHttpRequest.sendYuyueChargedata(devicenum, port, userid, userType, phonenum);
 		return SendMsgUtil.send_0x1B(devicenum, Byte.parseByte(port), useridStr, Byte.parseByte(userType), phonenum);
 	}
 	

@@ -269,7 +269,7 @@ public class Server {
 					return;
 				}
 				logger.info("桢起始上传没毛病");
-				byte cmd = buffer.get();//命令
+				int cmd = buffer.get() & 0xff;//命令
 				logger.info("cmd=" + DisposeUtil.intToHex(cmd));
 				
 				//-----桩号 start 编码BCD-----
@@ -279,21 +279,6 @@ public class Server {
 				buffer.position(0);
 				DisposeUtil.printDeviceDataInfo(devicenum, buffer, true);
 				buffer.position(11);
-//				short operatorNum = buffer.getShort();//运营商编号
-//				String operatorStr = DisposeUtil.completeNumIntHex((operatorNum & 0xffff), 4);
-//				byte gunNum = buffer.get();//枪数
-//				String gunStr = DisposeUtil.completeNumIntHex((gunNum & 0xff), 2);
-//				//站点编号（1-999999）共3个字节
-//				short siteBeforeTwo = buffer.getShort();//站点前两个字节
-//				String siteBeforeTwoStr = DisposeUtil.completeNumIntHex((siteBeforeTwo & 0xffff), 4);
-//				short siteAfterOne = buffer.getShort();//站点后一个字节
-//				String siteAfterOneStr = DisposeUtil.completeNumIntHex((siteAfterOne & 0xff), 2);
-//				//站内桩地址（1-9999） 2个字节
-//				short siteLocal = buffer.getShort();
-//				String siteLocalStr = DisposeUtil.completeNumIntHex((siteLocal & 0xffff), 4);
-//				//桩号
-//				String deviceNum = DisposeUtil.sumStr(operatorStr, gunStr, siteBeforeTwoStr, siteAfterOneStr,
-//							siteLocalStr);
 				//-----桩号 end-----
 				
 				byte encryptionWay = buffer.get();//加密方式 0x01-数据不加密，0x02-加密
@@ -304,6 +289,7 @@ public class Server {
 				try {
 					buffer.get(datas);
 				} catch (Exception e) {
+					System.out.println("data不足");
 					return;
 				}
 				buffer.position(2);
@@ -311,6 +297,7 @@ public class Server {
 				try {
 					buffer.get(sumdatas);
 				} catch (Exception e) {
+					System.out.println("校验码-data不足");
 					return;
 				}
 				byte clacSumVal = SendMsgUtil.clacSumVal(sumdatas);
@@ -330,37 +317,55 @@ public class Server {
 						devicenumList.add(devicenum);
 					}
 					SendMsgUtil.parse_0x01(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+					System.out.println(111);
 				} else if (cmd == 0x03) {//登录信息
+					System.out.println(222);
 					sendMsgUtil.parse_0x03(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x05) {//桩请求对时命令
+					System.out.println(333);
 					SendMsgUtil.parse_0x05(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x07) {//桩回复对时命令
+					System.out.println(444);
 					SendMsgUtil.parse_0x07(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x09) {//桩遥信
+					System.out.println(555);
 					SendMsgUtil.parse_0x09(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x0A) {//桩遥测
+					System.out.println(666);
 					SendMsgUtil.parse_0x0A(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x0C) {//桩心跳
+					System.out.println(777);
 					SendMsgUtil.parse_0x0C(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x1C) {//桩回复预约命令
+					System.out.println(888);
 					SendMsgUtil.parse_0x1C(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x1E) {//桩回复取消预约
+					System.out.println(999);
 					SendMsgUtil.parse_0x1E(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x20) {//桩回复充电命令
+					System.out.println(101010);
 					SendMsgUtil.parse_0x20(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x21) {//桩启动充电结果
+					System.out.println(111111);
+					System.out.println("桩启动充电结果 success");
 					SendMsgUtil.parse_0x21(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x25) {//充电桩工作信息
+					System.out.println(121212);
 					SendMsgUtil.parse_0x25(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x23) {//桩上送充电订单
-					SendMsgUtil.parse_0x23(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
+					System.out.println(131313);
+					sendMsgUtil.parse_0x23(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x33) {//历史充电订单
+					System.out.println(141414);
 					SendMsgUtil.parse_0x33(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x36) {//桩回复新 IP 地址设置
+					System.out.println(151515);
 					SendMsgUtil.parse_0x36(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else if (cmd == 0x38) {//桩回复计费模型设置
+					System.out.println(161616);
 					SendMsgUtil.parse_0x38(devicenum, channel, buffer, encryptionWay, datalen, deviceDataTime);
 				} else {
+					System.out.println(171717);
 					return;
 				}
 			}

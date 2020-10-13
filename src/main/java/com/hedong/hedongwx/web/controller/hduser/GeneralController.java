@@ -2180,7 +2180,7 @@ public class GeneralController {
 			inCoinsService.insertInCoinsRecord(ordernum, code, Byte.parseByte(port), user.getId(), money,
 					Byte.parseByte(WxPayController.doubleToString(remark)), (byte) 6,(byte) 1);
 //			SendMsgUtil.send_0x83(code, Byte.parseByte(port), Byte.parseByte(WxPayController.doubleToString(remark)));
-			WolfHttpRequest.sendIncoinsPaydata(code, Byte.parseByte(port), Byte.parseByte(WxPayController.doubleToString(remark)));
+//			WolfHttpRequest.sendIncoinsPaydata(code, Byte.parseByte(port), Byte.parseByte(WxPayController.doubleToString(remark)));
 			UserEquipment userEquipment = userEquipmentService.getDivideintoByCode(code);
 			InCoins inCoins = inCoinsService.selectInCoinsRecordByOrdernum(ordernum);
 			if (inCoins == null) {

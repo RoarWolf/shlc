@@ -1,16 +1,14 @@
 package com.hedong.hedongwx.utils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -27,44 +25,16 @@ import com.alibaba.fastjson.JSON;
  */
 public class WolfHttpRequest {
 	
+	public static final String domain_url = "http://139.224.255.156/";
+	
 	/** 付款下发充电*/
-	public static final String SEND_PAY_URL = "http://www.tengfuchong.com.cn/sendinstruct/informequipment";
-	/** 设置设备参数*/
-	public static final String SEND_SETSYSTEM_URL = "http://www.tengfuchong.com.cn/sendinstruct/setsystemparam";
-	/** 读取设备参数*/
-	public static final String SEND_READSYSTEM_URL = "http://www.tengfuchong.com.cn/sendinstruct/querysystemparam";
-	/** 锁定解锁端口*/
-	public static final String SEND_SETPORTSTATUS_URL = "http://www.tengfuchong.com.cn/sendinstruct/setportstatus";
-	/** 远程停止端口*/
-	public static final String SEND_STOPPORT_URL = "http://www.tengfuchong.com.cn/sendinstruct/setstopport";
-	/** 远程停止端口(加载等待回复)*/
-	public static final String SEND_STOPPORTLOAD_URL = "http://www.tengfuchong.com.cn/sendinstruct/setstopportload";
-	/** 查询当前端口充电信息*/
-	public static final String SEND_QUERYPORTCHARGESTATUS_URL = "http://www.tengfuchong.com.cn/sendinstruct/queryportstatus";
-	/** 查询所有端口状态*/
-	public static final String SEND_QUERYALLPORTSTATUS_URL = "http://www.tengfuchong.com.cn/sendinstruct/queryallportstatus";
-	/** 查询当前端口状态*/
-	public static final String SEND_QUERYPORTSTATUS_URL = "http://www.tengfuchong.com.cn/sendinstruct/quryportusestatus";
-	/** 查询离线充值机当前卡号*/
-	public static final String SEND_QUERYOFFLINECARD_URL = "http://www.tengfuchong.com.cn/sendinstruct/queryOfflineCard";
-	/** 充值离线充值机当前卡号*/
-	public static final String SEND_CHARGEOFFLINECARD_URL = "http://www.tengfuchong.com.cn/sendinstruct/chargeCard";
-	/** 充值离线充值机当前卡号无回复*/
-	public static final String SEND_CHARGEOFFLINECARDNOREPLY_URL = "http://www.tengfuchong.com.cn/sendinstruct/chargeCardNoReply";
-	/** 线上支付模拟投币*/
-	public static final String SEND_INCOINSPAY_URL = "http://www.tengfuchong.com.cn/sendinstruct/incoinsPay";
-	/** 付款下发充电异步加载等待回复*/
-	public static final String SEND_PAYLOAD_URL = "http://www.tengfuchong.com.cn/sendinstruct/chargePayAsyn";
-	/** 获取主板信息*/
-	public static final String SEND_MAININFO_URL = "http://www.tengfuchong.com.cn/sendinstruct/wolfmaininfo";
-	/** 新版设置设备系统参数*/
-	public static final String SEND_NEWSETSYS_URL = "http://www.tengfuchong.com.cn/sendinstruct/wolfsetsys";
-	/** 新版获取设备系统参数*/
-	public static final String SEND_NEWREADSYS_URL = "http://www.tengfuchong.com.cn/sendinstruct/wolfreadsys";
-	/** 新版付款下发充电异步加载等待回复*/
-	public static final String SEND_NEWPAYLOAD_URL = "http://www.tengfuchong.com.cn/sendinstruct/wolfnewpayload";
-	/** 新版付款下发充电*/
-	public static final String SEND_NEWPAY_URL = "http://www.tengfuchong.com.cn/sendinstruct/wolfnewpay";
+	public static final String SEND_PAY_URL = domain_url + "deviceConnect/startCharge";
+	/** 付款下发充电,等待回复*/
+	public static final String SEND_PAYBACK_URL = domain_url + "deviceConnect/startChargeback";
+	/** 预约设备*/
+	public static final String SEND_YUYUE_URL = domain_url + "deviceConnect/yuyueCharge";
+	/** 停止充电*/
+	public static final String SEND_STOP_URL = domain_url + "deviceConnect/stopCharge";
 
 	public static Map<String,String> httpconnectwolf(Map<String, String> map,String url) {
 		HttpClient client = HttpClients.createDefault();
@@ -96,49 +66,39 @@ public class WolfHttpRequest {
         }
 	}
 	
-	public static Map<String,String> sendChargePaydata(byte payport,short time,String money,String elecs,String code, int temp) {
+	public static Map<String,String> sendChargePaydata(String devicenum, Integer port, Integer userid, 
+			Double paymoney, String ordernum) {
 		Map<String,String> map = new HashMap<>();
-		map.put("port", payport + "");
-		map.put("money", money);
-		map.put("time", time + "");
-		map.put("elec", elecs + "");
-		map.put("code", code);
-		if (temp == 0) {
-			return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_PAY_URL);
-		} else {
-			return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_PAYLOAD_URL);
-		}
+		map.put("devicenum", devicenum);
+		map.put("port", port + "");
+		map.put("userid", userid + "");
+		map.put("paymoney", paymoney + "");
+		map.put("ordernum", ordernum);
+		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_PAY_URL);
 	}
 	
-	public static Map<String,String> sendNewChargePaydata(byte payport,short time,String money,String elecs,String code, int chargeType, int temp) {
+	public static Map<String,String> sendChargePaydata(String ordernum) {
 		Map<String,String> map = new HashMap<>();
-		map.put("port", payport + "");
-		map.put("money", money);
-		map.put("time", time + "");
-		map.put("elec", elecs + "");
-		map.put("code", code);
-		map.put("chargeType", chargeType + "");
-		if (temp == 0) {
-			return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_NEWPAY_URL);
-		} else {
-			return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_NEWPAYLOAD_URL);
-		}
+		map.put("ordernum", ordernum);
+		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_PAYBACK_URL);
 	}
 	
-	public static Map<String,String> sendOfflineCardPaydata(String code,String card_id,Short card_surp,Byte card_ope) {
+	public static Map<String,String> sendYuyueChargedata(String devicenum, String port, Integer userid, String userType,
+			String phonenum) {
 		Map<String,String> map = new HashMap<>();
-		map.put("code", code);
-		map.put("card_id", card_id);
-		map.put("card_surp", card_surp * 10 + "");
-		map.put("card_ope", card_ope + "");
-		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_CHARGEOFFLINECARDNOREPLY_URL);
+		map.put("devicenum", devicenum);
+		map.put("port", port + "");
+		map.put("userid", userid + "");
+		map.put("userType", userType + "");
+		map.put("phonenum", phonenum + "");
+		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_YUYUE_URL);
 	}
 	
-	public static Map<String,String> sendIncoinsPaydata(String code, Byte num, Byte money) {
+	public static Map<String,String> sendStopChargedata(String devicenum, Integer port) {
 		Map<String,String> map = new HashMap<>();
-		map.put("code", code);
-		map.put("num", num + "");
-		map.put("money", money + "");
-		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_INCOINSPAY_URL);
+		map.put("devicenum", devicenum);
+		map.put("port", port + "");
+		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_STOP_URL);
 	}
+	
 }

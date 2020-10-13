@@ -290,6 +290,7 @@
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
+					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
 			<plugin>

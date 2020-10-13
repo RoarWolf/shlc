@@ -25,12 +25,10 @@ import com.hedong.hedongwx.thread.Server;
  * @author RoarWolf
  */
 public class DisposeUtil {
-	
-	private static final Logger logger = LoggerFactory.getLogger(Server.class);
+
+	private static Logger logger = LoggerFactory.getLogger(DisposeUtil.class);
 
 	public static void main(String[] args) {
-//		byte[] bytes = new byte[]{(byte) 0xA6,(byte) 0xBB,0x41,0x31,0x32,0x33,0x34,0x35,0x36};
-//		System.out.println(handleCarnum(bytes).trim());
 	}
 	
 	public static List<String> quChong(List<String> list) {

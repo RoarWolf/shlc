@@ -387,11 +387,11 @@ public class AlipayController {
 						params.put("ordernum", out_trade_no);
 						chargeRecordService.updateByOrdernum(params);
 						Equipment equipment = equipmentService.getEquipmentById(code);
-						if ("07".equals(equipment.getHardversion())) {
-							WolfHttpRequest.sendNewChargePaydata(port, time, money / 10 + "", chargeRecord.getQuantity() + "", code, 1, 0);
-						} else {
-							WolfHttpRequest.sendChargePaydata(port, time, money / 10 + "", chargeRecord.getQuantity() + "", code, 0);
-						}
+//						if ("07".equals(equipment.getHardversion())) {
+//							WolfHttpRequest.sendNewChargePaydata(port, time, money / 10 + "", chargeRecord.getQuantity() + "", code, 1, 0);
+//						} else {
+//							WolfHttpRequest.sendChargePaydata(port, time, money / 10 + "", chargeRecord.getQuantity() + "", code, 0);
+//						}
 					} catch (Exception e) {
 						logger.warn("设备编号：--" + code + "--设备端口：--" + chargeRecord.getPort() + "--充电异常" + e.getMessage());
 					}
@@ -454,7 +454,7 @@ public class AlipayController {
 								String money = String.valueOf(inCoins.getMoney());
 								int idx = money.lastIndexOf(".");
 								String total_fee = money.substring(0, idx);
-								WolfHttpRequest.sendIncoinsPaydata(inCoins.getEquipmentnum(), inCoins.getPort(), Byte.parseByte(total_fee));
+//								WolfHttpRequest.sendIncoinsPaydata(inCoins.getEquipmentnum(), inCoins.getPort(), Byte.parseByte(total_fee));
 								inCoinsService.updateInCoinsStatusAndRecycletype(out_trade_no, (byte) 1);
 							} catch (Exception e) {
 								logger.error("投币异常" + e.getMessage() + e.getStackTrace()[0].getLineNumber());
@@ -512,7 +512,7 @@ public class AlipayController {
 							String accountmoney = String.valueOf(offlineCard.getAccountmoney() * 10);
 							String money = accountmoney.substring(0, accountmoney.indexOf("."));
 							short parseShort = Short.parseShort(money);
-							WolfHttpRequest.sendOfflineCardPaydata(offlineCard.getEquipmentnum(), cardID, parseShort, (byte) 1);
+//							WolfHttpRequest.sendOfflineCardPaydata(offlineCard.getEquipmentnum(), cardID, parseShort, (byte) 1);
 						} catch (Exception e) {
 							logger.error("支付宝---离线卡充值异常" + e.getMessage() + e.getStackTrace()[0].getLineNumber());
 						}
