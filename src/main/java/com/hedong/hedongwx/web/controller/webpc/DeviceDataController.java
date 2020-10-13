@@ -731,4 +731,17 @@ public class DeviceDataController {
 	public Object updateDevice(@RequestBody EquipmentNew equ){
 		return equipmentService.updateEquipmentNew(equ);
 	}
+
+	/**
+	 * @Author
+	 * @Description删除设备信息
+	 * @Date 2020/10/13 14:34
+	 * @Param [id]
+	 **/
+	@RequestMapping(value = "/delEquipmentNewByCode")
+	@ResponseBody
+	public Object delEquipmentNewById(String code){
+		return equipmentService.delEquipmentNewById(code);
+	}
+
 }

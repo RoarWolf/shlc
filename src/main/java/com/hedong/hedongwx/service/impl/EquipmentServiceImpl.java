@@ -1232,20 +1232,6 @@ public class EquipmentServiceImpl implements EquipmentService {
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			User user = CommonConfig.getAdminReq(request);
-			//===========================================
-			//前端传递代理商名下某一个商家的id
-			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
-			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
-				user = new User();
-				user.setLevel(2);
-				user.setId(agentSelectmerid);
-			}
-			//====================================================
-			Integer rank = CommUtil.toInteger(user.getLevel());
-			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
-			parameters.setDeviceType(CommUtil.toInteger(type));
-			
 			parameters.setCode(CommUtil.toString(maparam.get("devicenum")));
 			parameters.setNickname(CommUtil.toString(maparam.get("nick")));
 			parameters.setUsername(CommUtil.toString(maparam.get("realname")));
@@ -1294,7 +1280,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 			}else if(teststatus.equals(3)){
 				parameters.setLevel("10");
 			}
-			List<Map<String, Object>> deviceData = CommUtil.isListMapEmpty(equipmentDao.selectEquList(parameters));
+			List<Map<String, Object>> deviceData = CommUtil.isListMapEmpty(equipmentNewDao.selectEquList(parameters));
 
 			Integer export =  CommUtil.toInteger(maparam.get("export"));
 			if(export.equals(1)){
@@ -2796,7 +2782,15 @@ public class EquipmentServiceImpl implements EquipmentService {
 			return CommUtil.responseBuildInfo(201, "修改失败", null);
 		}
 	}
-
+	@Override
+	public Map<String, Object> delEquipmentNewById(String code){
+		try {
+			equipmentNewDao.delEquipmentNewById(code);
+			return CommUtil.responseBuildInfo(200, "修改成功", null);
+		} catch (Exception e) {
+			return CommUtil.responseBuildInfo(201, "修改失败", null);
+		}
+	}
 	@Override
 	public Map<String, Object> insertEquipmentNewData(String code, String hardversion, String softversion,
 			String subHardversion, String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower,

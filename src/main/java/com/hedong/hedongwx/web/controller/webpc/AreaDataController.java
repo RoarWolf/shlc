@@ -1,16 +1,16 @@
 package com.hedong.hedongwx.web.controller.webpc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.hedong.hedongwx.utils.JedisUtils;
+import com.hedong.hedongwx.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -153,7 +153,8 @@ public class AreaDataController {
 			return CommUtil.responseBuildInfo(301, "异常错误", datamap);
 		}
 	}
-	
+
+
 	
 	/**
 	 * @Description：修改合伙人分成比
@@ -368,10 +369,91 @@ public class AreaDataController {
 			return CommUtil.responseBuildInfo(301, "异常错误", datamap);
 		}
 	}
-		
-	
-	
-	
-	
-	
+
+	/**
+	 * 通过小区id 删除小区信息、并同步删除小区名下合伙人信息
+	 * @param request, response, model
+	 * @return
+	 */
+	@RequestMapping(value = { "/deleteByArea" })
+	@ResponseBody
+	public Object deleteByArea(Integer id){
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			areaService.deleteAreaByAid(id);
+			map.put("code", 200);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("code", 403);
+		}
+		return map;
+	}
+/**
+	 * 通过实体类 Parameter 修改站点信息
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = { "/insertByParame" })
+	@ResponseBody
+	public Object insertByParame(HttpServletRequest request){
+		Map<String, Object> map = new HashMap<String, Object>();
+		try{
+			Area area = new Area();
+			area.setName(request.getParameter("name"));
+			area.setAddress(request.getParameter("address"));
+			area.setLat(new BigDecimal(request.getParameter("lat")));
+			area.setLon(new BigDecimal(request.getParameter("lon")));
+			area.setCreateTime(new Date());
+			areaService.insertArea(area);
+			map.put("code", 200);
+		}catch (Exception e){
+			e.printStackTrace();
+			map.put("code", 403);
+		}
+		return map;
+	}
+	/**
+	 * 通过实体类 Parameter 修改站点信息
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = { "/updateByParame" })
+	@ResponseBody
+	public Object updateByParame(HttpServletRequest request){
+		Map<String, Object> map = new HashMap<String, Object>();
+		try{
+			Area area = new Area();
+			area.setId(StringUtil.getIntString(request.getParameter("id")));
+			area.setName(request.getParameter("name"));
+			area.setAddress(request.getParameter("address"));
+			area.setLat(new BigDecimal(request.getParameter("lat")));
+			area.setLon(new BigDecimal(request.getParameter("lon")));
+			area.setUpdateTime(new Date());
+			 areaService.updateByArea(area);
+			map.put("code", 200);
+		}catch (Exception e){
+			e.printStackTrace();
+			map.put("code", 403);
+		}
+		return map;
+	}
+
+	/**
+	 * 查询站点列表下拉框
+	 * @return
+	 */
+	@RequestMapping(value = { "/selectAllArea" })
+	@ResponseBody
+	public Object selectAllArea(){
+		Map<String, Object> map = new HashMap<String, Object>();
+		try{
+			List<Map<String, Object>> areaList = areaService.selectAllArea();
+			map.put("areaList",areaList);
+			map=CommUtil.responseBuildInfo(200, "成功", map);
+		}catch (Exception e){
+			e.printStackTrace();
+			map=CommUtil.responseBuildInfo(301, "异常错误", map);
+		}
+		return JSON.toJSON(map);
+	}
 }

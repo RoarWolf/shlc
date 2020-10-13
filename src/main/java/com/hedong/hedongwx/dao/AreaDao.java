@@ -128,7 +128,7 @@ public interface AreaDao {
 	 *
 	 * @return
 	 */
-	List<Area> selectAllArea();
+	List<Map<String, Object>> selectAllArea();
 
 	/**
 	 * @Description： 

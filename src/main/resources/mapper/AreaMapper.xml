@@ -9,8 +9,8 @@
 	</sql>
 	
 	<insert id="insertArea" parameterType="com.hedong.hedongwx.entity.Area">
-		insert into hd_area (name, tempid, merid, manid, divideinto, address, create_time,area_only_code)
-		values (#{name}, #{tempid}, #{merid}, #{manid}, #{divideinto}, #{address}, #{createTime})
+		insert into hd_area (name,address, create_time,area_only_code,lon,lat)
+		values (#{name}, #{address}, #{createTime},#{areaOnlyCode},#{lon},#{lat})
 	</insert>
 	 
 	 <select id="selectByIdArea" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.Area">
@@ -20,21 +20,13 @@
 	 </select>
 
  	<select id="selectByParame" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
-		SELECT name
-		FROM hd_area a
+		SELECT id,name,address,create_time,area_only_code,lon,lat
+		FROM hd_area
 		<where>
-			<if test="uid!=null and uid!=''"> AND a.merid = #{uid} </if>
-			<if test="remark!=null and remark!=''"> AND a.name LIKE '%${remark}%' </if>
-			<if test="source!=null and source!=''"> AND a.address LIKE '%${source}%' </if>
-			<if test="dealer!=null and dealer!=''"> AND u.username LIKE '%${dealer}%' </if>
-			<if test="realname!=null and realname!=''"> AND u.realname LIKE '%${realname}%' </if>
-			<if test="mobile!=null and mobile!=''"> AND u.phone_num LIKE '%${mobile}%' </if>
-			<if test="username!=null and username!=''"> AND mu.realname LIKE '%${username}%' </if>
-			<if test="phone!=null and phone!=''"> AND mu.phone_num LIKE '%${phone}%' </if>
-			<if test="startTime!=null and startTime!=''"> AND a.create_time &gt;= #{startTime}</if>
-			<if test="endTime!=null and endTime!=''"> AND a.create_time &lt;= #{endTime}</if>
+			<if test="remark!=null and remark!=''"> AND name LIKE '%${remark}%' </if>
+			<if test="source!=null and source!=''"> AND address LIKE '%${source}%' </if>
 		</where>
-			 ORDER BY a.create_time DESC
+			 ORDER BY create_time DESC
 	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
 	</select>
 
@@ -90,8 +82,7 @@
 		DELETE FROM hd_area 
 		<where>
 			<if test="id!=null and id!=''"> AND id = #{id} </if>
-			<if test="merid!=null and merid!=''"> AND merid = #{merid} </if>
-			<if test="tempid!=null and tempid!=''"> AND tempid = #{tempid} </if>
+
 		</where>
 	</delete>
 	
@@ -143,7 +134,7 @@
 		update hd_area set now_online_earn = 0,now_coins_earn = 0
 	</update>
 	
-	<select id="selectAllArea" resultType="com.hedong.hedongwx.entity.Area">
+	<select id="selectAllArea" resultType="map">
 		select
 		<include refid="Area_Column_List" /> 
 		from hd_area

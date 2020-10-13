@@ -19,4 +19,6 @@ public interface EquipmentNewDao {
 	List<Map<String, Object>> selectEquList(Parameters parameters);
 	
 	EquipmentNew selectDeviceInfo(String code);
+	//删除设备信息
+	int delEquipmentNewById(String code);
 }

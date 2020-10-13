@@ -450,6 +450,13 @@ public interface EquipmentService {
 	 * @Param [equ]
 	 **/
 	public Map<String, Object> updateEquipmentNew(EquipmentNew equ);
+	/**
+	 * @Author 删除充电桩信息
+	 * @Description
+	 * @Date 2020/10/11 19:33
+	 * @Param [equ]
+	 **/
+	public Map<String, Object> delEquipmentNewById(String code);
 
 	/**
 	 * 添加充电桩(设备主动上传)

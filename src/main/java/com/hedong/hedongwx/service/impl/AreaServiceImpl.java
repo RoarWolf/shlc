@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.hedong.hedongwx.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +29,6 @@ import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.service.AreaService;
 import com.hedong.hedongwx.service.UserService;
-import com.hedong.hedongwx.utils.CommUtil;
-import com.hedong.hedongwx.utils.JedisUtils;
-import com.hedong.hedongwx.utils.PageUtils;
-import com.hedong.hedongwx.utils.StringUtil;
 
 import net.sf.json.JSONObject;
 
@@ -50,6 +48,9 @@ public class AreaServiceImpl implements AreaService {
 
 	@Override
 	public int insertArea(Area area) {
+		/*Integer aid = CommUtil.toInteger(item.get("id"));
+		String areaOnlyCode = DisposeUtil.completeNum();*/
+		area.setAreaOnlyCode("000000");
 		return areaDao.insertArea(area);
 	}
 	
@@ -111,10 +112,10 @@ public class AreaServiceImpl implements AreaService {
 			Area area = new Area();
 			area.setId(CommUtil.toInteger(aid));
 			areaDao.deleteByArea(area);
-			
+		/*
 			AreaRelevance arearele = new AreaRelevance();
 			arearele.setAid(CommUtil.toInteger(aid));
-			areaDao.deleteArReleByPara(arearele);
+			areaDao.deleteArReleByPara(arearele);*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -223,7 +224,7 @@ public class AreaServiceImpl implements AreaService {
 	}
 
 	@Override
-	public List<Area> selectAllArea() {
+	public List<Map<String, Object>> selectAllArea() {
 		return areaDao.selectAllArea();
 	}
 
@@ -578,12 +579,8 @@ public class AreaServiceImpl implements AreaService {
 			Parameters parameters = new Parameters();
 			parameters.setRemark(CommUtil.toString(maparam.get("areaname")));//小区名称
 			parameters.setSource(CommUtil.toString(maparam.get("address")));//小区地址
-//			parameters.setRealname(CommUtil.toString(maparam.get("manarealname")));//副号名称
-//			parameters.setPhone(CommUtil.toString(maparam.get("manaphonenum")));//副号点
-			parameters.setStartTime(CommUtil.toString(maparam.get("startTime")));
-			parameters.setEndTime(CommUtil.toString(maparam.get("endTime")));
-			List<Map<String, Object>> areaManageData = CommUtil.isListMapEmpty(areaDao.selectByParame(parameters));
-			page.setTotalRows(areaManageData.size());
+			int count = areaDao.getTotalAreaByparam(parameters);
+			page.setTotalRows(count);
 			page.setTotalPages();
 			page.setStart();
 			page.setEnd();
@@ -591,35 +588,27 @@ public class AreaServiceImpl implements AreaService {
 			parameters.setStartnumber(page.getStartIndex());
 			List<Map<String, Object>> areaManageInfo = CommUtil.isListMapEmpty(areaDao.selectByParame(parameters));
 			for(Map<String, Object> item : areaManageInfo){
-				Integer aid = CommUtil.toInteger(item.get("id"));
-				String areaOnlyCode = StringUtil.StringNumer(CommUtil.toString(item.get("id")));//生成站点唯一编号
-				item.put("area_only_code",areaManageInfo);
-				Area area = new Area();
-				area.setId(Integer.parseInt(item.get("id").toString()));
-				area.setAreaOnlyCode(areaOnlyCode);
-				areaDao.updateByArea(area);
 
 
-
-				Map<String, Object>  areaonline = areaDao.inquireAreaOnlineCard(aid);
+		/*		Map<String, Object>  areaonline = areaDao.inquireAreaOnlineCard(aid);
 				Integer devicenum =  areaDao.inquireAreaDevicenum(aid);
-				Map<String, Object>  areauser =  areaDao.inquireAreaUser(aid);
+				Map<String, Object>  areauser =  areaDao.inquireAreaUser(aid);*/
 				
-				Integer onlinenum = CommUtil.toInteger(areaonline.get("count"));//在线卡表数
+			/*	Integer onlinenum = CommUtil.toInteger(areaonline.get("count"));//在线卡表数
 				Double ctopupbalance = CommUtil.toDouble(areaonline.get("topupbalance"));//金额
 				Double csendmoney = CommUtil.toDouble(areaonline.get("sendmoney"));//赠送金额
 				
 				Integer areausernum = CommUtil.toInteger(areauser.get("count"));//小区用户数
 				Double utopupbalance = CommUtil.toDouble(areauser.get("topupbalance"));//金额
-				Double usendmoney = CommUtil.toDouble(areauser.get("sendmoney"));//赠送金额
+				Double usendmoney = CommUtil.toDouble(areauser.get("sendmoney"));//赠送金额*/
 				
-				item.put("devicenum", devicenum);//设备数
+				/*item.put("devicenum", devicenum);//设备数
 				item.put("onlinenum", onlinenum);//在线数
 				item.put("ctopupbalance", ctopupbalance);//金额
 				item.put("csendmoney", csendmoney);//赠送金额
 				item.put("areausernum", areausernum);//小区人数
 				item.put("utopupbalance", utopupbalance);//金额
-				item.put("usendmoney", usendmoney);//赠送用户金额
+				item.put("usendmoney", usendmoney);//赠送用户金额*/
 			/*	Parameters pareme = new Parameters();
 				pareme.setState(aid.toString());
 				pareme.setType("2");*/

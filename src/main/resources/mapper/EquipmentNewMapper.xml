@@ -10,9 +10,6 @@
 		<where>
 			<if test=" uid!=null and uid!=''"> AND t.user_id = #{uid} </if>
 			<if test=" code!=null and  code!=''"> AND e.`code` LIKE '%${code}%' </if>
-			<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
-			<if test=" username!=null and  username!=''"> AND u.realname LIKE '%${username}%' </if>
-			<if test=" phone!=null and  phone!=''"> AND u.phone_num LIKE '%#{phone}%' </if>
 			<if test=" sort!=null and  sort!=''"> AND e.imei LIKE '%${sort}%' </if>
 			<if test=" state!=null and  state!=''"> AND e.ccid LIKE '%${state}%' </if>
 			<if test=" statement!=null and statement!=''"> AND  e.hardversion = #{statement}</if>
@@ -26,8 +23,6 @@
 			<if test=" deviceType!=null and deviceType!=''"> AND e.device_type = #{deviceType} </if>
 		</where>
 		<if test=" remark!=null and remark!=''"> ORDER BY ${remark} </if>
-		<!-- <if test=" remark==0"> ORDER BY e.csq  ASC </if>
-        <if test=" remark==1"> ORDER BY e.csq DESC </if> -->
 		<if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
 	</select>
 
@@ -234,4 +229,9 @@
 	<select id="selectDeviceInfo" resultType="com.hedong.hedongwx.entity.EquipmentNew" parameterType="java.lang.String">
 		select code,lon,lat from hd_equipment_new where code = #{devicenum}
 	</select>
+
+	<!--	删除设备信息	-->
+	<delete id="delEquipmentNewById" parameterType="java.lang.String">
+		DELETE FROM hd_equipment_new  WHERE code = #{code,jdbcType=VARCHAR}
+	</delete>
 </mapper>

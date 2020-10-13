@@ -28,7 +28,7 @@ public class LoginController {
 	@RequestMapping({ "/accountEnter" })
 	@ResponseBody
 	public Object accountEnter(String phone,  String password, Integer type){
-		
+		System.err.println("==============");
 		Map<String, Object> result = userService.accountEnter( phone, password, type);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("userInfo", result);

@@ -17,7 +17,7 @@ public interface AreaService {
 
 	int insertArea(Area area);
 	
-	List<Area> selectAllArea();
+	List<Map<String, Object>> selectAllArea();
 	
 	//通过Parameter查询设备地点（小区）所有信息
 	PageUtils<Parameters> selectByParame(HttpServletRequest request);
