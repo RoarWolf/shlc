@@ -71,8 +71,8 @@ public class ModelToEquipment {
 			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
 		}
 		String useridStr = DisposeUtil.completeNum(userid + "", 8);
-		WolfHttpRequest.sendYuyueChargedata(devicenum, port, userid, userType, phonenum);
-		return SendMsgUtil.send_0x1B(devicenum, Byte.parseByte(port), useridStr, Byte.parseByte(userType), phonenum);
+		return WolfHttpRequest.sendYuyueChargedata(devicenum, port, userid, userType, phonenum);
+//		return SendMsgUtil.send_0x1B(devicenum, Byte.parseByte(port), useridStr, Byte.parseByte(userType), phonenum);
 	}
 	
 	/**
@@ -83,6 +83,7 @@ public class ModelToEquipment {
 	 */
 	@PostMapping("/cancelyuyue")
 	public Object cancelyuyue(String devicenum, Integer port) {
+		
 		SendMsgUtil.send_0x1D(devicenum, port.byteValue());
 		return CommUtil.responseBuildInfo(1000, "取消成功", null);
 	}
@@ -94,7 +95,8 @@ public class ModelToEquipment {
 	 */
 	@PostMapping("/startCharge")
 	public Object startCharge(String ordernum) {
-		return SendMsgUtil.backChargeInfo(ordernum);
+//		return SendMsgUtil.backChargeInfo(ordernum);
+		return WolfHttpRequest.sendChargePaydata(ordernum);
 	}
 	
 	/**
@@ -105,8 +107,9 @@ public class ModelToEquipment {
 	 */
 	@PostMapping("/stopCharge")
 	public Object stopCharge(String devicenum, Integer port) {
-		SendMsgUtil.send_0x26(devicenum, port.byteValue());
-		return SendMsgUtil.backStopCahrgeInfo(devicenum, port);
+//		SendMsgUtil.send_0x26(devicenum, port.byteValue());
+//		return SendMsgUtil.backStopCahrgeInfo(devicenum, port);
+		return WolfHttpRequest.sendStopChargedata(devicenum, port);
 	}
 	
 	/**
