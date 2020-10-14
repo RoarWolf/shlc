@@ -275,17 +275,12 @@
 	<select id="selectChargeRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
 		SELECT c.*,u.username,hu.username AS dealer FROM hd_chargerecord c
 		LEFT JOIN hd_user u 
-		ON c.uid = u.id 
-		LEFT JOIN hd_user hu 
-		ON c.merchantid = hu.id 
+		ON c.uid = u.id
 		<where>
 			<if test=" paramete!=null and  paramete!=''"> AND c.id = #{paramete} </if>
 		    <if test=" order!=null and  order!=''"> and c.ordernum = #{order} </if>
 		    <if test=" uid!=null and  uid!=''"> AND c.merchantid = #{uid} </if>
 		    <if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
-			<if test=" dealer!=null and  dealer!=''"> and hu.username LIKE '%${dealer}%' </if>
-			<if test=" realname!=null and  realname!=''"> and hu.realname LIKE '%${realname}%' </if>
-			<if test=" phone!=null and  phone!=''"> and hu.phone_num LIKE '%${phone}%' </if>
 		    <if test=" code!=null and code!=''"> and c.equipmentnum LIKE '%${code}%' </if>
 		    <if test=" state!=null and state!=''"> and c.port = #{state} </if>
 		    <if test=" type!=null and type!='' and type!=0"> and c.paytype = #{type} </if>

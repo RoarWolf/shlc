@@ -48,10 +48,13 @@ public class AreaServiceImpl implements AreaService {
 
 	@Override
 	public int insertArea(Area area) {
-		/*Integer aid = CommUtil.toInteger(item.get("id"));
-		String areaOnlyCode = DisposeUtil.completeNum();*/
-		area.setAreaOnlyCode("000000");
-		return areaDao.insertArea(area);
+		areaDao.insertArea(area);
+		Integer aid = CommUtil.toInteger(area.getId());
+		String areaOnlyCode = DisposeUtil.completeNum(aid.toString(),6);
+		Area updateArea = new Area();
+		area.setId(aid);
+		area.setAreaOnlyCode(areaOnlyCode);
+		return areaDao.updateByArea(updateArea);
 	}
 	
 	//通过Parameter查询设备地点（小区）所有信息

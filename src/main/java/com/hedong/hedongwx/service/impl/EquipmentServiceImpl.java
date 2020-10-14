@@ -2766,6 +2766,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 	@Override
 	public Map<String, Object> insertEquipmentNew(EquipmentNew equ) {
 		try {
+
 			equipmentNewDao.insertEquipmentNew(equ);
 			return CommUtil.responseBuildInfo(200, "添加成功", null);
 		} catch (Exception e) {
@@ -2776,9 +2777,11 @@ public class EquipmentServiceImpl implements EquipmentService {
 	@Override
 	public Map<String, Object> updateEquipmentNew(EquipmentNew equ) {
 		try {
+			System.err.println(equ+"=========");
 			equipmentNewDao.updateEquipmentNew(equ);
 			return CommUtil.responseBuildInfo(200, "修改成功", null);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return CommUtil.responseBuildInfo(201, "修改失败", null);
 		}
 	}

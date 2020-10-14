@@ -8,7 +8,8 @@
 		equ_earn,card_earn
 	</sql>
 	
-	<insert id="insertArea" parameterType="com.hedong.hedongwx.entity.Area">
+	<insert id="insertArea" parameterType="com.hedong.hedongwx.entity.Area" useGeneratedKeys="true"
+			keyProperty="id">
 		insert into hd_area (name,address, create_time,area_only_code,lon,lat)
 		values (#{name}, #{address}, #{createTime},#{areaOnlyCode},#{lon},#{lat})
 	</insert>

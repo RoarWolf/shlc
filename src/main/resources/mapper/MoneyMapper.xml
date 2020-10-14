@@ -114,18 +114,14 @@
 		<!-- SELECT m.*,u.username,u.realname,u.phone_num AS uphonenum 
 		FROM hd_moneyrecord m LEFT JOIN hd_user u ON m.uid = u.id
 		WHERE m.`status` = 1 -->
-		SELECT m.*,u.username,u.realname,u.phone_num AS uphonenum, mu.id AS dealid, mu.username AS dealernick,mu.realname AS dealer,mu.phone_num AS mobile
-		FROM hd_moneyrecord m LEFT JOIN hd_user u ON m.uid = u.id LEFT JOIN hd_user mu ON u.merid = mu.id
+		SELECT m.*,u.username,u.realname,u.phone_num AS uphonenum
+		FROM hd_moneyrecord m LEFT JOIN hd_user u ON m.uid = u.id
 		WHERE m.`status` = 1
 		<if test=" paramete!=null and paramete!=''"> AND m.uid = #{paramete} </if>
 		<if test=" uid!=null and uid!=''"> AND u.merid = #{uid} </if>
 	    <if test=" order!=null and  order!=''"> AND m.ordernum LIKE '%${order}%' </if>
 		<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
 		<if test=" username!=null and  username!=''"> AND u.realname LIKE '%${username}%' </if>
-		
-		<if test="dealer!=null and dealer!=''">AND mu.username LIKE '%${dealer}%' </if>
-		<if test="realname!=null and realname!=''">AND mu.realname LIKE '%${realname}%' </if>
-		<if test="mobile!=null and mobile!=''">AND mu.phone_num LIKE '%${mobile}%' </if>
 			
 		<if test=" remark!=null and  remark!=''"> AND m.remark LIKE '%${remark}%' </if>
 		<if test=" type!=null and  type!=''"> AND m.paytype IN (${type}) </if> 

@@ -7,10 +7,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hedong.hedongwx.service.*;
 import com.hedong.hedongwx.utils.JedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,12 +22,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.hedong.hedongwx.config.CommonConfig;
 import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.User;
-import com.hedong.hedongwx.service.AdminiStratorService;
-import com.hedong.hedongwx.service.FeescaleService;
-import com.hedong.hedongwx.service.OnlineCardService;
-import com.hedong.hedongwx.service.OperateRecordService;
-import com.hedong.hedongwx.service.OrderDataService;
-import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.utils.CommUtil;
 
 /**
@@ -49,6 +45,9 @@ public class AccountController {
 	private HttpServletRequest request;
 	@Autowired
 	private FeescaleService feescaleService;
+
+	@Autowired
+	private GeneralDetailService generalDetailService;
 
 	/**
 	 * separate
@@ -220,7 +219,19 @@ public class AccountController {
 		}
 		return result;
 	}
-	
+
+
+	/**
+	 * 查询用户钱包记录
+	 * @param userid
+	 * @param startnum
+	 * @return
+	 */
+	@RequestMapping("/getWalletRecord")
+	@ResponseBody
+	public 	Object getWalletRecord(Integer userid, Integer startnum) {
+		return generalDetailService.selectGenWalletDetailByUid(userid, startnum);
+	}
 	/**
 	 * separate
 	 * @Description： 获取单个用户信息
