@@ -879,10 +879,10 @@ public class AreaServiceImpl implements AreaService {
 	}
 
 	@Override
-	public Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum, Integer distanceSort) {
+	public Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum, Integer distanceSort, String areaname) {
 		Map<String,Object> map = new HashMap<>();
 		try {
-			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum, distanceSort);
+			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum, distanceSort, areaname);
 			if (arealist == null) {
 				arealist = new ArrayList<>();
 			} else {

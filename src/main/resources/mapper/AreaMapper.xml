@@ -317,6 +317,9 @@
 		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as DCfreenum, COUNT(ap.port_status) as DCAllnum 
 		FROM hd_allportstatus ap GROUP BY ap.aid) s 
 		on s.aid = a.id
+		<if test="areaname != null and areaname != ''">
+			where name like '%${areaname}%' 
+		</if>
 		HAVING distance &lt;= #{distance} 
 		<if test="distanceSort == 1">
 			order by distance 

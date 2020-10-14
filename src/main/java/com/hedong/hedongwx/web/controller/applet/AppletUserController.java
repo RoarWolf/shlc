@@ -137,8 +137,8 @@ public class AppletUserController {
 	 */
 	@PostMapping("/getAreaRecently")
 	public 	Object getAreaRecently(Double lon, Double lat, Double distance, Integer startnum, 
-			Integer distanceSort) {
-		return areaService.queryAreaRecently(lon, lat, distance, startnum, distanceSort);
+			Integer distanceSort, String areaname) {
+		return areaService.queryAreaRecently(lon, lat, distance, startnum, distanceSort, areaname);
 	}
 	
 	/**
