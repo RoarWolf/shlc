@@ -1305,7 +1305,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 				page.setEnd();
 				parameters.setPages(page.getNumPerPage());
 				parameters.setStartnumber(page.getStartIndex());
-				List<Map<String, Object>> deviceInfo = CommUtil.isListMapEmpty(equipmentDao.selectEquList(parameters));
+				List<Map<String, Object>> deviceInfo = CommUtil.isListMapEmpty(equipmentNewDao.selectEquList(parameters));
 				datamap.put("listdata", deviceInfo);
 				datamap.put("totalRows", page.getTotalRows());
 				datamap.put("totalPages", page.getTotalPages());
@@ -2766,10 +2766,11 @@ public class EquipmentServiceImpl implements EquipmentService {
 	@Override
 	public Map<String, Object> insertEquipmentNew(EquipmentNew equ) {
 		try {
-
+			equ.setCreateTime(new Date());
 			equipmentNewDao.insertEquipmentNew(equ);
 			return CommUtil.responseBuildInfo(200, "添加成功", null);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return CommUtil.responseBuildInfo(201, "添加失败", null);
 		}
 	}

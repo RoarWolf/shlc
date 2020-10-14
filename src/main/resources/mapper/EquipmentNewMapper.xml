@@ -205,17 +205,8 @@
 			<if test="aid != null">
 				aid = #{aid,jdbcType=INTEGER},
 			</if>
-			<if test="several != null">
-				several = #{several,jdbcType=INTEGER},
-			</if>
 			<if test="remark != null">
 				remark = #{remark,jdbcType=VARCHAR},
-			</if>
-			<if test="liveTime != null">
-				live_time = #{liveTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="deviceType != null">
-				device_type = #{deviceType,jdbcType=INTEGER},
 			</if>
 		</set>
 		where code = #{code,jdbcType=VARCHAR}
