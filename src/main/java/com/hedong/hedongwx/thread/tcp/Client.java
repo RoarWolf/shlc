@@ -24,7 +24,7 @@ public class Client {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Client client = new Client();
 		client.connect("139.196.212.158", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
-//		client.connect("121.196.187.251", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
+//		client.connect("139.224.255.156", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
 
 			@Override
 			public void completed(Void result, AsynchronousSocketChannel channel) {
