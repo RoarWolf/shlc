@@ -119,8 +119,6 @@
 	    <if test=" order!=null and  order!=''"> AND m.ordernum LIKE '%${order}%' </if>
 		<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
 		<if test=" username!=null and  username!=''"> AND u.realname LIKE '%${username}%' </if>
-			
-		<if test=" remark!=null and  remark!=''"> AND m.remark LIKE '%${remark}%' </if>
 		<if test=" type!=null and  type!=''"> AND m.paytype IN (${type}) </if> 
 		<if test="startTime!=null and startTime!=''"> AND m.paytime &gt;= #{startTime} </if>
 		<if test="endTime!=null and endTime!=''"> AND m.paytime &lt;= #{endTime} </if>
@@ -137,8 +135,6 @@
 		<if test=" order!=null and  order!=''"> AND m.ordernum LIKE '%${order}%' </if>
 		<if test=" nickname!=null and  nickname!=''"> AND u.username LIKE '%${nickname}%' </if>
 		<if test=" username!=null and  username!=''"> AND u.realname LIKE '%${username}%' </if>
-
-		<if test=" remark!=null and  remark!=''"> AND m.remark LIKE '%${remark}%' </if>
 		<if test=" type!=null and  type!=''"> AND m.paytype IN (${type}) </if>
 		<if test="startTime!=null and startTime!=''"> AND m.paytime &gt;= #{startTime} </if>
 		<if test="endTime!=null and endTime!=''"> AND m.paytime &lt;= #{endTime} </if>
