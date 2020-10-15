@@ -287,7 +287,7 @@
 		    <if test=" type!=null and type!='' and type!=0"> and c.paytype = #{type} </if>
 		    <if test=" number!=null and number!=''"> AND c.number = #{number} </if>
 		    <if test=" statement!=null and  statement!=''"> AND c.resultinfo = #{statement} </if>
-		    <if test=" startTime!=null and startTime!=''"> AND c.begintime &gt;= #{startTime} </if>
+		    <if test=" startTime!=null and startTime!=''"> AND c.create_time &gt;= #{startTime} </if>
 			<if test=" endTime!=null and endTime!=''"> AND c.begintime &lt;= #{endTime} </if>
 			AND status = 1
 	    	ORDER BY c.id DESC
@@ -611,7 +611,7 @@
 	<select id="queryChargeRecordInfo" resultType="com.hedong.hedongwx.entity.ChargeRecordCopy">
 		select e.remark as equipmentnick,c.ordernum,c.equipmentnum,
 		(c.paymoney - c.refund_money - c.server_money) as chargemoney,c.paymoney,c.server_money,c.refund_money,
-		c.create_time,c.pay_time,c.begin_time,c.end_time,c.useelec,c.usetime,c.status
+		c.create_time,c.pay_time,c.begin_time,c.end_time,c.useelec,c.usetime,c.status,c.port
 		from hd_chargerecord_copy c
 		LEFT JOIN
 		hd_equipment_new e on e.`code` = c.equipmentnum
