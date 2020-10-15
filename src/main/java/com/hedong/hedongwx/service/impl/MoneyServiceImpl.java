@@ -443,10 +443,7 @@ public class MoneyServiceImpl implements MoneyService{
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 			//User user = CommonConfig.getAdminReq(request);
-			User user = JSONArray.parseObject(JedisUtils.get("admin"), User.class);
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getLevel());
-			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
 			
 			parameters.setOrder(CommUtil.toString(maparam.get("ordernum")));
 			parameters.setNickname(CommUtil.toString(maparam.get("usernick")));
