@@ -33,6 +33,8 @@ public interface MoneyDao {
 	/*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***/
 	List<Map<String, Object>> selectWalletRecord(Parameters parameters);
 
+	int selectWalletRecordTotal(Parameters parameters);
+
 	/**
 	 * @Description：  根据订单号更改状态
 	 * @author： origin  

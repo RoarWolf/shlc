@@ -412,32 +412,27 @@
 	
 	<!-- 查询普通用户信息 -->
 	<select id="selectGeneralUserInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
-		SELECT  u.*,mu.id AS merid,mu.username AS muusername,mu.realname AS murealname,mu.phone_num AS muphone_num,a.`name` AS arename, p.id AS montid, p.uid AS montuid
-		FROM hd_user u LEFT JOIN hd_user mu ON u.merid = mu.id LEFT JOIN hd_area a ON u.aid = a.id LEFT JOIN hd_packagemonth p ON u.id = p.uid
+		SELECT  id,username,realname,phone_num
+		FROM hd_user
 	    <where>
-		    <if test=" order!=null and order!=''"> and u.id = #{order} </if>
 		    <if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
 		    <if test=" username!=null and  username!=''"> and u.realname LIKE '%${username}%' </if>
 		    <if test=" phone!=null and  phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
-		    <if test=" uid!=null and uid!=''"> and u.merid = #{uid} </if>
-			<if test=" level!=null and level!=''"> and u.level in (#{level}) </if>
-		    <if test=" source!=null and  source!=''"> and a.`name` LIKE '%${source}%' </if>
-		    <if test=" dealer!=null and dealer!=''"> and mu.realname LIKE '%${dealer}%' </if>
-		    <if test=" mobile!=null and mobile!=''"> and mu.phone_num LIKE '%${mobile}%' </if>
-		    <if test=" startTime!=null and startTime!=''"> AND u.create_time &gt;= #{startTime} </if>
-			<if test=" endTime!=null and endTime!=''"> AND u.create_time &lt;= #{endTime} </if>
-			<if test=" sort!=null and sort!=''"> AND ${sort} </if>
 	    </where>
 	    <if test=" paramete!=null and paramete!=''"> ${paramete} </if>
 	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
 	</select>
 
-
-
-
-
-
-
+	<!-- 查询普通用户数量 -->
+	<select id="selectGeneralUserTotal" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="int">
+		SELECT  count(*)
+		FROM hd_user
+		<where>
+			<if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
+			<if test=" username!=null and  username!=''"> and u.realname LIKE '%${username}%' </if>
+			<if test=" phone!=null and  phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+		</where>
+	</select>
 
 
 	<select id="getUserByUnionid" parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.User">

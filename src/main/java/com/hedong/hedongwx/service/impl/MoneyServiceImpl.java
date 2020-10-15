@@ -453,8 +453,6 @@ public class MoneyServiceImpl implements MoneyService{
 			parameters.setUsername(CommUtil.toString(maparam.get("username")));
 
 			parameters.setMobile(CommUtil.toString(maparam.get("phone")));
-			parameters.setDealer(CommUtil.toString(maparam.get("dealer")));
-			parameters.setRealname(CommUtil.toString(maparam.get("realname")));
 			parameters.setParamete(CommUtil.toString(maparam.get("uid")));
 			
 			String paytype = CommUtil.toString(maparam.get("paytype"));
@@ -462,10 +460,8 @@ public class MoneyServiceImpl implements MoneyService{
 			if("2".equals(paytype)) parameters.setType("2,3,4,5");
 			parameters.setStartTime(CommUtil.toString(maparam.get("startTime")));
 			parameters.setEndTime(CommUtil.toString(maparam.get("endTime")));
-//			parameters.setStartTime(CommUtil.getRelevantDate(maparam.get("startTime"), 7, 1));
-//			parameters.setEndTime(CommUtil.getRelevantDate(maparam.get("endTime"), 0, 3));
-			List<Map<String, Object>> orderWalletData = moneyDao.selectWalletRecord(parameters);
-			page.setTotalRows(orderWalletData.size());
+			int count = moneyDao.selectWalletRecordTotal(parameters);
+			page.setTotalRows(count);
 			page.setTotalPages();
 			page.setStart();
 			page.setEnd();

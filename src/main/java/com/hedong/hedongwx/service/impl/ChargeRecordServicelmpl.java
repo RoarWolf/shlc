@@ -545,35 +545,19 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			User user = CommonConfig.getAdminReq(request);
 			Integer isAlllData = CommUtil.toInteger(maparam.get("isAlllData"));
-			//===========================================
-			//前端传递代理商名下某一个商家的id
-			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
-			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
-				user = new User();
-				user.setLevel(2);
-				user.setId(agentSelectmerid);
-			}
-			//====================================================
+
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getLevel());
-			if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
-//			String continues = CommUtil.toString(maparam.get("continue"));
+
 			parameters.setStartTime(CommUtil.toString(maparam.get("startTime")));
 			parameters.setEndTime(CommUtil.toString(maparam.get("endTime")));
-//			parameters.setStartTime(CommUtil.getRelevantDate(maparam.get("startTime"), 7, 1));
-//			parameters.setEndTime(CommUtil.getRelevantDate(maparam.get("endTime"), 0, 3));
 			parameters.setParamete(CommUtil.toString(maparam.get("orderId")));
 			parameters.setOrder(CommUtil.toString(maparam.get("ordernum")));
 			parameters.setNickname(CommUtil.toString(maparam.get("usernick")));
-			parameters.setDealer(CommUtil.toString(maparam.get("dealer")));
 			parameters.setRealname(CommUtil.toString(maparam.get("realname")));
 			parameters.setPhone(CommUtil.toString(maparam.get("mobile")));
 			parameters.setCode(CommUtil.toString(maparam.get("devicenum")));//设备号
 			parameters.setState(CommUtil.toString(maparam.get("port")));
-			parameters.setType(CommUtil.toString(maparam.get("paytype")));//消费类型
-			parameters.setStatement(CommUtil.toString(maparam.get("resultinfo")));//结束原因
 			String number = CommUtil.toString(maparam.get("orderstatus"));
 			parameters.setNumber(number);//订单状态:
 			List<Map<String, Object>> chargeData = chargeRecordDao.selectChargeRecord(parameters);

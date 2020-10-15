@@ -2790,9 +2790,9 @@ public class EquipmentServiceImpl implements EquipmentService {
 	public Map<String, Object> delEquipmentNewById(String code){
 		try {
 			equipmentNewDao.delEquipmentNewById(code);
-			return CommUtil.responseBuildInfo(200, "修改成功", null);
+			return CommUtil.responseBuildInfo(200, "删除成功", null);
 		} catch (Exception e) {
-			return CommUtil.responseBuildInfo(201, "修改失败", null);
+			return CommUtil.responseBuildInfo(201, "删除失败", null);
 		}
 	}
 	@Override

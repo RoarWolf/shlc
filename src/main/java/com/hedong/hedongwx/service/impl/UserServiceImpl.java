@@ -1291,84 +1291,29 @@ public class UserServiceImpl implements UserService {
 		Map<String, Object> datamap = new HashMap<String, Object>();
 		try {
 			Map<String, Object> maparam = CommUtil.getRequestParam(request);
-			System.err.println("==================="+maparam);
-			User user = CommonConfig.getAdminReq(request);
-			//===========================================
-			//前端传递代理商名下某一个商家的id
-			Integer agentSelectmerid =  CommUtil.toInteger(maparam.get("agentSelectmerid"));
-			if(agentSelectmerid != null && !agentSelectmerid.equals(0)){
-				user = new User();
-				user.setLevel(2);
-				user.setId(agentSelectmerid);
-			}
-			//====================================================
-//			Integer rank = CommUtil.toInteger(user.getLevel());
-			//Integer condition = CommUtil.toInteger(maparam.get("condition"));
-			/*if(rank.equals(0) && condition.equals(1)){//管理员初次查询
-				datamap.put("wallettotalmoney", 0.00);
-				datamap.put("touristinfo", new ArrayList<Map<String,Object>>());
-				datamap.put("totalRows", 0);
-				datamap.put("totalPages", 0);
-				datamap.put("currentPage", 0);
-				return CommUtil.responseBuildInfo(200, "成功", datamap);
-			}*/
+
 			Parameters parameters = new Parameters();
-			//if(!rank.equals(0)) parameters.setUid(user.getId());//绑定id
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
-			System.err.println(numPerPage+"================:"+currentPage);
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			//parameters.setOrder(CommUtil.toString(maparam.get("memberId")));//会员id
 			parameters.setNickname(CommUtil.toString(maparam.get("nick")));
 			parameters.setUsername(CommUtil.toString(maparam.get("realname")));
 			parameters.setPhone(CommUtil.toString(maparam.get("phone")));
-			//parameters.setDealer(CommUtil.toString(maparam.get("dealer")));
-			//parameters.setSource(CommUtil.toString(maparam.get("areaname")));
+
 			parameters.setMobile(CommUtil.toString(maparam.get("mobile")));
-//			parameters.setSource(CommUtil.toString(maparam.get("income")));//归属小区
-			Integer rankwallet = CommUtil.toInteger(maparam.get("moneySort"));
+			int userTotal = userDao.selectGeneralUserTotal(parameters);
 
-			/*Integer startID = CommUtil.toInteger(maparam.get("startID"));//会员id
-			Integer endID = CommUtil.toInteger(maparam.get("endID"));//会员id*/
-
-			/*StringBuffer idsort = new StringBuffer();
-			if(!startID.equals(0)){
-				idsort.append("u.id >= " + startID );
-			}
-			if(!endID.equals(0)){
-				if(idsort.length()==0){
-					idsort.append("u.id <= " + endID );
-				}else{
-					idsort.append(" AND u.id <= " + endID );
-				}
-			}*/
-			//parameters.setSort(idsort.toString());
-			if(rankwallet.equals(1)){
-				parameters.setParamete(" ORDER BY u.balance DESC");
-			}else if(rankwallet.equals(2)){
-				parameters.setParamete(" ORDER BY u.balance ASC");
-			}/*else{
-				parameters.setParamete(" ORDER BY u.create_time DESC");
-			}*/
-//			parameters.setRank("1");
-			List<Map<String, Object>> touristdata = selectGeneralUserInfo(parameters);
-			Double wallettotalmoney = 0.00;
-			for (Map<String, Object> item : touristdata) {
-				Double balance = CommUtil.toDouble(item.get("balance"));
-				wallettotalmoney =  CommUtil.addBig(wallettotalmoney,balance);
-			}
-			page.setTotalRows(touristdata.size());
+			page.setTotalRows(userTotal);
 			page.setTotalPages();
 			page.setStart();
 			page.setEnd();
 			parameters.setPages(page.getNumPerPage());
 			parameters.setStartnumber(page.getStartIndex());
-			List<Map<String, Object>> touristinfo = selectGeneralUserInfo(parameters);
+			List<Map<String, Object>> touristinfo = userDao.selectGeneralUserInfo(parameters);
 			for (Map<String, Object> item : touristinfo) {
 				String numerical = StringUtil.StringNumer(CommUtil.toString(item.get("id")));//生成帐号
 				item.put("numerical", numerical);
 			}
-			datamap.put("wallettotalmoney", wallettotalmoney);
 			datamap.put("touristinfo", touristinfo);
 			datamap.put("totalRows", page.getTotalRows());
 			datamap.put("totalPages", page.getTotalPages());
@@ -1377,17 +1322,6 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return CommUtil.responseBuildInfo(301, "异常错误", datamap);
-		}
-	}
-
-	public List<Map<String, Object>> selectGeneralUserInfo(Parameters parameters) {
-		try {
-			List<Map<String, Object>> touristinfo = userDao.selectGeneralUserInfo(parameters);
-			touristinfo = touristinfo == null ? new ArrayList<>(): touristinfo;
-			return touristinfo;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ArrayList<>();
 		}
 	}
 	
@@ -1741,6 +1675,7 @@ public class UserServiceImpl implements UserService {
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
 //			User user = CommonConfig.getAdminReq(request);
 			Parameters parameters = new Parameters();
+			System.err.println(maparam.get("uid")+"----------------");
 			parameters.setUid((Integer)maparam.get("uid"));
 			Integer paysource =  CommUtil.toInteger(maparam.get("paysource"));
 			parameters.setOrder(CommUtil.toString(maparam.get("order")));

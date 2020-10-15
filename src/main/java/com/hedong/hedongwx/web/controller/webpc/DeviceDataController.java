@@ -731,9 +731,9 @@ public class DeviceDataController {
      * @param remark         充电桩昵称
      * @return
      */
-    @RequestMapping(value = "/insetDevice", method = RequestMethod.POST)
+    @RequestMapping(value = "/insetDevice", method = RequestMethod.GET)
     @ResponseBody
-    public Object insetDevice(@RequestBody EquipmentNew equ) {
+    public Object insetDevice( EquipmentNew equ) {
         return equipmentService.insertEquipmentNew(equ);
     }
 
@@ -754,9 +754,9 @@ public class DeviceDataController {
      * @param remark         充电桩昵称
      * @return
      */
-    @RequestMapping(value = "/updateDevice", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateDevice", method = RequestMethod.GET)
     @ResponseBody
-    public Object updateDevice(@RequestBody EquipmentNew equ) {
+    public Object updateDevice( EquipmentNew equ) {
         return equipmentService.updateEquipmentNew(equ);
     }
 
@@ -766,7 +766,7 @@ public class DeviceDataController {
      * @Date 2020/10/13 14:34
      * @Param [id]
      **/
-    @RequestMapping(value = "/delEquipmentNewByCode")
+    @RequestMapping(value = "/delEquipmentNewById")
     @ResponseBody
     public Object delEquipmentNewById(String code) {
         return equipmentService.delEquipmentNewById(code);
@@ -787,13 +787,14 @@ public class DeviceDataController {
         try {
             boolean isTrue = equipmentService.selectDeviceExsit(code);
             map.put("isTrue", isTrue);
-            result = CommUtil.responseBuildInfo(200, "查询成功", map);
+           result = CommUtil.responseBuildInfo(200, "查询成功", map);
+           return JSON.toJSON(result);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("isTrue", "查询失败");
-            result = CommUtil.responseBuildInfo(201, "查询失败", map);
+            return CommUtil.responseBuildInfo(201, "查询失败", map);
         }
-        return JSON.toJSON(result);
+
     }
 
 }

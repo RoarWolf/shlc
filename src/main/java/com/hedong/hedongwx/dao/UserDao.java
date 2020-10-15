@@ -165,6 +165,8 @@ public interface UserDao {
 	List<Map<String, Object>> selectDealerUserInfo(Parameters parameter);
 
 	List<Map<String, Object>> selectGeneralUserInfo(Parameters parameters);
+
+	int selectGeneralUserTotal(Parameters parameters);
 	
 	//根据Unionid查询用户
 	User getUserByUnionid(String unionid);

@@ -4,7 +4,7 @@
 
 
 	<select id="selectEquList"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="map">
-		SELECT  e.*,a.address
+		SELECT  e.*,a.address,a.name areaName
 		FROM hd_equipment_new  e  LEFT JOIN
 		hd_area a ON e.aid = a.id
 		<where>

@@ -334,11 +334,11 @@ public class OrderDataController {
 	@ResponseBody
     public Object orderWalletRecordData(HttpServletRequest request, HttpServletResponse response) {
 		Object result = null;
-		if(JedisUtils.get("admin")==null){
-			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else{
+		//if(JedisUtils.get("admin")==null){
+		//	result = CommUtil.responseBuild(901, "session缓存失效", "");
+		//}else{
 			result =  moneyService.walletRecordData(request);
-		}
+		//}
 		return JSON.toJSON(result);
 	}
 	

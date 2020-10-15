@@ -222,7 +222,7 @@ public class AccountController {
 
 
 	/**
-	 * 查询用户钱包记录
+	 * 查询用户消费明细
 	 * @param userid
 	 * @param startnum
 	 * @return

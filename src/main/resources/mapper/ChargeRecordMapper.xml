@@ -273,8 +273,9 @@
 <!-- *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** -->
 	<!-- 查询商户信息 -->
 	<select id="selectChargeRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
-		SELECT c.*,u.username,hu.username AS dealer FROM hd_chargerecord c
-		LEFT JOIN hd_user u 
+		SELECT c.ordernum,c.number,c.paytype,c.status,c.equipmentnum,c.port,c.paymoney,c.server_money,c.begin_time,
+				c.end_time,c.resultinfo,c.refund_time,
+		u.username FROM hd_chargerecord_copy c LEFT JOIN hd_user u
 		ON c.uid = u.id
 		<where>
 			<if test=" paramete!=null and  paramete!=''"> AND c.id = #{paramete} </if>
