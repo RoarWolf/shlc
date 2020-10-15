@@ -129,7 +129,7 @@
 	</select>
 
 	<select id="selectWalletRecordTotal" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="int">
-		SELECT m.*,u.username,u.realname,u.phone_num AS uphonenum
+		SELECT count(*)
 		FROM hd_moneyrecord m LEFT JOIN hd_user u ON m.uid = u.id
 		WHERE m.`status` = 1
 		<if test=" paramete!=null and paramete!=''"> AND m.uid = #{paramete} </if>

@@ -287,7 +287,7 @@
 		    <if test=" type!=null and type!='' and type!=0"> and c.paytype = #{type} </if>
 		    <if test=" number!=null and number!=''"> AND c.number = #{number} </if>
 		    <if test=" statement!=null and  statement!=''"> AND c.resultinfo = #{statement} </if>
-		    <if test=" startTime!=null and startTime!=''"> AND c.begintime &gt;= #{startTime} </if>
+		    <if test=" startTime!=null and startTime!=''"> AND c.create_time &gt;= #{startTime} </if>
 			<if test=" endTime!=null and endTime!=''"> AND c.begintime &lt;= #{endTime} </if>
 			AND status = 1
 	    	ORDER BY c.id DESC
