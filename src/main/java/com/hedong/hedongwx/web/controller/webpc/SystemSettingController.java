@@ -239,7 +239,7 @@ public class SystemSettingController {
     @RequestMapping("/insertOrupdateBilling")
     @ResponseBody
     public Object insertBillingTemplate(HttpServletRequest request) {
-        Object result = JedisUtils.hgetAll("billingInfo");
+    	Map<String, String> result = JedisUtils.hgetAll("billingInfo");
         String templateType = request.getParameter("templateType");
         Map<String, String> map = new HashMap<>();
         if (templateType.equals("1")) {
@@ -248,7 +248,7 @@ public class SystemSettingController {
             map.put("timenum", request.getParameter("timenum"));
             JedisUtils.hmset("billingInfo", map);
         } else if (templateType.equals("2")) {
-            String timeInfoList = request.getParameter("timeInfo");
+            String timeInfoList = result.get("timeInfo");
             JSONArray objects = JSONArray.parseArray(timeInfoList);
             String code = request.getParameter("code");
             if (code != null) {
