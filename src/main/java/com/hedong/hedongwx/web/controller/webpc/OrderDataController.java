@@ -210,7 +210,6 @@ public class OrderDataController {
 	@RequestMapping(value="/orderChargeRecordData")
 	@ResponseBody
     public Object orderChargeRecordData(HttpServletRequest request, HttpServletResponse response) {
-		System.err.println("进入订单记录列表中=================");
 		Object result = null;
 		if(JedisUtils.get("admin")==null){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");

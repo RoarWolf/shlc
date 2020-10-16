@@ -245,6 +245,8 @@ public class SecurityFilter implements Filter {
 			return true;
 		}else if(url.indexOf("/orderData")!=-1){
 			return true;
+		}else if(url.indexOf("/systemSetting")!=-1){
+			return true;
 		}
 		else {
 			return false;
