@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hedong.hedongwx.config.CommonConfig;
-import com.hedong.hedongwx.config.WeChatOpenPlatform;
 import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.utils.MobileSendUtil;
@@ -46,7 +45,7 @@ public class AdminiLoginController {//用户登录控制类
 		if(code!=null){
 			JSONObject userinfo = null;
 			try {
-				userinfo = WeChatOpenPlatform.getOpenUserinfo(code);
+//				userinfo = WeChatOpenPlatform.getOpenUserinfo(code);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -1,11 +1,5 @@
 package com.hedong.hedongwx.utils;
 
-import java.util.Date;
-
-import com.hedong.hedongwx.entity.wx.Message;
-import com.hedong.hedongwx.entity.wx.model.Image;
-import com.hedong.hedongwx.entity.wx.model.ImageMessage;
-
 /**
  * 微信回复信息msg
  * @author Administrator
@@ -50,25 +44,6 @@ public class MessageUtil {
 		sb.append("退款说明:\n\n");
 		sb.append("把充电支付成功截图、充电站图片、以及充电插座图片和充电器图片发送给此公众号，退款会在1--3个工作日原路退回。");
 		return sb.toString();
-	}
-	
-	/**
-	 * 客服二维码
-	 * @return
-	 */
-	public static String initImageMessage(String toUserName,String fromUserName) {
-		String message = null;
-		Image image = new Image();
-		image.setMediaId("A8vruLNvxUHrAcA4nERDbXEHZeGzkdoSTgW5Lj0b7XKzhEaZ1h9_LFmKkuTPy45V");
-		ImageMessage imageMessage = new ImageMessage();
-		imageMessage.setFromUserName(toUserName);
-		imageMessage.setToUserName(fromUserName);
-		imageMessage.setMsgType(Message.IMAGE);
-		imageMessage.setCreateTime(new Date().getTime());
-		imageMessage.setImage(image);
-		message = WeixinUtil.imageMessageToXml(imageMessage);
-		System.out.println(message);
-		return message;
 	}
 	
 }

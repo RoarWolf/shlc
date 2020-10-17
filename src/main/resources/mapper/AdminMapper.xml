@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.AdminDao">
+	
+	<insert id="insertAdmin" parameterType="com.hedong.hedongwx.entity.Admin" >
+	  insert into hd_admin (name, username, password, encrypt_password, enabled, create_time)
+	  values (#{name,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+	    #{password,jdbcType=VARCHAR}, #{encryptPassword,jdbcType=VARCHAR}, 1, now())
+	</insert>
+  
+  	<update id="updateAdmin" parameterType="com.hedong.hedongwx.entity.Admin">
+	  update hd_admin
+	  <set >
+	    <if test="name != null" > name = #{name,jdbcType=VARCHAR}, </if>
+	    <if test="username != null" > username = #{username,jdbcType=VARCHAR}, </if>
+	    <if test="password != null" > password = #{password,jdbcType=VARCHAR}, </if>
+	    <if test="encryptPassword != null" > encrypt_password = #{encryptPassword,jdbcType=VARCHAR}, </if>
+	    <if test="enabled != null" > enabled = #{enabled,jdbcType=TINYINT}, </if>
+	    update_time = now()
+	  </set>
+	  where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="selectAdminById" resultType="com.hedong.hedongwx.entity.Admin">
+		select id,name,username,enabled,password,encrypt_password from hd_admin where id = #{id}
+	</select>
+	
+	<select id="selectAdminList"  parameterType="com.hedong.hedongwx.entity.Admin" resultType="com.hedong.hedongwx.entity.Admin">
+		select id,name,username,enabled from hd_admin
+		<where>
+			<if test="name != null and name != ''"> and name like '%${name}%' </if>
+			<if test="username != null and username != ''"> and username like '%${username}%' </if>
+			<if test="enabled != null"> and enabled = #{enabled} </if>
+		</where>
+		limit #{startindex}, 10
+	</select>
+	
+	<resultMap type="com.hedong.hedongwx.entity.Admin" id="adminMap">
+	    <id column="id" property="id"/>
+	    <result column="username" property="username"/>
+	    <result column="name" property="name"/>
+	    <collection property="menulist" ofType="com.hedong.hedongwx.entity.Menu">
+	        <id column="menuid" property="id"/>
+	        <result column="menuname" property="name"/>
+	        <result column="component" property="component"/>
+	        <result column="parentid" property="parentid"/>
+	    </collection>
+	</resultMap>
+	
+	<resultMap type="com.hedong.hedongwx.entity.Menu" id="menuMap">
+	    <id column="id" property="id"/>
+	    <result column="name" property="name"/>
+	    <result column="component" property="component"/>
+	        <result column="parentid" property="parentid"/>
+	    <collection property="subMenulist" ofType="com.hedong.hedongwx.entity.Menu">
+	        <id column="subid" property="id"/>
+	        <result column="subname" property="name"/>
+	        <result column="subcomponent" property="component"/>
+	        <result column="subparentid" property="parentid"/>
+	    </collection>
+	</resultMap>
+	
+	<select id="selectAdminMenu" resultMap="adminMap">
+		SELECT a.*,m.id as menuid,m.name as menuname,m.component,m.parentid from hd_admin a
+		LEFT JOIN hd_admin_menu am on am.aid = a.id
+		LEFT JOIN hd_menu m on m.id = am.mid
+		where a.id = #{id}
+	</select>
+	
+	<select id="selectAllMenu" resultMap="menuMap">
+		SELECT
+		m.id, m.name, m.component, m.parentid,
+		subm.id as subid, subm.name as subname, subm.component as subcomponent, subm.parentid as subparentid
+		from hd_menu m
+		LEFT JOIN hd_menu subm on subm.parentId = m.id
+	</select>
+</mapper>
+
+

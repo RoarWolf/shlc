@@ -10,16 +10,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
-import com.hedong.hedongwx.utils.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
-import com.hedong.hedongwx.config.WeChatOpenPlatform;
 import com.hedong.hedongwx.dao.AreaDao;
 import com.hedong.hedongwx.dao.CodestatisticsDao;
 import com.hedong.hedongwx.dao.DealerAuthorityDao;
@@ -53,6 +51,14 @@ import com.hedong.hedongwx.entity.UserBankcard;
 import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.service.MoneyService;
 import com.hedong.hedongwx.service.UserService;
+import com.hedong.hedongwx.utils.CommUtil;
+import com.hedong.hedongwx.utils.HttpRequest;
+import com.hedong.hedongwx.utils.JedisUtils;
+import com.hedong.hedongwx.utils.MD5Util;
+import com.hedong.hedongwx.utils.PageUtils;
+import com.hedong.hedongwx.utils.StringUtil;
+import com.hedong.hedongwx.utils.WeixinUtil;
+import com.hedong.hedongwx.utils.WxpayUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -1025,7 +1031,7 @@ public class UserServiceImpl implements UserService {
 			} 
 			JSONObject userinfo = null;
 			try {
-				userinfo = WeChatOpenPlatform.getOpenUserinfo(code);
+//				userinfo = WeChatOpenPlatform.getOpenUserinfo(code);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

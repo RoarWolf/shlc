@@ -19,7 +19,6 @@ import java.security.KeyManagementException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,15 +43,7 @@ import com.hedong.hedongwx.dao.UserHandler;
 import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.entity.wx.AccessToken;
 import com.hedong.hedongwx.entity.wx.ApiTicket;
-import com.hedong.hedongwx.entity.wx.Article;
-import com.hedong.hedongwx.entity.wx.Message;
-import com.hedong.hedongwx.entity.wx.Reply;
 import com.hedong.hedongwx.entity.wx.TextMessage;
-import com.hedong.hedongwx.entity.wx.menu.Button;
-import com.hedong.hedongwx.entity.wx.menu.ClickButton;
-import com.hedong.hedongwx.entity.wx.menu.Menu;
-import com.hedong.hedongwx.entity.wx.menu.ViewButton;
-import com.hedong.hedongwx.entity.wx.model.ImageMessage;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.util.QuickWriter;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
@@ -116,37 +107,6 @@ public class WeixinUtil {
             };  
         }  
     });  
-	
-	/**
-	 * 将回复消息对象转换成xml字符串
-	 * @param reply 回复消息对象
-	 * @return 返回符合微信接口的xml字符串
-	 */
-	public static String replyToXml(Reply reply){
-		String type = reply.getMsgType();
-		if(Reply.TEXT.equals(type)){
-			xstream.omitField(Reply.class, "articles");
-			xstream.omitField(Reply.class, "articleCount");
-			xstream.omitField(Reply.class, "musicUrl");
-			xstream.omitField(Reply.class, "hQMusicUrl");
-		}else if(Reply.MUSIC.equals(type)){
-			xstream.omitField(Reply.class, "content");
-			xstream.omitField(Reply.class, "musicUrl");
-			xstream.omitField(Reply.class, "hQMusicUrl");
-		}else if(Reply.NEWS.equals(type)){//图文信息回复
-			xstream.omitField(Reply.class, "articles");
-			xstream.omitField(Reply.class, "articleCount");
-			xstream.omitField(Reply.class, "content");
-			xstream.omitField(Reply.class, "title");
-			xstream.omitField(Reply.class, "description");
-			xstream.omitField(Reply.class, "picUrl");
-			xstream.omitField(Reply.class, "url");
-		}
-		xstream.autodetectAnnotations(true);
-		xstream.alias("xml", reply.getClass());
-		xstream.alias("item", new Article().getClass());
-		return xstream.toXML(reply);
-	}
 	
 	public static String mapToXml(Map<String, String> map) {
 		return xstream.toXML(map);
@@ -212,57 +172,6 @@ public class WeixinUtil {
 		}
 	}*/
 	
-	/**
-	 * 存储数据的Map转换为对应的Message对象
-	 * @param map 存储数据的map
-	 * @return 返回对应Message对象
-	 */
-	public static  Message  mapToMessage(Map<String,String> map){
-		if(map == null) return null;
-		String msgType = map.get("MsgType");
-		Message message = new Message();
-		message.setToUserName(map.get("ToUserName"));
-		message.setFromUserName(map.get("FromUserName"));
-		message.setCreateTime(new Date());
-		message.setMsgType(msgType);
-		message.setMsgId(map.get("MsgId"));
-		if(Message.TEXT.equals(msgType)){
-			message.setContent(map.get("Content"));
-		}else if(Message.IMAGE.equals(msgType)){
-			message.setPicUrl(map.get("PicUrl"));
-		}else if(Message.LINK.equals(msgType)){
-			message.setTitle(map.get("Title"));
-			message.setDescription(map.get("Description"));
-			message.setUrl(map.get("Url"));
-		}else if(Message.LOCATION.equals(msgType)){
-			message.setLocationX(map.get("Location_X"));
-			message.setLocationY(map.get("Location_Y"));
-			message.setScale(map.get("Scale"));
-			message.setLabel(map.get("Label"));
-		}else if(Message.EVENT.equals(msgType)){
-			message.setEvent(map.get("Event"));
-			message.setEventKey(map.get("EventKey"));
-		}
-		return message;
-	}
-	
-	/**
-	 * 存储数据的Map转换为对应的Message对象
-	 * @param map 存储数据的map
-	 * @return 返回对应Message对象
-	 */
-	public static  Message  jsonMapToMessage(Map<String,String> map){
-		if(map == null) return null;
-		String msgType = map.get("msg_type");
-		Message message = new Message();
-		message.setCreateTime(new Date());
-		message.setMsgType(msgType);
-		message.setSessionID(map.get("SessionID"));
-		message.setDeviceID(map.get("device_id"));
-		message.setDeviceType(map.get("device_type"));
-		message.setOpenID(map.get("open_id"));
-		return message;
-	}
 	
 	/**
 	 * 解析request中的xml 并将数据存储到一个Map中返回
@@ -522,73 +431,6 @@ public class WeixinUtil {
         return xstream.toXML(textMessage);  
     }
     
-    /** 
-     * 图片消息对象转换成xml 
-     *  
-     * @param textMessage 文本消息对象 
-     * @return xml 
-     */  
-    public static String imageMessageToXml(ImageMessage imageMessage) {  
-    	xstream.alias("xml", imageMessage.getClass());
-    	return xstream.toXML(imageMessage);  
-    }
-	
-	/**
-	 * 组装菜单
-	 * @return
-	 */
-	public static Menu initMenu(){
-		Menu menu = new Menu();
-		ClickButton button11 = new ClickButton();
-		button11.setName("扫码充电");
-		button11.setType("scancode_push");
-		button11.setKey("11");
-		
-		/*ViewButton button21 = new ViewButton();
-		button21.setName("使用说明");
-		button21.setType("view");
-		button21.setUrl("http://www.tengfuchong.com.cn/helpdoc");*/
-		
-		ViewButton button22 = new ViewButton();
-		button22.setName("充电中心");
-		button22.setType("view");
-		button22.setUrl("http://www.tengfuchong.com.cn/chargingoauth2");
-
-		Button sub_button = new Button();
-		sub_button.setName("后台管理");
-		
-//		ViewButton button30 = new ViewButton();
-//		button30.setName("售后登陆");
-//		button30.setType("view");
-//		button30.setUrl("http://www.tengfuchong.com.cn/oauth2loginChild");
-		
-		ViewButton button31 = new ViewButton();
-		button31.setName("商家登陆");
-		button31.setType("view");
-		button31.setUrl("http://www.tengfuchong.com.cn/oauth2login");
-		
-		ViewButton button32 = new ViewButton();
-		button32.setName("使用说明");
-		button32.setType("view");
-		button32.setUrl("http://www.tengfuchong.com.cn/helpdoc");
-		
-//		ViewButton button34 = new ViewButton();
-//		button34.setName("个人中心");
-//		button34.setType("view");
-//		button34.setUrl("http://www.tengfuchong.com.cn/generalLogin");
-		
-		/*ViewButton button24 = new ViewButton();
-		button24.setName("后台管理");
-		button24.setType("view");
-		button24.setUrl("http://www.he360.com.cn/user/list");*/
-		
-		Button[] buttons = new Button[]{button31,button32};
-		sub_button.setSub_button(buttons);
-		
-		menu.setButton(new Button[]{button11,button22,sub_button});
-		return menu;
-	}
-	
 	public static int createMenu(String token,String menu) throws ParseException, IOException{
 		int result = 0;
 		String url = CREATE_MENU_URL.replace("ACCESS_TOKEN", token);

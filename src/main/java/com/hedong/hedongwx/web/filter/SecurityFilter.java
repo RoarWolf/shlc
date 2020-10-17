@@ -247,6 +247,8 @@ public class SecurityFilter implements Filter {
 			return true;
 		}else if(url.indexOf("/systemSetting")!=-1){
 			return true;
+		}else if(url.indexOf("/admin")!=-1){
+			return true;
 		}
 		else {
 			return false;

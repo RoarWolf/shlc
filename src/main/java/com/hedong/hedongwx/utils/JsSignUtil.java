@@ -16,8 +16,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import com.hedong.hedongwx.entity.wx.ApiTicket;
-
 /**
  * 官方给的使用js的验证工具
  * 
@@ -32,8 +30,9 @@ public class JsSignUtil {
 //		AccessToken accessToken = WeixinUtil.getAccessToken();
 		String basicAccessToken = WeixinUtil.getBasicAccessToken();
 //		ApiTicket apiTicket = WeixinUtil.getApiTicket(accessToken.getToken());
-		ApiTicket apiTicket = WeixinUtil.getApiTicket(basicAccessToken);
-		String jsapiTicket = apiTicket.getTicket();
+//		ApiTicket apiTicket = WeixinUtil.getApiTicket(basicAccessToken);
+///		String jsapiTicket = apiTicket.getTicket();
+		String jsapiTicket = "";
 		Map<String, String> ret = new HashMap<String, String>();
 		String nonce_str = create_nonce_str();
 		String timestamp = create_timestamp();
