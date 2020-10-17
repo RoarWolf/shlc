@@ -239,7 +239,7 @@ public class SystemSettingController {
     @RequestMapping("/insertOrupdateBilling")
     @ResponseBody
     public Object insertBillingTemplate(HttpServletRequest request) {
-    	Map<String, String> result = JedisUtils.hgetAll("billingInfo");
+        Map<String, String> result = JedisUtils.hgetAll("billingInfo");
         String templateType = request.getParameter("templateType");
         Map<String, String> map = new HashMap<>();
         if (templateType.equals("1")) {
@@ -269,6 +269,16 @@ public class SystemSettingController {
                     }
                 }
             } else {
+                if(objects.size()>12){
+                    return JSON.toJSON(CommUtil.responseBuild(400, "最多添加12个计费子模板", ""));
+                }
+                String hour= JSONObject.parseObject(objects.get(objects.size()-1).toString()).getString("hour");
+                String minute= JSONObject.parseObject(objects.get(objects.size()-1).toString()).getString("minute");
+                int timeOld=Integer.parseInt(hour)*60+Integer.parseInt(minute);
+                int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
+                if(timeNew<timeOld){
+                    return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
+                }
                 Map<String, String> map1 = new HashMap<>();
                 map1.put("code", SnowflakeIdWorkerUtil.SIWU.nextId());
                 map1.put("chargefee", request.getParameter("chargefee"));
@@ -276,16 +286,46 @@ public class SystemSettingController {
                 map1.put("serverfee", request.getParameter("serverfee"));
                 map1.put("type", request.getParameter("type"));
                 map1.put("minute", request.getParameter("minute"));
-                //JSONObject json = new JSONObject(map1);
                 net.sf.json.JSONObject jsonMap = net.sf.json.JSONObject.fromObject(map1);
-                System.err.println("=====:"+jsonMap);
                 objects.add(jsonMap);
             }
             String timeInfos = objects.toJSONString();
-            Map<String, String> map1 = new HashMap<>();
-            map1.put("timeInfos",timeInfos);
-            JedisUtils.hmset("timeInfo",map1);
+            Map<String, String> mapInsert = new HashMap<>();
+            mapInsert.put("timeInfo", timeInfos);
+            JedisUtils.hmset("billingInfo", mapInsert);
         }
-        return JSON.toJSON(result);
+        return JSON.toJSON(CommUtil.responseBuild(200, "新增成功", ""));
+    }
+
+    /**
+     * 计费模板查询
+     *
+     * @return
+     */
+    @RequestMapping("/delBillingBilling")
+    @ResponseBody
+    public Object delBillingBilling(String code) {
+        Object object=null;
+        Map<String, String> result = JedisUtils.hgetAll("billingInfo");
+        String timeInfoList = result.get("timeInfo");
+        JSONArray objects = JSONArray.parseArray(timeInfoList);
+        if (code != null) {
+            for (int i = 0; i < objects.size(); i++) {
+                String timeInfo = objects.getString(i);
+                JSONObject jsonObject = JSON.parseObject(timeInfo);
+                String code1 = jsonObject.getString("code");
+                if (code.equals(code1)) {
+                    objects.remove(i);
+                }
+            }
+            String timeInfos = objects.toJSONString();
+            Map<String, String> mapInsert = new HashMap<>();
+            mapInsert.put("timeInfo", timeInfos);
+            JedisUtils.hmset("billingInfo", mapInsert);
+            object= JSON.toJSON(CommUtil.responseBuild(200, "删除成功", ""));
+        } else {
+            object=   JSON.toJSON(CommUtil.responseBuild(400, "code不能为空", ""));
+        }
+        return object;
     }
 }
