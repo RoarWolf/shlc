@@ -2,11 +2,14 @@ package com.hedong.hedongwx.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * 菜单
  * @author RoarWolf
  *
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Menu {
 	
 	/** 表自增id*/

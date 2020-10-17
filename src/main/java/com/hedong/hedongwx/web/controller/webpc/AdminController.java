@@ -38,4 +38,14 @@ public class AdminController {
 	public Object selectAdminlist(Admin admin) {
 		return adminService.selectAdminList(admin);
 	}
+	
+	@RequestMapping("/selectAdminMenu")
+	public Object selectAdminMenu(Integer adminid) {
+		return adminService.selectAdminMenu(adminid);
+	}
+	
+	@RequestMapping("/selectSetAdminMenu")
+	public Object selectSetAdminMenu(Integer adminid) {
+		return adminService.selectSetAdminMenu(adminid);
+	}
 }

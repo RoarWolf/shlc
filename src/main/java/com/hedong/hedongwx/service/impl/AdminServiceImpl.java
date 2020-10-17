@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.dao.AdminDao;
 import com.hedong.hedongwx.entity.Admin;
+import com.hedong.hedongwx.entity.Menu;
 import com.hedong.hedongwx.service.AdminService;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.MD5Util;
@@ -45,12 +46,12 @@ public class AdminServiceImpl implements AdminService {
 			admin.setEncryptPassword(MD5Util.MD5Encode(password, null));
 			int result = adminDao.updateAdmin(admin);
 			if (result > 0) {
-				return CommUtil.responseBuildInfo(200, "添加成功", null);
+				return CommUtil.responseBuildInfo(200, "修改成功", null);
 			} else {
-				return CommUtil.responseBuildInfo(201, "添加失败", null);
+				return CommUtil.responseBuildInfo(201, "修改失败", null);
 			}
 		} catch (Exception e) {
-			return CommUtil.responseBuildInfo(201, "添加失败", null);
+			return CommUtil.responseBuildInfo(201, "修改失败", null);
 		}
 	}
 
@@ -96,9 +97,9 @@ public class AdminServiceImpl implements AdminService {
 	public Map<String,Object> selectAdminMenu(Integer id) {
 		Map<String,Object> map = new HashMap<>();
 		try {
-			Admin adminList = adminDao.selectAdminMenu(id);
-			if (adminList != null) {
-				map.put("adminlist", adminList);
+			Admin admin = adminDao.selectAdminMenu(id);
+			if (admin != null) {
+				map.put("admin", admin);
 				return CommUtil.responseBuildInfo(200, "查询成功", map);
 			} else {
 				map.put("adminlist", new ArrayList<>());
@@ -111,8 +112,41 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Map<String, Object> selectAllMenu(Integer id) {
-		return null;
+	public Map<String, Object> selectSetAdminMenu(Integer id) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			List<Menu> menuList = adminDao.selectAllMenu();
+			Admin admin = adminDao.selectAdminMenu(id);
+			if (admin != null) {
+				List<Menu> adminMenulist = admin.getMenulist();
+				if (adminMenulist != null && adminMenulist.size() > 0) {
+					for (Menu menu : menuList) {
+						for (Menu menu2 : adminMenulist) {
+							if (menu.getId().equals(menu2.getId())) {
+								menu.setIscheck(true);
+							} else {
+								List<Menu> subMenulist = menu.getSubMenulist();
+								for (Menu menu3 : subMenulist) {
+									if (menu3.getId().equals(menu2.getId())) {
+										menu3.setIscheck(true);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if (menuList != null) {
+				map.put("menuList", menuList);
+				return CommUtil.responseBuildInfo(200, "查询成功", map);
+			} else {
+				map.put("adminlist", new ArrayList<>());
+				return CommUtil.responseBuildInfo(201, "查询失败", map);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuild(201, "查询失败", e.getMessage());
+		}
 	}
 
 }

@@ -73,6 +73,7 @@
 		subm.id as subid, subm.name as subname, subm.component as subcomponent, subm.parentid as subparentid
 		from hd_menu m
 		LEFT JOIN hd_menu subm on subm.parentId = m.id
+		where m.parentid = 1
 	</select>
 </mapper>
 

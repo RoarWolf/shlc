@@ -36,11 +36,11 @@ public interface AdminService {
 	Map<String,Object> selectAdminMenu(Integer id);
 	
 	/**
-	 * 查询管理员信息菜单信息
+	 * 查询管理员信息配置菜单信息
 	 * @param id
 	 * @return admin
 	 */
-	Map<String,Object> selectAllMenu(Integer id);
+	Map<String,Object> selectSetAdminMenu(Integer id);
     
     /**
      * 根据条件查询管理员

@@ -1,13 +1,17 @@
 //package com.hedong.hedongwx;
 //
+//import java.util.Map;
+//
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.test.context.junit4.SpringRunner;
 //
-//import com.hedong.hedongwx.dao.EquipmentNewDao;
+//import com.alibaba.fastjson.JSON;
+//import com.hedong.hedongwx.dao.AdminDao;
 //import com.hedong.hedongwx.dao.UserDao;
+//import com.hedong.hedongwx.service.AdminService;
 //import com.hedong.hedongwx.service.AreaService;
 //import com.hedong.hedongwx.service.ChargeRecordService;
 //
@@ -22,13 +26,14 @@
 //	@Autowired
 //	public ChargeRecordService chargeRecordService;
 //	@Autowired
-//	public EquipmentNewDao equipmentNewDao;
+//	public AdminDao adminDao;
+//	@Autowired
+//	public AdminService adminService;
 //
 //	@Test
 //    public void dealerIncomeCollect(){
-//		String selectDeviceExsit = equipmentNewDao.selectDeviceExsit("1027520102030001");
-//		System.out.println("---" + selectDeviceExsit);
-//		
+//		Map<String, Object> selectAdminMenu = adminService.selectSetAdminMenu(1);
+//		System.out.println("---" + JSON.toJSONString(selectAdminMenu));
 //	}
 //	
 //}
