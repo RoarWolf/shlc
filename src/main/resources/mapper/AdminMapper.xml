@@ -75,6 +75,25 @@
 		LEFT JOIN hd_menu subm on subm.parentId = m.id
 		where m.parentid = 1
 	</select>
+	
+	<insert id="insertAdminMenu">
+		insert into hd_admin_menu (mid,aid)
+		values
+		<foreach collection="menuidlist" index="index" item="item" separator="," open="(" close=")">
+            #{item},#{id}
+        </foreach>
+	</insert>
+	
+	<delete id="deleteAdminMenu" parameterType="java.lang.Integer">
+		delete from hd_admin_menu where mid in
+		<foreach collection="menuidlist"  item="item" open="(" separator="," close=")"  >
+           #{item}
+      </foreach>
+	</delete>
+	
+	<select id="selectAdminMenuList" resultType="java.lang.Integer">
+		select mid from hd_admin_menu where aid = #{id}
+	</select>
 </mapper>
 
 

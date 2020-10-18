@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.dao.AdminDao;
@@ -147,6 +148,27 @@ public class AdminServiceImpl implements AdminService {
 			e.printStackTrace();
 			return CommUtil.responseBuild(201, "查询失败", e.getMessage());
 		}
+	}
+
+	@Transactional
+	@Override
+	public int updateAdminMenu(Integer id, List<Integer> menuidlist) {
+		List<Integer> adminMenulist = adminDao.selectAdminMenuList(id);
+		List<Integer> insertlist = new ArrayList<>();
+		List<Integer> deletelist = new ArrayList<>();
+		for (Integer menuid : adminMenulist) {
+			if (!menuidlist.contains(menuid)) {//传入权限list中不含
+				deletelist.add(menuid);
+			}
+		}
+		for (Integer menuid : menuidlist) {
+			if (!adminMenulist.contains(menuid)) {//传入权限list中不含
+				insertlist.add(menuid);
+			}
+		}
+		adminDao.insertAdminMenu(id, insertlist);
+		adminDao.deleteAdminMenu(deletelist);
+		return 0;
 	}
 
 }

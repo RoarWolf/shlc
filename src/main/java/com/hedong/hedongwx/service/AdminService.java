@@ -48,4 +48,13 @@ public interface AdminService {
      * @return
      */
 	Map<String,Object> selectAdminList(Admin admin);
+	
+	/**
+	 * 修改管理员权限
+	 * @param id
+	 * @param menuidlist
+	 * @return
+	 */
+	int updateAdminMenu(Integer id, List<Integer> menuidlist);
+    
 }
