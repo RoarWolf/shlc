@@ -120,6 +120,20 @@ public class Admin {
 	public void setStartindex(Integer startindex) {
 		this.startindex = startindex;
 	}
-	
-	
+
+    @Override
+    public String toString() {
+        return "Admin{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", encryptPassword='" + encryptPassword + '\'' +
+                ", enabled=" + enabled +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", menulist=" + menulist +
+                ", startindex=" + startindex +
+                '}';
+    }
 }

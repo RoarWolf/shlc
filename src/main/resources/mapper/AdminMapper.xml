@@ -94,6 +94,14 @@
 	<select id="selectAdminMenuList" resultType="java.lang.Integer">
 		select mid from hd_admin_menu where aid = #{id}
 	</select>
+
+	<select id="selectAdmin"  parameterType="java.lang.String" resultType="com.hedong.hedongwx.entity.Admin">
+		select id,name,username,password,encrypt_password,enabled,create_time,update_time
+		from hd_admin
+		where username = #{username,jdbcType=VARCHAR}
+	</select>
+
+
 </mapper>
 
 

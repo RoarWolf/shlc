@@ -257,6 +257,35 @@ public class SystemSettingController {
                     JSONObject jsonObject = JSON.parseObject(timeInfo);
                     String code1 = jsonObject.getString("code");
                     if (code.equals(code1)) {
+
+                        if(objects.size()>1&&i==0){//第一条数据
+                            String hourNext= JSONObject.parseObject(objects.get(1).toString()).getString("hour");
+                            String minuteNext= JSONObject.parseObject(objects.get(1).toString()).getString("minute");
+                            int timeNext=Integer.parseInt(hourNext)*60+Integer.parseInt(minuteNext);
+                            int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
+                            if(timeNew<timeNext){
+                                return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
+                            }
+                        }else if(objects.size()>1&&i==objects.size()-1){//最后一条数据
+                            String hourOld= JSONObject.parseObject(objects.get(i-1).toString()).getString("hour");
+                            String minuteOld= JSONObject.parseObject(objects.get(i-1).toString()).getString("minute");
+                            int timeOld=Integer.parseInt(hourOld)*60+Integer.parseInt(minuteOld);
+                            int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
+                            if(timeOld<timeNew){
+                                return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
+                            }
+                        }else if(objects.size()>1&&0<i&&i<(objects.size()-1)){//除了第一条和最后一条数据修改
+                            String hourOld= JSONObject.parseObject(objects.get(i-1).toString()).getString("hour");
+                            String minuteOld= JSONObject.parseObject(objects.get(i-1).toString()).getString("minute");
+                            int timeOld=Integer.parseInt(hourOld)*60+Integer.parseInt(minuteOld);
+                            String hourNext= JSONObject.parseObject(objects.get(i+1).toString()).getString("hour");
+                            String minuteNext= JSONObject.parseObject(objects.get(i+1).toString()).getString("minute");
+                            int timeNext=Integer.parseInt(hourNext)*60+Integer.parseInt(minuteNext);
+                            int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
+                            if(timeOld<timeNew&&timeNew<timeNext){
+                                return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
+                            }
+                        }
                         objects.remove(i);
                         map.put("code", code);
                         map.put("chargefee", request.getParameter("chargefee"));
@@ -272,12 +301,14 @@ public class SystemSettingController {
                 if(objects.size()>12){
                     return JSON.toJSON(CommUtil.responseBuild(400, "最多添加12个计费子模板", ""));
                 }
-                String hour= JSONObject.parseObject(objects.get(objects.size()-1).toString()).getString("hour");
-                String minute= JSONObject.parseObject(objects.get(objects.size()-1).toString()).getString("minute");
-                int timeOld=Integer.parseInt(hour)*60+Integer.parseInt(minute);
-                int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
-                if(timeNew<timeOld){
-                    return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
+                if(objects.size()>0){
+                    String hour= JSONObject.parseObject(objects.get(objects.size()-1).toString()).getString("hour");
+                    String minute= JSONObject.parseObject(objects.get(objects.size()-1).toString()).getString("minute");
+                    int timeOld=Integer.parseInt(hour)*60+Integer.parseInt(minute);
+                    int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
+                    if(timeNew<timeOld){
+                        return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
+                    }
                 }
                 Map<String, String> map1 = new HashMap<>();
                 map1.put("code", SnowflakeIdWorkerUtil.SIWU.nextId());

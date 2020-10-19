@@ -26,4 +26,6 @@ public interface AdminDao {
     int insertAdminMenu(@Param("id") Integer id, @Param("menuidlist") List<Integer> menuidlist);
     
     int deleteAdminMenu(@Param("menuidlist") List<Integer> menuidlist);
+
+    Admin selectAdmin(@Param("username") String username);
 }

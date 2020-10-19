@@ -415,9 +415,9 @@
 		SELECT  id,username,realname,phone_num
 		FROM hd_user
 	    <where>
-		    <if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
-		    <if test=" username!=null and  username!=''"> and u.realname LIKE '%${username}%' </if>
-		    <if test=" phone!=null and  phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+		    <if test=" nickname!=null and  nickname!=''"> and username LIKE '%${nickname}%' </if>
+		    <if test=" username!=null and  username!=''"> and realname LIKE '%${username}%' </if>
+		    <if test=" phone!=null and  phone!=''"> and phone_num LIKE '%${phone}%' </if>
 	    </where>
 	    <if test=" paramete!=null and paramete!=''"> ${paramete} </if>
 	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
@@ -428,9 +428,9 @@
 		SELECT  count(*)
 		FROM hd_user
 		<where>
-			<if test=" nickname!=null and  nickname!=''"> and u.username LIKE '%${nickname}%' </if>
-			<if test=" username!=null and  username!=''"> and u.realname LIKE '%${username}%' </if>
-			<if test=" phone!=null and  phone!=''"> and u.phone_num LIKE '%${phone}%' </if>
+			<if test=" nickname!=null and  nickname!=''"> and username LIKE '%${nickname}%' </if>
+			<if test=" username!=null and  username!=''"> and realname LIKE '%${username}%' </if>
+			<if test=" phone!=null and  phone!=''"> and phone_num LIKE '%${phone}%' </if>
 		</where>
 	</select>
 

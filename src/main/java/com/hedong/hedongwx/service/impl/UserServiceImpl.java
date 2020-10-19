@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hedong.hedongwx.dao.*;
+import com.hedong.hedongwx.entity.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,36 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
-import com.hedong.hedongwx.dao.AreaDao;
-import com.hedong.hedongwx.dao.CodestatisticsDao;
-import com.hedong.hedongwx.dao.DealerAuthorityDao;
-import com.hedong.hedongwx.dao.EquipmentDao;
-import com.hedong.hedongwx.dao.GeneralDetailDao;
-import com.hedong.hedongwx.dao.MerchantDetailDao;
-import com.hedong.hedongwx.dao.OperateRecordDao;
-import com.hedong.hedongwx.dao.PackageMonthDao;
-import com.hedong.hedongwx.dao.PrivilegeDao;
-import com.hedong.hedongwx.dao.RoleDao;
-import com.hedong.hedongwx.dao.TradeRecordDao;
-import com.hedong.hedongwx.dao.UserBankcardDao;
-import com.hedong.hedongwx.dao.UserDao;
-import com.hedong.hedongwx.dao.UserEquipmentDao;
-import com.hedong.hedongwx.dao.WithdrawDao;
-import com.hedong.hedongwx.entity.Area;
-import com.hedong.hedongwx.entity.Codestatistics;
-import com.hedong.hedongwx.entity.DealerAuthority;
-import com.hedong.hedongwx.entity.Equipment;
-import com.hedong.hedongwx.entity.MerAmount;
-import com.hedong.hedongwx.entity.MerchantDetail;
-import com.hedong.hedongwx.entity.Money;
-import com.hedong.hedongwx.entity.PackageMonth;
-import com.hedong.hedongwx.entity.PackageMonthRecord;
-import com.hedong.hedongwx.entity.Parameter;
-import com.hedong.hedongwx.entity.Parameters;
-import com.hedong.hedongwx.entity.Privilege;
-import com.hedong.hedongwx.entity.TradeRecord;
-import com.hedong.hedongwx.entity.User;
-import com.hedong.hedongwx.entity.UserBankcard;
 import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.service.MoneyService;
 import com.hedong.hedongwx.service.UserService;
@@ -102,6 +74,9 @@ public class UserServiceImpl implements UserService {
 	private MoneyService moneyService;
 	@Autowired
 	private GeneralDetailService generalDetailService;
+
+	@Autowired
+	private AdminDao adminDao;
 	
 	
 	@Transactional
@@ -898,12 +873,12 @@ public class UserServiceImpl implements UserService {
 	 * @return
 	 * @throws Exception 
 	 */
-	public User acquireUserData(String phone) {
-		User user = null;
+	public Admin acquireUserData(String phone) {
+		Admin user = null;
 		if(!StringUtils.isBlank(phone)){
-			user = userDao.selectAdmin(phone);
+			user = adminDao.selectAdmin(phone);
 		}
-		return user = user == null ? new User() : user;
+		return  user == null ? new Admin() : user;
 	}
 	
 	/**
@@ -921,24 +896,13 @@ public class UserServiceImpl implements UserService {
 				return datamap;
 			}
 			String md5word = DigestUtils.md5Hex(password);
-			User account = acquireUserData(accountnum);
-			String cipher = CommUtil.trimToEmpty(account.getPassword());
-			Integer rank = CommUtil.toInteger(account.getLevel());
+			Admin account = acquireUserData(accountnum);
+			String cipher = CommUtil.trimToEmpty(account.getEncryptPassword());
 			if(account.getId()==null){
 				return CommUtil.responseBuildInfo(101, "该用户不存在", datamap);
 			} 
 			if(!cipher.equals(md5word)){
 				return CommUtil.responseBuildInfo(104, "密码不正确", datamap);
-			} 
-			if(!rank.equals(0) && !rank.equals(2) && !rank.equals(3)){
-				return CommUtil.responseBuildInfo(104, "该用户无登录权限，请重新输入", datamap);
-			}
-			if(rank==0){
-				datamap.put("classify", "superAdmin");
-			}else if(rank==2){
-				datamap.put("classify", "Admin");
-			}else if(rank==3){
-				datamap.put("classify", "Agent");
 			}
 			datamap.put("userName", account.getUsername());
 			datamap.put("token", account.getId());
@@ -959,7 +923,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Object captchaEnter(HttpServletRequest request) {
-		Map<String, Object> datamap = new HashMap<String, Object>();
+		/*Map<String, Object> datamap = new HashMap<String, Object>();
 		try {
 			Map<String, Object> maparam = CommUtil.getRequestParam(request);
 			if(maparam.isEmpty()){
@@ -1006,7 +970,8 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return CommUtil.responseBuildInfo(301, "异常错误", datamap);
-		}
+		}*/
+		return null;
 	}
 	
 	/**
