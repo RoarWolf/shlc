@@ -38,9 +38,11 @@ import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.service.MerchantDetailService;
 import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.utils.CommUtil;
+import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.PageUtils;
 import com.hedong.hedongwx.utils.StringUtil;
+import com.hedong.hedongwx.utils.WolfHttpRequest;
 
 @Service
 public class ChargeRecordServicelmpl implements ChargeRecordService{
@@ -895,6 +897,7 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 		if (user == null || user.getBalance() < paymoney) {
 			return CommUtil.responseBuildInfo(1001, "余额不足", null);
 		}
+		WolfHttpRequest.sendChargePaydata(equipmentnum, port, uid, paymoney, ordernum);
 		ChargeRecordCopy charge = new ChargeRecordCopy();
 		charge.setOrdernum(ordernum);
 		charge.setUid(uid);
