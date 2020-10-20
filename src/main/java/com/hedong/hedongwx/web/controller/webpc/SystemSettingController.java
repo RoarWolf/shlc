@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.web.controller.webpc;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -241,13 +242,14 @@ public class SystemSettingController {
     public Object insertBillingTemplate(HttpServletRequest request) {
         Map<String, String> result = JedisUtils.hgetAll("billingInfo");
         String templateType = request.getParameter("templateType");
-        Map<String, String> map = new HashMap<>();
         if (templateType.equals("1")) {
-            map.put("billver", request.getParameter("billver"));
-            map.put("parkingfee", request.getParameter("parkingfee"));
-            map.put("timenum", request.getParameter("timenum"));
-            JedisUtils.hmset("billingInfo", map);
+            Map<String, String> mapParent = new HashMap<>();
+            mapParent.put("billver", request.getParameter("billver"));
+            mapParent.put("parkingfee", request.getParameter("parkingfee"));
+            mapParent.put("timenum", request.getParameter("timenum"));
+            JedisUtils.hmset("billingInfo", mapParent);
         } else if (templateType.equals("2")) {
+            Map<String, Object> map = new HashMap<>();
             String timeInfoList = result.get("timeInfo");
             JSONArray objects = JSONArray.parseArray(timeInfoList);
             String code = request.getParameter("code");
@@ -257,21 +259,19 @@ public class SystemSettingController {
                     JSONObject jsonObject = JSON.parseObject(timeInfo);
                     String code1 = jsonObject.getString("code");
                     if (code.equals(code1)) {
-
+                        int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
                         if(objects.size()>1&&i==0){//第一条数据
                             String hourNext= JSONObject.parseObject(objects.get(1).toString()).getString("hour");
                             String minuteNext= JSONObject.parseObject(objects.get(1).toString()).getString("minute");
                             int timeNext=Integer.parseInt(hourNext)*60+Integer.parseInt(minuteNext);
-                            int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
-                            if(timeNew<timeNext){
+                            if(timeNew>timeNext){
                                 return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
                             }
                         }else if(objects.size()>1&&i==objects.size()-1){//最后一条数据
                             String hourOld= JSONObject.parseObject(objects.get(i-1).toString()).getString("hour");
                             String minuteOld= JSONObject.parseObject(objects.get(i-1).toString()).getString("minute");
                             int timeOld=Integer.parseInt(hourOld)*60+Integer.parseInt(minuteOld);
-                            int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
-                            if(timeOld<timeNew){
+                            if(timeOld>timeNew){
                                 return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
                             }
                         }else if(objects.size()>1&&0<i&&i<(objects.size()-1)){//除了第一条和最后一条数据修改
@@ -281,18 +281,17 @@ public class SystemSettingController {
                             String hourNext= JSONObject.parseObject(objects.get(i+1).toString()).getString("hour");
                             String minuteNext= JSONObject.parseObject(objects.get(i+1).toString()).getString("minute");
                             int timeNext=Integer.parseInt(hourNext)*60+Integer.parseInt(minuteNext);
-                            int timeNew = Integer.parseInt(request.getParameter("hour"))*60+Integer.parseInt(request.getParameter("minute"));
-                            if(timeOld<timeNew&&timeNew<timeNext){
+                            if(timeOld>timeNew||timeNew>timeNext){
                                 return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
                             }
                         }
                         objects.remove(i);
                         map.put("code", code);
-                        map.put("chargefee", request.getParameter("chargefee"));
-                        map.put("hour", request.getParameter("hour"));
-                        map.put("serverfee", request.getParameter("serverfee"));
+                        map.put("chargefee", new BigDecimal(request.getParameter("chargefee")));
+                        map.put("hour", Integer.parseInt(request.getParameter("hour")));
+                        map.put("serverfee", new BigDecimal(request.getParameter("serverfee")));
                         map.put("type", request.getParameter("type"));
-                        map.put("minute", request.getParameter("minute"));
+                        map.put("minute", Integer.parseInt(request.getParameter("minute")));
                         net.sf.json.JSONObject jsonMap = net.sf.json.JSONObject.fromObject(map);
                         objects.add(jsonMap);
                     }
@@ -310,13 +309,13 @@ public class SystemSettingController {
                         return JSON.toJSON(CommUtil.responseBuild(400, "开始时间设置的不正确", ""));
                     }
                 }
-                Map<String, String> map1 = new HashMap<>();
+                Map<String, Object> map1 = new HashMap<>();
                 map1.put("code", SnowflakeIdWorkerUtil.SIWU.nextId());
-                map1.put("chargefee", request.getParameter("chargefee"));
-                map1.put("hour", request.getParameter("hour"));
-                map1.put("serverfee", request.getParameter("serverfee"));
+                map1.put("chargefee", new BigDecimal(request.getParameter("chargefee")));
+                map1.put("hour", Integer.parseInt(request.getParameter("hour")));
+                map1.put("serverfee", new BigDecimal(request.getParameter("serverfee")));
                 map1.put("type", request.getParameter("type"));
-                map1.put("minute", request.getParameter("minute"));
+                map1.put("minute", Integer.parseInt(request.getParameter("minute")));
                 net.sf.json.JSONObject jsonMap = net.sf.json.JSONObject.fromObject(map1);
                 objects.add(jsonMap);
             }
