@@ -10,8 +10,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.hedong.hedongwx.dao.*;
-import com.hedong.hedongwx.entity.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
+import com.hedong.hedongwx.dao.AdminDao;
+import com.hedong.hedongwx.dao.AreaDao;
+import com.hedong.hedongwx.dao.CodestatisticsDao;
+import com.hedong.hedongwx.dao.DealerAuthorityDao;
+import com.hedong.hedongwx.dao.EquipmentDao;
+import com.hedong.hedongwx.dao.GeneralDetailDao;
+import com.hedong.hedongwx.dao.MerchantDetailDao;
+import com.hedong.hedongwx.dao.OperateRecordDao;
+import com.hedong.hedongwx.dao.PackageMonthDao;
+import com.hedong.hedongwx.dao.PrivilegeDao;
+import com.hedong.hedongwx.dao.RoleDao;
+import com.hedong.hedongwx.dao.TradeRecordDao;
+import com.hedong.hedongwx.dao.UserBankcardDao;
+import com.hedong.hedongwx.dao.UserDao;
+import com.hedong.hedongwx.dao.UserEquipmentDao;
+import com.hedong.hedongwx.dao.WithdrawDao;
+import com.hedong.hedongwx.entity.Admin;
+import com.hedong.hedongwx.entity.Area;
+import com.hedong.hedongwx.entity.Codestatistics;
+import com.hedong.hedongwx.entity.DealerAuthority;
+import com.hedong.hedongwx.entity.Equipment;
+import com.hedong.hedongwx.entity.MerAmount;
+import com.hedong.hedongwx.entity.MerchantDetail;
+import com.hedong.hedongwx.entity.Money;
+import com.hedong.hedongwx.entity.PackageMonth;
+import com.hedong.hedongwx.entity.PackageMonthRecord;
+import com.hedong.hedongwx.entity.Parameter;
+import com.hedong.hedongwx.entity.Parameters;
+import com.hedong.hedongwx.entity.Privilege;
+import com.hedong.hedongwx.entity.TradeRecord;
+import com.hedong.hedongwx.entity.User;
+import com.hedong.hedongwx.entity.UserBankcard;
 import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.service.MoneyService;
 import com.hedong.hedongwx.service.UserService;
@@ -2284,11 +2314,19 @@ public class UserServiceImpl implements UserService {
 			User selectUser = userDao.getUserByOpenid(openid);
 			if (selectUser == null) {
 				User user = new User();
-				user.setOpenid(openid.trim());
-				user.setUsername(username);
-				user.setImageUrl(imageUrl);
-				user.setCreateTime(new Date());
-				userDao.addUser(user);
+				try {
+					user.setOpenid(openid.trim());
+					user.setUsername(username);
+					user.setImageUrl(imageUrl);
+					user.setCreateTime(new Date());
+					userDao.addUser(user);
+				} catch (Exception e) {
+					user.setUsername(null);
+					user.setOpenid(openid.trim());
+					user.setImageUrl(imageUrl);
+					user.setCreateTime(new Date());
+					userDao.addUser(user);
+				}
 				selectUser = userDao.getUserByOpenid(openid);
 			}
 			Map<String,Object> map = new HashMap<>();

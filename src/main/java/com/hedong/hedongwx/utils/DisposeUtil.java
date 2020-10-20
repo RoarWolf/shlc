@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.entity.User;
-import com.hedong.hedongwx.thread.Server;
 
 /**
  * @author RoarWolf
