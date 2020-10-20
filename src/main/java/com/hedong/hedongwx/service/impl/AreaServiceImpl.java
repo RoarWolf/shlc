@@ -1,6 +1,7 @@
 package com.hedong.hedongwx.service.impl;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -908,22 +909,33 @@ public class AreaServiceImpl implements AreaService {
 			if (area != null) {
 				area.setExAllnum(0);
 				area.setExfreenum(0);
-				area.setDCchargeMoney(1.0);
-				area.setDCserverMoney(0.2);
-				area.setExchargeMoney(0.8);
-				area.setExserverMoney(0.1);
+//				area.setDCchargeMoney(1.0);
+//				area.setDCserverMoney(0.2);
+//				area.setExchargeMoney(0.8);
+//				area.setExserverMoney(0.1);
 			}
-			map.put("areainfo", area);
 			Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
 			int timenum = Integer.parseInt(billingParam.get("timenum"));
 			if (timenum > 0) {
 				String timeInfoStr = billingParam.get("timeInfo");
 				List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
 				for (Map<String, Object> map2 : timeInfo) {
-					int hour = (int) map2.get("hour");
-					int minute = (int) map2.get("minute");
+					Integer hour = (int) map2.get("hour");
+					Integer minute = (int) map2.get("minute");
+					int nowhour = DisposeUtil.getDateTime(4, 0);
+					int nowminute = DisposeUtil.getDateTime(5, 0);
+					BigDecimal chargefee = (BigDecimal) map2.get("chargefee");
+					BigDecimal serverfee = (BigDecimal) map2.get("serverfee");
+					area.setDCchargeMoney(chargefee.doubleValue());
+					area.setDCserverMoney(serverfee.doubleValue());
+					area.setExchargeMoney(chargefee.doubleValue());
+					area.setExserverMoney(serverfee.doubleValue());
+					if (hour > nowhour && minute > nowminute) {
+						break;
+					}
 				}
 			}
+			map.put("areainfo", area);
 			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
 			e.printStackTrace();

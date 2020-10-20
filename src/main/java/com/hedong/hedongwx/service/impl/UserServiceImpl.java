@@ -2396,5 +2396,27 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
+
+	@Override
+	public Map<String, Object> bindPhonenum(Integer userid, String phonenum, String verifiCode) {
+		if (phonenum.length() != 11) {
+			return CommUtil.responseBuildInfo(1001, "手机号不正确", null);
+		} else if (!verifiCode.equals(JedisUtils.getnum(phonenum, 2))) {
+			return CommUtil.responseBuildInfo(1003, "验证码不正确", null);
+		}
+		try {
+			User selectUser = userDao.selectUserById(userid);
+			if (selectUser != null) {
+				selectUser.setPhoneNum(phonenum);
+				userDao.updateUserById(selectUser);
+			}
+			Map<String,Object> map = new HashMap<>();
+			map.put("userinfo", selectUser);
+			return CommUtil.responseBuildInfo(1000, "绑定成功", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
+		}
+	}
 	
 }

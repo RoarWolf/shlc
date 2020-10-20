@@ -1,7 +1,11 @@
 package com.hedong.hedongwx.utils;
 
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.alibaba.fastjson.JSON;
 
 public class SMSMobileSendUtil {
 
@@ -14,7 +18,7 @@ public class SMSMobileSendUtil {
 	public static final String CONTENT = "【中源乐充】尊敬的用户，您的验证码为：RANDOM（10分钟内有效），请及时验证。";
 	
 	public static void main(String[] args) {
-		mobileSend("18621563709");
+		System.out.println(JSON.toJSONString(mobileSend("15235571294")));
 	}
 	
 	public static String getRandom(int length) {
@@ -30,7 +34,7 @@ public class SMSMobileSendUtil {
 		return timeStr.substring(0, 10);
 	}
 	
-	public static void mobileSend(String mobile) {
+	public static Object mobileSend(String mobile) {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("username", USERNAME);
@@ -40,11 +44,20 @@ public class SMSMobileSendUtil {
 			jsonObject.put("mobile", mobile);
 			String random = getRandom(6);
 			jsonObject.put("content", CONTENT.replaceAll("RANDOM", random));
-			System.out.println("sendinfo:" + jsonObject.toString());
 			String sendSMSPost = HttpRequest.sendSMSPost(SMS_URL, jsonObject.toString());
-			System.out.println("backinfo:" + sendSMSPost);
+			Map<String,Object> backMap = (Map<String, Object>) JSON.parse(sendSMSPost);
+			JedisUtils.setnum(mobile, random, 600, 2);
+			if (backMap.get("code").equals(200)) {
+				backMap.put("result_code", 1000);
+				backMap.put("result_info", "获取成功");
+			} else {
+				backMap.put("result_code", 1001);
+				backMap.put("result_info", "获取失败");
+			}
+			return backMap;
 		} catch (JSONException e) {
 			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1001, "系统异常", null);
 		}
 	}
 }
