@@ -934,6 +934,7 @@ public class UserServiceImpl implements UserService {
 			if(!cipher.equals(md5word)){
 				return CommUtil.responseBuildInfo(104, "密码不正确", datamap);
 			}
+			datamap.put("adminid",account.getId());
 			datamap.put("userName", account.getUsername());
 			datamap.put("token", account.getId());
 			request.getSession().setAttribute("user", account);
