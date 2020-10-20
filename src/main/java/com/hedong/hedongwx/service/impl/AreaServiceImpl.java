@@ -888,8 +888,27 @@ public class AreaServiceImpl implements AreaService {
 				arealist = new ArrayList<>();
 			} else {
 				for (Area area : arealist) {
-					area.setDCchargeMoney(1.2);
-					area.setDCserverMoney(0.0);
+					Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
+					int timenum = Integer.parseInt(billingParam.get("timenum"));
+					if (timenum > 0) {
+						String timeInfoStr = billingParam.get("timeInfo");
+						List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
+						for (Map<String, Object> map2 : timeInfo) {
+							Integer hour = (int) map2.get("hour");
+							Integer minute = (int) map2.get("minute");
+							int nowhour = DisposeUtil.getDateTime(4, 0);
+							int nowminute = DisposeUtil.getDateTime(5, 0);
+							BigDecimal chargefee = (BigDecimal) map2.get("chargefee");
+							BigDecimal serverfee = (BigDecimal) map2.get("serverfee");
+							area.setDCchargeMoney(chargefee.doubleValue());
+							area.setDCserverMoney(serverfee.doubleValue());
+							area.setExchargeMoney(chargefee.doubleValue());
+							area.setExserverMoney(serverfee.doubleValue());
+							if (hour > nowhour && minute > nowminute) {
+								break;
+							}
+						}
+					}
 				}
 			}
 			map.put("arealist", arealist);
