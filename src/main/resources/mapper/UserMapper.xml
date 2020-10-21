@@ -412,7 +412,7 @@
 	
 	<!-- 查询普通用户信息 -->
 	<select id="selectGeneralUserInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
-		SELECT  id,username,realname,phone_num
+		SELECT  id,username,realname,phone_num,sendmoney,balance
 		FROM hd_user
 	    <where>
 		    <if test=" nickname!=null and  nickname!=''"> and username LIKE '%${nickname}%' </if>
