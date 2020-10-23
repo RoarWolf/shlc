@@ -156,11 +156,9 @@ public class AppletUserController {
 		System.out.println("传入devicenum===" + devicenum);
 		try {
 			Double ctrlParamVal = paymoney * 100;
-			String useridStr = DisposeUtil.completeNum(userid + "", 8);
 			String ordernum = HttpRequest.createNewOrdernum(devicenum);
 //			SendMsgUtil.send_0x1F(devicenum, port.byteValue(), ordernum, useridStr, (short) 21, "0", (byte) 3, 
 //					ctrlParamVal.intValue(), (byte) 1, (byte) 1, "0", (byte)1, null);
-			WolfHttpRequest.sendChargePaydata(devicenum, port, userid, paymoney, ordernum);
 			return chargeService.insertChargeRecord(devicenum, port, 3, ctrlParamVal.intValue(), 1, userid, 1, paymoney,ordernum);
 		} catch (Exception e) {
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
