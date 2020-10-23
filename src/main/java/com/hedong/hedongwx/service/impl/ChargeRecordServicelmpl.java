@@ -21,6 +21,7 @@ import com.hedong.hedongwx.dao.ChargeRecordDao;
 import com.hedong.hedongwx.dao.EquipmentDao;
 import com.hedong.hedongwx.dao.RealchargerecordDao;
 import com.hedong.hedongwx.dao.TradeRecordDao;
+import com.hedong.hedongwx.entity.AllPortStatus;
 import com.hedong.hedongwx.entity.Area;
 import com.hedong.hedongwx.entity.ChargeRecord;
 import com.hedong.hedongwx.entity.ChargeRecordCopy;
@@ -31,6 +32,7 @@ import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.Realchargerecord;
 import com.hedong.hedongwx.entity.TradeRecord;
 import com.hedong.hedongwx.entity.User;
+import com.hedong.hedongwx.service.AllPortStatusService;
 import com.hedong.hedongwx.service.AreaService;
 import com.hedong.hedongwx.service.ChargeRecordService;
 import com.hedong.hedongwx.service.EquipmentService;
@@ -67,6 +69,8 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 	private UserService userService;
 	@Autowired
 	private GeneralDetailService generalDetailService;
+	@Autowired
+	private AllPortStatusService allPortStatusService;
 	
 	@Override
 	public List<ChargeRecord> chargeRecordByUid(Integer uid) {
@@ -898,6 +902,11 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 			return CommUtil.responseBuildInfo(1001, "余额不足", null);
 		}
 		WolfHttpRequest.sendChargePaydata(equipmentnum, port, uid, paymoney, ordernum);
+		AllPortStatus allPortStatus = new AllPortStatus();
+		allPortStatus.setEquipmentnum(equipmentnum);
+		allPortStatus.setPort(port);
+		allPortStatus.setPortStatus((byte) 2);
+		allPortStatusService.updateAllPortStatus(allPortStatus);
 		ChargeRecordCopy charge = new ChargeRecordCopy();
 		charge.setOrdernum(ordernum);
 		charge.setUid(uid);
