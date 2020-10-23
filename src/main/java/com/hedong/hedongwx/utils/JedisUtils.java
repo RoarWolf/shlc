@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.utils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,15 +26,25 @@ public class JedisUtils {
 	static{
 		JedisPoolConfig poolConfig=new JedisPoolConfig();
 		poolConfig.setMaxTotal(1000);
-		pool=new JedisPool(poolConfig,"121.196.187.251",6379,0,"redisshzylc");
+		pool=new JedisPool(poolConfig,"106.14.46.43",6379,0,"redisshzylc");
 	}
 	
 	//@PostConstruct
 	//public void init() {
 	//	jedisPool = jp;
 	//}
-	
-	
+
+	public static void main(String[] args) {
+		Map<String, String> mapParent = new HashMap<>();
+		mapParent.put("billver", 1+"");
+		mapParent.put("parkingfee", 1+"");
+		mapParent.put("timenum", 6+"");
+		mapParent.put("timeInfo", 6+"");
+		JedisUtils.hmset("billingInfo", mapParent);
+		System.err.println(set("admin","123",1222));
+	}
+
+
 	/**
 	 * 获取缓存
 	 * @param key 键
@@ -355,6 +366,9 @@ public class JedisUtils {
 		}
 		return value;
 	}
+
+
+
 	
 	public static String hget(String key, String field) {
 		String value = null;

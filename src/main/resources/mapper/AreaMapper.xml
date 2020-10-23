@@ -10,8 +10,8 @@
 	
 	<insert id="insertArea" parameterType="com.hedong.hedongwx.entity.Area" useGeneratedKeys="true"
 			keyProperty="id">
-		insert into hd_area (name,address, create_time,area_only_code,lon,lat)
-		values (#{name}, #{address}, #{createTime},#{areaOnlyCode},#{lon},#{lat})
+		insert into hd_area (name,address, create_time,area_only_code,lon,lat,area_img)
+		values (#{name}, #{address}, #{createTime},#{areaOnlyCode},#{lon},#{lat},#{areaImg})
 	</insert>
 	 
 	 <select id="selectByIdArea" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.Area">
@@ -21,7 +21,7 @@
 	 </select>
 
  	<select id="selectByParame" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
-		SELECT id,name,address,create_time,area_only_code,lon,lat
+		SELECT id,name,address,create_time,area_only_code,lon,lat,area_img
 		FROM hd_area
 		<where>
 			<if test="remark!=null and remark!=''"> AND name LIKE '%${remark}%' </if>
@@ -70,10 +70,13 @@
 		<if test="name!=null "> name = #{name}, </if>
 		<if test="address!=null "> address = #{address}, </if>
 		<if test="merid!=null "> merid = #{merid}, </if>
+		<if test="lon!=null "> lon = #{lon}, </if>
+		<if test="lat!=null "> lat = #{lat}, </if>
 		<if test="manid!=null "> manid = #{manid}, </if>
 		<if test="tempid!=null "> tempid = #{tempid}, </if>
 		<if test="tempid2!=null "> tempid2 = #{tempid2}, </if>
 		<if test="divideinto != null "> divideinto = #{divideinto}, </if>
+		<if test="areaImg != null "> area_img = #{areaImg}, </if>
 		<if test="areaOnlyCode != null "> area_only_code = #{areaOnlyCode}, </if>
 		 update_time = now()
 		where id = #{id}
@@ -334,7 +337,7 @@
 		select
 	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{lat}*PI()/180-lat*PI()/180)/2),2)+
 	    COS(#{lat}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{lon}*PI()/180- 
-	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,IFNULL(s.DCAllnum,0) as DCAllnum,a.id,a.`name`,a.lat,a.lon,a.address
+	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,IFNULL(s.DCAllnum,0) as DCAllnum,a.id,a.`name`,a.lat,a.lon,a.address,a.area_img
 		FROM hd_area a
 		LEFT JOIN 
 		(SELECT ap.aid,

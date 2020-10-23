@@ -39,6 +39,14 @@
 	</select>
 
 
+	<!--获取用户消费明细数量-->
+	<select id="selectGenWalletDetailtotal" resultType="int">
+		select
+		count(*)
+		from hd_gen_detail where uid = #{uid}
+	</select>
+
+
 	<!--<select id="selectGenWalletByUidTotal" resultType="com.hedong.hedongwx.entity.GeneralDetail">
 		select
 		count(*)

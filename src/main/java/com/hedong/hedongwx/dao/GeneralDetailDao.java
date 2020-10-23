@@ -16,6 +16,9 @@ public interface GeneralDetailDao {
 	List<Map<String, Object>> selecwalletdetail(Parameters parameters);
 	
 	List<GeneralDetail> selectGenWalletDetailByUid(@Param("uid")Integer uid, @Param("startnum")Integer startnum);
+
+	int  selectGenWalletDetailtotal(@Param("uid")Integer uid);
+
 	
 	GeneralDetail selectGenWalletInfoById(Integer id);
 

@@ -570,6 +570,10 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 			parameters.setPages(page.getNumPerPage());
 			parameters.setStartnumber(page.getStartIndex());
 			List<Map<String, Object>> chargeinfo = chargeRecordDao.selectChargeRecord(parameters);
+			for(int i=0;i<chargeinfo.size();i++){
+				Double payMoney=(Double) chargeinfo.get(i).get("paymoney")-(Double) chargeinfo.get(i).get("refund_money");
+				chargeinfo.get(i).put("paymoney",payMoney);
+			}
 			datamap.put("totalRows", page.getTotalRows());
 			datamap.put("totalPages", page.getTotalPages());
 			datamap.put("currentPage", page.getCurrentPage());

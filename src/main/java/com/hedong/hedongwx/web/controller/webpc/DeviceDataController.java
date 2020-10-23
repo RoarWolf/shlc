@@ -733,7 +733,7 @@ public class DeviceDataController {
      */
     @RequestMapping(value = "/insetDevice", method = RequestMethod.GET)
     @ResponseBody
-    public Object insetDevice( EquipmentNew equ) {
+    public Object insetDevice(EquipmentNew equ) {
         return equipmentService.insertEquipmentNew(equ);
     }
 
@@ -756,7 +756,7 @@ public class DeviceDataController {
      */
     @RequestMapping(value = "/updateDevice", method = RequestMethod.GET)
     @ResponseBody
-    public Object updateDevice( EquipmentNew equ) {
+    public Object updateDevice(EquipmentNew equ) {
         return equipmentService.updateEquipmentNew(equ);
     }
 
@@ -781,14 +781,14 @@ public class DeviceDataController {
      **/
     @RequestMapping(value = "/selectDeviceExsit")
     @ResponseBody
-    public Object selectDeviceExsit(String code) {
+    public Object selectDeviceExsit(String code, String paramType) {
         Object result = null;
         Map<String, Object> map = new HashMap<>();
         try {
             boolean isTrue = equipmentService.selectDeviceExsit(code);
             map.put("isTrue", isTrue);
-           result = CommUtil.responseBuildInfo(200, "查询成功", map);
-           return JSON.toJSON(result);
+            result = CommUtil.responseBuildInfo(200, "查询成功", map);
+            return JSON.toJSON(result);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("isTrue", "查询失败");

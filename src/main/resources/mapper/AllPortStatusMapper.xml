@@ -28,7 +28,10 @@
 				power = #{power},
 			</if>
 			<if test="elec != null">
-				elec = #{elec},
+			elec = #{elec},
+			</if>
+			<if test="aid != null">
+				aid = #{aid},
 			</if>
 				update_time = now()
 		</set>

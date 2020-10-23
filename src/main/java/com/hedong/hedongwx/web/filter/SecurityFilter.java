@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hedong.hedongwx.entity.Admin;
 import org.springframework.stereotype.Component;
 
 import com.hedong.hedongwx.entity.User;
@@ -74,7 +75,7 @@ public class SecurityFilter implements Filter {
 				}
 				returnAdminLogin(request, response, basePath);
 			}else{
-				User user = (User) req.getSession().getAttribute("user");
+				Admin user = (Admin) req.getSession().getAttribute("user");
 //				User user = DisposeUtil.getUserBySessionId(req);
 				int length = url.length();
 				int lastIndexOf = url.lastIndexOf("/");
@@ -248,6 +249,8 @@ public class SecurityFilter implements Filter {
 		}else if(url.indexOf("/systemSetting")!=-1){
 			return true;
 		}else if(url.indexOf("/admin")!=-1){
+			return true;
+		}else if(url.indexOf("/upload")!=-1){
 			return true;
 		}
 		else {

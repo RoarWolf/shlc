@@ -21,4 +21,5 @@ public interface EquipmentNewDao {
 	EquipmentNew selectDeviceInfo(String code);
 	//删除设备信息
 	int delEquipmentNewById(String code);
+
 }

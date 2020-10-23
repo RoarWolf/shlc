@@ -899,6 +899,7 @@ public class AreaServiceImpl implements AreaService {
 							int nowhour = DisposeUtil.getDateTime(4, 0);
 							int nowminute = DisposeUtil.getDateTime(5, 0);
 							BigDecimal chargefee = (BigDecimal) map2.get("chargefee");
+							System.err.println(map2.get("serverfee")+"----------------");
 							BigDecimal serverfee = (BigDecimal) map2.get("serverfee");
 							area.setDCchargeMoney(chargefee.doubleValue());
 							area.setDCserverMoney(serverfee.doubleValue());
@@ -916,6 +917,7 @@ public class AreaServiceImpl implements AreaService {
 			map.put("listsize", arealist.size());
 			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
 	}

@@ -46,6 +46,9 @@ public class Area {
 	private Double equEarn;
 	/** 卡充值收益 */
 	private Double cardEarn;
+
+	/** 小区图片 */
+	private String areaImg;
 	
 	//商户名
 	private String dealer;
@@ -385,9 +388,17 @@ public class Area {
 		this.exserverMoney = exserverMoney;
 	}
 
+	public String getAreaImg() {
+		return areaImg;
+	}
+
+	public void setAreaImg(String areaImg) {
+		this.areaImg = areaImg;
+	}
+
 	@Override
 	public String toString() {
-		return "Area [id=" + id + ", name=" + name + ", tempid=" + tempid + ", tempid2=" + tempid2 + ", merid=" + merid
+		return "Area [id=" + id + ", name=" + name + ",areaImg=" + areaImg + ", tempid=" + tempid + ", tempid2=" + tempid2 + ", merid=" + merid
 				+ ", manid=" + manid + ", divideinto=" + divideinto + ", address=" + address + ", lon=" + lon + ", lat="
 				+ lat + ", createTime=" + createTime + ", updateTime=" + updateTime + ", totalOnlineEarn="
 				+ totalOnlineEarn + ", nowOnlineEarn=" + nowOnlineEarn + ", totalCoinsEarn=" + totalCoinsEarn
