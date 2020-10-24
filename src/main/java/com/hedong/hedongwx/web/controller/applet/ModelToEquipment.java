@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hedong.hedongwx.entity.AllPortStatus;
 import com.hedong.hedongwx.entity.Equipment;
+import com.hedong.hedongwx.service.AllPortStatusService;
 import com.hedong.hedongwx.service.EquipmentService;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
@@ -29,6 +31,8 @@ public class ModelToEquipment {
 	private HttpServletRequest request;
 	@Autowired
 	private EquipmentService equipmentService;
+	@Autowired
+	private AllPortStatusService allPortStatusService;
 	
 //	@Scheduled(cron = "0/10 * * * * *")
 //	public void hartTask() {
@@ -60,14 +64,20 @@ public class ModelToEquipment {
 	 * @return
 	 */
 	@PostMapping("/yuyueCharge")
-	public Object yuyueCharge(String devicenum, String port, Integer userid, String userType,
-			String phonenum) {
-		Equipment equipment = equipmentService.getEquipmentById(devicenum);
-		if (equipment == null) {
+	public Object yuyueCharge(String devicenum, String port) {
+		boolean selectDeviceExsit = equipmentService.selectDeviceExsit(devicenum);
+		System.out.println("查询设备：" + selectDeviceExsit);
+		if (!selectDeviceExsit) {
 			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
 		}
-		String useridStr = DisposeUtil.completeNum(userid + "", 8);
-		return WolfHttpRequest.sendYuyueChargedata(devicenum, port, userid, userType, phonenum);
+//		String useridStr = DisposeUtil.completeNum(userid + "", 8);
+		AllPortStatus allPortStatus = allPortStatusService.findPortStatusByEquipmentnumAndPort(devicenum, Integer.parseInt(port));
+		if (allPortStatus.getPortStatus() == 1) {
+			return CommUtil.responseBuildInfo(1000, "枪号可用", null);
+		} else {
+			return CommUtil.responseBuildInfo(1001, "枪被占用，不可用", null);
+		}
+//		return WolfHttpRequest.sendYuyueChargedata(devicenum, port, userid, userType, phonenum);
 //		return SendMsgUtil.send_0x1B(devicenum, Byte.parseByte(port), useridStr, Byte.parseByte(userType), phonenum);
 	}
 	

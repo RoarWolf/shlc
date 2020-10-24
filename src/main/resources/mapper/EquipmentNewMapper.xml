@@ -213,7 +213,7 @@
 	</update>
 
 
-	<select id="selectDeviceExsit" resultType="java.lang.String" parameterType="java.lang.String">
+	<select id="selectDeviceExsit" resultType="java.lang.String">
 		select code from hd_equipment_new where code = #{devicenum}
 	</select>
 

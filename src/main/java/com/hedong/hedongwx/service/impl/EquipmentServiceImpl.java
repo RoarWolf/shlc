@@ -2764,8 +2764,10 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public boolean selectDeviceExsit(String devicenum) {
+    	String selectDeviceExsit = equipmentNewDao.selectDeviceExsit(devicenum);
+    	System.out.println("设备：" + selectDeviceExsit);
         try {
-            if (equipmentNewDao.selectDeviceExsit(devicenum) != null) {
+            if (selectDeviceExsit != null) {
                 return true;
             }
             return false;
