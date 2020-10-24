@@ -322,6 +322,7 @@ public class SystemSettingController {
             String timeInfos = objects.toJSONString();
             Map<String, String> mapInsert = new HashMap<>();
             mapInsert.put("timeInfo", timeInfos);
+            mapInsert.put("timenum", objects.size()+"");
             JedisUtils.hmset("billingInfo", mapInsert);
         }
         return JSON.toJSON(CommUtil.responseBuild(200, "新增成功", ""));
@@ -351,6 +352,7 @@ public class SystemSettingController {
             String timeInfos = objects.toJSONString();
             Map<String, String> mapInsert = new HashMap<>();
             mapInsert.put("timeInfo", timeInfos);
+            mapInsert.put("timenum", objects.size()+"");
             JedisUtils.hmset("billingInfo", mapInsert);
             object= JSON.toJSON(CommUtil.responseBuild(200, "删除成功", ""));
         } else {

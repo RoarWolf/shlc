@@ -159,7 +159,6 @@ public class AppletUserController {
 	@PostMapping("/getAreaRecently")
 	public 	Object getAreaRecently(Double lon, Double lat, Double distance, Integer startnum, 
 			Integer distanceSort, String areaname) {
-		System.err.println("进来了==============");
 		return areaService.queryAreaRecently(lon, lat, distance, startnum, distanceSort, areaname);
 	}
 	

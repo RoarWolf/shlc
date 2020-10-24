@@ -53,8 +53,8 @@ public class AreaServiceImpl implements AreaService {
 		Integer aid = CommUtil.toInteger(area.getId());
 		String areaOnlyCode = DisposeUtil.completeNum(aid.toString(),6);
 		Area updateArea = new Area();
-		area.setId(aid);
-		area.setAreaOnlyCode(areaOnlyCode);
+		updateArea.setId(aid);
+		updateArea.setAreaOnlyCode(areaOnlyCode);
 		return areaDao.updateByArea(updateArea);
 	}
 	
@@ -590,8 +590,9 @@ public class AreaServiceImpl implements AreaService {
 			page.setEnd();
 			parameters.setPages(page.getNumPerPage());
 			parameters.setStartnumber(page.getStartIndex());
+			parameters.setAreaOnlyCode(CommUtil.toString(maparam.get("areaOnlyCode")));
 			List<Map<String, Object>> areaManageInfo = CommUtil.isListMapEmpty(areaDao.selectByParame(parameters));
-			for(Map<String, Object> item : areaManageInfo){
+			//for(Map<String, Object> item : areaManageInfo){
 
 
 		/*		Map<String, Object>  areaonline = areaDao.inquireAreaOnlineCard(aid);
@@ -619,7 +620,7 @@ public class AreaServiceImpl implements AreaService {
 				/*List<Map<String, Object>> arearelevanceData = CommUtil.isListMapEmpty(areaDao.selectaRearelInfo(pareme));
 				item.put("partnersize", arearelevanceData.size());
 				item.put("partner", arearelevanceData);*/
-			}
+			//}
 			datamap.put("listdata", CommUtil.isListMapEmpty(areaManageInfo));
 			datamap.put("totalRows", page.getTotalRows());
 			datamap.put("totalPages", page.getTotalPages());
@@ -899,7 +900,6 @@ public class AreaServiceImpl implements AreaService {
 							int nowhour = DisposeUtil.getDateTime(4, 0);
 							int nowminute = DisposeUtil.getDateTime(5, 0);
 							BigDecimal chargefee = (BigDecimal) map2.get("chargefee");
-							System.err.println(map2.get("serverfee")+"----------------");
 							BigDecimal serverfee = (BigDecimal) map2.get("serverfee");
 							area.setDCchargeMoney(chargefee.doubleValue());
 							area.setDCserverMoney(serverfee.doubleValue());

@@ -56,11 +56,11 @@ public class AreaDataController {
     @ResponseBody
     public Object areaManageData(HttpServletRequest request, HttpServletResponse response) {
         Object result = null;
-		/*if(JedisUtils.get("admin")==null){
+		if(JedisUtils.get("admin")==null){
 			result = CommUtil.responseBuild(901, "session缓存失效", "");
-		}else{*/
+		}else{
         result = areaService.areaManageData(request);
-        //}
+        }
         return JSON.toJSON(result);
     }
 

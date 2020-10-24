@@ -26,6 +26,7 @@
 		<where>
 			<if test="remark!=null and remark!=''"> AND name LIKE '%${remark}%' </if>
 			<if test="source!=null and source!=''"> AND address LIKE '%${source}%' </if>
+			<if test="areaOnlyCode!=null and areaOnlyCode!=''"> AND name LIKE '%${areaOnlyCode}%' </if>
 		</where>
 			 ORDER BY create_time DESC
 	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
@@ -37,6 +38,7 @@
 		<where>
 			<if test="remark!=null and remark!=''"> name LIKE '%${remark}%' </if>
 			<if test="source!=null and source!=''"> AND address LIKE '%${source}%' </if>
+			<if test="areaOnlyCode!=null and areaOnlyCode!=''"> AND name LIKE '%${areaOnlyCode}%' </if>
 		</where>
 	</select>
 
