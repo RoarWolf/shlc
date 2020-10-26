@@ -67,6 +67,9 @@ public class GeneralDetailServiceImpl implements GeneralDetailService {
 	public Map<String, Object> selectGenWalletDetailByUid(Integer uid, Integer startnum) {
 		Map<String,Object> map = new HashMap<>();
 		try {
+			if (startnum == 0) {
+				startnum = 1;
+			}
 			List<GeneralDetail> walletDetail = generalDetailDao.selectGenWalletDetailByUid(uid, (startnum-1)* 10);
 			int total = generalDetailDao.selectGenWalletDetailtotal(uid);
 			if (walletDetail == null) {
@@ -78,6 +81,7 @@ public class GeneralDetailServiceImpl implements GeneralDetailService {
 			map.put("total",total);
 			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
 	}

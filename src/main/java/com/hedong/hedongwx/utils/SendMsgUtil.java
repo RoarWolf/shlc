@@ -54,12 +54,12 @@ public class SendMsgUtil {
 //		billMap.put("parkingfee", 0.0 + "");//停车费费率
 //		List<Object> list = new ArrayList<>();
 //		for (int i = 1; i <= timenum; i++) {
-//			Map<String,Object> timeiMap = new HashMap<>();
-//			timeiMap.put("hour", i);//时
-//			timeiMap.put("minute", 0);//分
-//			timeiMap.put("type", 1);//类型
-//			timeiMap.put("chargefee", 1.0);//电能费
-//			timeiMap.put("serverfee", 0.02);//服务费
+//			Map<String,String> timeiMap = new HashMap<>();
+//			timeiMap.put("hour", i + "");//时
+//			timeiMap.put("minute", 0 + "");//分
+//			timeiMap.put("type", 1 + "");//类型
+//			timeiMap.put("chargefee", 1.0 + "");//电能费
+//			timeiMap.put("serverfee", 0.02 + "");//服务费
 //			list.add(timeiMap);
 //		}
 //		billMap.put("timeInfo", JSON.toJSONString(list));

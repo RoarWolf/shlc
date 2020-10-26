@@ -884,7 +884,10 @@ public class AreaServiceImpl implements AreaService {
 	public Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum, Integer distanceSort, String areaname) {
 		Map<String,Object> map = new HashMap<>();
 		try {
-			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum, distanceSort, areaname);
+			if (startnum < 0) {
+				startnum = 0;
+			}
+			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum * 10, distanceSort, areaname);
 			if (arealist == null) {
 				arealist = new ArrayList<>();
 			} else {
@@ -893,14 +896,14 @@ public class AreaServiceImpl implements AreaService {
 					int timenum = Integer.parseInt(billingParam.get("timenum"));
 					if (timenum > 0) {
 						String timeInfoStr = billingParam.get("timeInfo");
-						List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
-						for (Map<String, Object> map2 : timeInfo) {
-							Integer hour = (int) map2.get("hour");
-							Integer minute = (int) map2.get("minute");
+						List<Map<String, String>> timeInfo = (List<Map<String, String>>) JSON.parse(timeInfoStr);
+						for (Map<String, String> map2 : timeInfo) {
+							Integer hour = Integer.parseInt(map2.get("hour")) ;
+							Integer minute = Integer.parseInt( map2.get("minute"));
 							int nowhour = DisposeUtil.getDateTime(4, 0);
 							int nowminute = DisposeUtil.getDateTime(5, 0);
-							BigDecimal chargefee = (BigDecimal) map2.get("chargefee");
-							BigDecimal serverfee = (BigDecimal) map2.get("serverfee");
+							Double chargefee = Double.parseDouble( map2.get("chargefee"));
+							Double serverfee = Double.parseDouble( map2.get("serverfee"));
 							area.setDCchargeMoney(chargefee.doubleValue());
 							area.setDCserverMoney(serverfee.doubleValue());
 							area.setExchargeMoney(chargefee.doubleValue());
@@ -930,23 +933,19 @@ public class AreaServiceImpl implements AreaService {
 			if (area != null) {
 				area.setExAllnum(0);
 				area.setExfreenum(0);
-//				area.setDCchargeMoney(1.0);
-//				area.setDCserverMoney(0.2);
-//				area.setExchargeMoney(0.8);
-//				area.setExserverMoney(0.1);
 			}
 			Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
 			int timenum = Integer.parseInt(billingParam.get("timenum"));
 			if (timenum > 0) {
 				String timeInfoStr = billingParam.get("timeInfo");
-				List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
-				for (Map<String, Object> map2 : timeInfo) {
-					Integer hour = (int) map2.get("hour");
-					Integer minute = (int) map2.get("minute");
+				List<Map<String, String>> timeInfo = (List<Map<String, String>>) JSON.parse(timeInfoStr);
+				for (Map<String, String> map2 : timeInfo) {
+					Integer hour = Integer.parseInt(map2.get("hour")) ;
+					Integer minute = Integer.parseInt( map2.get("minute"));
 					int nowhour = DisposeUtil.getDateTime(4, 0);
 					int nowminute = DisposeUtil.getDateTime(5, 0);
-					BigDecimal chargefee = (BigDecimal) map2.get("chargefee");
-					BigDecimal serverfee = (BigDecimal) map2.get("serverfee");
+					Double chargefee = Double.parseDouble( map2.get("chargefee"));
+					Double serverfee = Double.parseDouble( map2.get("serverfee"));
 					area.setDCchargeMoney(chargefee.doubleValue());
 					area.setDCserverMoney(serverfee.doubleValue());
 					area.setExchargeMoney(chargefee.doubleValue());
