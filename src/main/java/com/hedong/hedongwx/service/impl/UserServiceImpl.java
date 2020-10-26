@@ -10,8 +10,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.hedong.hedongwx.dao.*;
-import com.hedong.hedongwx.entity.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
+import com.hedong.hedongwx.dao.AdminDao;
+import com.hedong.hedongwx.dao.AreaDao;
+import com.hedong.hedongwx.dao.CodestatisticsDao;
+import com.hedong.hedongwx.dao.DealerAuthorityDao;
+import com.hedong.hedongwx.dao.EquipmentDao;
+import com.hedong.hedongwx.dao.GeneralDetailDao;
+import com.hedong.hedongwx.dao.MerchantDetailDao;
+import com.hedong.hedongwx.dao.OperateRecordDao;
+import com.hedong.hedongwx.dao.PackageMonthDao;
+import com.hedong.hedongwx.dao.PrivilegeDao;
+import com.hedong.hedongwx.dao.RoleDao;
+import com.hedong.hedongwx.dao.TradeRecordDao;
+import com.hedong.hedongwx.dao.UserBankcardDao;
+import com.hedong.hedongwx.dao.UserDao;
+import com.hedong.hedongwx.dao.UserEquipmentDao;
+import com.hedong.hedongwx.dao.WithdrawDao;
+import com.hedong.hedongwx.entity.Admin;
+import com.hedong.hedongwx.entity.Area;
+import com.hedong.hedongwx.entity.Codestatistics;
+import com.hedong.hedongwx.entity.DealerAuthority;
+import com.hedong.hedongwx.entity.Equipment;
+import com.hedong.hedongwx.entity.MerAmount;
+import com.hedong.hedongwx.entity.MerchantDetail;
+import com.hedong.hedongwx.entity.Money;
+import com.hedong.hedongwx.entity.PackageMonth;
+import com.hedong.hedongwx.entity.PackageMonthRecord;
+import com.hedong.hedongwx.entity.Parameter;
+import com.hedong.hedongwx.entity.Parameters;
+import com.hedong.hedongwx.entity.Privilege;
+import com.hedong.hedongwx.entity.TradeRecord;
+import com.hedong.hedongwx.entity.User;
+import com.hedong.hedongwx.entity.UserBankcard;
 import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.service.MoneyService;
 import com.hedong.hedongwx.service.UserService;
@@ -904,6 +934,7 @@ public class UserServiceImpl implements UserService {
 			if(!cipher.equals(md5word)){
 				return CommUtil.responseBuildInfo(104, "密码不正确", datamap);
 			}
+			datamap.put("adminid",account.getId());
 			datamap.put("userName", account.getUsername());
 			datamap.put("token", account.getId());
 			request.getSession().setAttribute("user", account);
@@ -2284,11 +2315,19 @@ public class UserServiceImpl implements UserService {
 			User selectUser = userDao.getUserByOpenid(openid);
 			if (selectUser == null) {
 				User user = new User();
-				user.setOpenid(openid.trim());
-				user.setUsername(username);
-				user.setImageUrl(imageUrl);
-				user.setCreateTime(new Date());
-				userDao.addUser(user);
+				try {
+					user.setOpenid(openid.trim());
+					user.setUsername(username);
+					user.setImageUrl(imageUrl);
+					user.setCreateTime(new Date());
+					userDao.addUser(user);
+				} catch (Exception e) {
+					user.setUsername(null);
+					user.setOpenid(openid.trim());
+					user.setImageUrl(imageUrl);
+					user.setCreateTime(new Date());
+					userDao.addUser(user);
+				}
 				selectUser = userDao.getUserByOpenid(openid);
 			}
 			Map<String,Object> map = new HashMap<>();
@@ -2395,6 +2434,28 @@ public class UserServiceImpl implements UserService {
 			userDao.updateBalanceByOpenid(topupbalance, sendbalance, touuser.getOpenid(),null);
 		}
 		return null;
+	}
+
+	@Override
+	public Map<String, Object> bindPhonenum(Integer userid, String phonenum, String verifiCode) {
+		if (phonenum.length() != 11) {
+			return CommUtil.responseBuildInfo(1001, "手机号不正确", null);
+		} else if (!verifiCode.equals(JedisUtils.getnum(phonenum, 2))) {
+			return CommUtil.responseBuildInfo(1003, "验证码不正确", null);
+		}
+		try {
+			User selectUser = userDao.selectUserById(userid);
+			if (selectUser != null) {
+				selectUser.setPhoneNum(phonenum);
+				userDao.updateUserById(selectUser);
+			}
+			Map<String,Object> map = new HashMap<>();
+			map.put("userinfo", selectUser);
+			return CommUtil.responseBuildInfo(1000, "绑定成功", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1002, "系统异常", null);
+		}
 	}
 	
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.dao.AdminDao;
@@ -78,14 +79,18 @@ public class AdminServiceImpl implements AdminService {
 		System.out.println("startindex===" + admin.getStartindex());
 		try {
 			if (admin.getStartindex() == null) {
-				admin.setStartindex(0);
+				admin.setStartindex(1);
 			}
+			map.put("total", adminDao.selectAllAdminSize());
+			admin.setStartindex((admin.getStartindex() - 1) * 10);
 			List<Admin> adminList = adminDao.selectAdminList(admin);
 			if (adminList != null && adminList.size() > 0) {
 				map.put("adminlist", adminList);
+				map.put("listsize", adminList.size());
 				return CommUtil.responseBuildInfo(200, "查询成功", map);
 			} else {
 				map.put("adminlist", new ArrayList<>());
+				map.put("listsize", 0);
 				return CommUtil.responseBuildInfo(201, "查询失败", map);
 			}
 		} catch (Exception e) {
@@ -166,8 +171,12 @@ public class AdminServiceImpl implements AdminService {
 				insertlist.add(menuid);
 			}
 		}
-		adminDao.insertAdminMenu(id, insertlist);
-		adminDao.deleteAdminMenu(deletelist);
+		if (insertlist.size() > 0) {
+			adminDao.insertAdminMenu(id, insertlist);
+		}
+		if (deletelist.size() > 0) {
+			adminDao.deleteAdminMenu(deletelist);
+		}
 		return 0;
 	}
 

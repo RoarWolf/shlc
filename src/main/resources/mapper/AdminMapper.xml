@@ -35,6 +35,10 @@
 		limit #{startindex}, 10
 	</select>
 	
+	<select id="selectAllAdminSize" resultType="java.lang.Integer">
+		select count(1) from hd_admin
+	</select>
+	
 	<resultMap type="com.hedong.hedongwx.entity.Admin" id="adminMap">
 	    <id column="id" property="id"/>
 	    <result column="username" property="username"/>
@@ -79,8 +83,8 @@
 	<insert id="insertAdminMenu">
 		insert into hd_admin_menu (mid,aid)
 		values
-		<foreach collection="menuidlist" index="index" item="item" separator="," open="(" close=")">
-            #{item},#{id}
+		<foreach collection="menuidlist" index="index" item="item" separator=",">
+            (#{item},#{id})
         </foreach>
 	</insert>
 	

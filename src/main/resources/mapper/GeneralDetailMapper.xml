@@ -34,8 +34,16 @@
 	<!--获取用户消费明细-->
 	<select id="selectGenWalletDetailByUid" resultType="com.hedong.hedongwx.entity.GeneralDetail">
 		select
-		id,money,ordernum,paysource,create_time
+		id,money,ordernum,paysource,create_time,tomoney,sendmoney,balance,givebalance
 		from hd_gen_detail where uid = #{uid} order by id desc limit #{startnum}, 10
+	</select>
+
+
+	<!--获取用户消费明细数量-->
+	<select id="selectGenWalletDetailtotal" resultType="int">
+		select
+		count(*)
+		from hd_gen_detail where uid = #{uid}
 	</select>
 
 

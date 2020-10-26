@@ -8,6 +8,7 @@ public class AllPortStatus {
 	private Integer id;
 	/** 设备编号*/
 	private String equipmentnum;
+
 	/** 设备端口号*/
 	private Integer port;
 	/** 端口状态*/
@@ -28,6 +29,17 @@ public class AllPortStatus {
 	private Date updateTime;
 	/** 预计剩余时间*/ 
 	private String predict;
+	/** 场站id*/
+	private Integer aid;
+
+	public Integer getAid() {
+		return aid;
+	}
+
+	public void setAid(Integer aid) {
+		this.aid = aid;
+	}
+
 	public Integer getId() {
 		return id;
 	}

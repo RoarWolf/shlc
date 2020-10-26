@@ -5,7 +5,6 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class User implements Serializable {
 
 	/**

@@ -78,6 +78,16 @@ public class Parameters {
     // 结束原因(手动,充满，超功率)
     private Integer resultInfo;
 
+    private String areaOnlyCode;
+
+	public String getAreaOnlyCode() {
+		return areaOnlyCode;
+	}
+
+	public void setAreaOnlyCode(String areaOnlyCode) {
+		this.areaOnlyCode = areaOnlyCode;
+	}
+
 	public Integer getPaySource() {
 		return paySource;
 	}

@@ -38,6 +38,7 @@ import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.JedisUtils;
+import com.hedong.hedongwx.utils.SMSMobileSendUtil;
 import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.StringUtil;
 import com.hedong.hedongwx.utils.WolfHttpRequest;
@@ -85,6 +86,26 @@ public class AppletUserController {
 	@PostMapping("/getUserInfo")
 	public 	Object getUserInfo(Integer userid) {
 		return userService.queryUserInfo(userid);
+	}
+	
+	/**
+	 * 通过手机号获取验证码
+	 * @param code
+	 * @return
+	 */
+	@PostMapping("/getVerifiCode")
+	public 	Object getVerifiCode(String phonenum) {
+		return SMSMobileSendUtil.mobileSend(phonenum);
+	}
+	
+	/**
+	 * 通过手机号获取验证码
+	 * @param code
+	 * @return
+	 */
+	@PostMapping("/bindPhonenum")
+	public 	Object bindPhonenum(Integer userid, String phonenum, String verifiCode) {
+		return userService.bindPhonenum(userid, phonenum,verifiCode);
 	}
 	
 	/**

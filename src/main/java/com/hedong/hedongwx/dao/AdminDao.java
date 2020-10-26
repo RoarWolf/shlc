@@ -21,6 +21,8 @@ public interface AdminDao {
     
     List<Admin> selectAdminList(Admin admin);
     
+    Integer selectAllAdminSize();
+    
     List<Integer> selectAdminMenuList(Integer id);
     
     int insertAdminMenu(@Param("id") Integer id, @Param("menuidlist") List<Integer> menuidlist);

@@ -1,6 +1,7 @@
 package com.hedong.hedongwx.service.impl;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,8 +53,8 @@ public class AreaServiceImpl implements AreaService {
 		Integer aid = CommUtil.toInteger(area.getId());
 		String areaOnlyCode = DisposeUtil.completeNum(aid.toString(),6);
 		Area updateArea = new Area();
-		area.setId(aid);
-		area.setAreaOnlyCode(areaOnlyCode);
+		updateArea.setId(aid);
+		updateArea.setAreaOnlyCode(areaOnlyCode);
 		return areaDao.updateByArea(updateArea);
 	}
 	
@@ -589,8 +590,9 @@ public class AreaServiceImpl implements AreaService {
 			page.setEnd();
 			parameters.setPages(page.getNumPerPage());
 			parameters.setStartnumber(page.getStartIndex());
+			parameters.setAreaOnlyCode(CommUtil.toString(maparam.get("areaOnlyCode")));
 			List<Map<String, Object>> areaManageInfo = CommUtil.isListMapEmpty(areaDao.selectByParame(parameters));
-			for(Map<String, Object> item : areaManageInfo){
+			//for(Map<String, Object> item : areaManageInfo){
 
 
 		/*		Map<String, Object>  areaonline = areaDao.inquireAreaOnlineCard(aid);
@@ -618,7 +620,7 @@ public class AreaServiceImpl implements AreaService {
 				/*List<Map<String, Object>> arearelevanceData = CommUtil.isListMapEmpty(areaDao.selectaRearelInfo(pareme));
 				item.put("partnersize", arearelevanceData.size());
 				item.put("partner", arearelevanceData);*/
-			}
+			//}
 			datamap.put("listdata", CommUtil.isListMapEmpty(areaManageInfo));
 			datamap.put("totalRows", page.getTotalRows());
 			datamap.put("totalPages", page.getTotalPages());
@@ -887,8 +889,27 @@ public class AreaServiceImpl implements AreaService {
 				arealist = new ArrayList<>();
 			} else {
 				for (Area area : arealist) {
-					area.setDCchargeMoney(1.2);
-					area.setDCserverMoney(0.0);
+					Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
+					int timenum = Integer.parseInt(billingParam.get("timenum"));
+					if (timenum > 0) {
+						String timeInfoStr = billingParam.get("timeInfo");
+						List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
+						for (Map<String, Object> map2 : timeInfo) {
+							Integer hour = (int) map2.get("hour");
+							Integer minute = (int) map2.get("minute");
+							int nowhour = DisposeUtil.getDateTime(4, 0);
+							int nowminute = DisposeUtil.getDateTime(5, 0);
+							BigDecimal chargefee = (BigDecimal) map2.get("chargefee");
+							BigDecimal serverfee = (BigDecimal) map2.get("serverfee");
+							area.setDCchargeMoney(chargefee.doubleValue());
+							area.setDCserverMoney(serverfee.doubleValue());
+							area.setExchargeMoney(chargefee.doubleValue());
+							area.setExserverMoney(serverfee.doubleValue());
+							if (hour > nowhour && minute > nowminute) {
+								break;
+							}
+						}
+					}
 				}
 			}
 			map.put("arealist", arealist);
@@ -896,6 +917,7 @@ public class AreaServiceImpl implements AreaService {
 			map.put("listsize", arealist.size());
 			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return CommUtil.responseBuildInfo(1002, "系统异常", null);
 		}
 	}
@@ -908,22 +930,33 @@ public class AreaServiceImpl implements AreaService {
 			if (area != null) {
 				area.setExAllnum(0);
 				area.setExfreenum(0);
-				area.setDCchargeMoney(1.0);
-				area.setDCserverMoney(0.2);
-				area.setExchargeMoney(0.8);
-				area.setExserverMoney(0.1);
+//				area.setDCchargeMoney(1.0);
+//				area.setDCserverMoney(0.2);
+//				area.setExchargeMoney(0.8);
+//				area.setExserverMoney(0.1);
 			}
-			map.put("areainfo", area);
 			Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
 			int timenum = Integer.parseInt(billingParam.get("timenum"));
 			if (timenum > 0) {
 				String timeInfoStr = billingParam.get("timeInfo");
 				List<Map<String, Object>> timeInfo = (List<Map<String, Object>>) JSON.parse(timeInfoStr);
 				for (Map<String, Object> map2 : timeInfo) {
-					int hour = (int) map2.get("hour");
-					int minute = (int) map2.get("minute");
+					Integer hour = (int) map2.get("hour");
+					Integer minute = (int) map2.get("minute");
+					int nowhour = DisposeUtil.getDateTime(4, 0);
+					int nowminute = DisposeUtil.getDateTime(5, 0);
+					BigDecimal chargefee = (BigDecimal) map2.get("chargefee");
+					BigDecimal serverfee = (BigDecimal) map2.get("serverfee");
+					area.setDCchargeMoney(chargefee.doubleValue());
+					area.setDCserverMoney(serverfee.doubleValue());
+					area.setExchargeMoney(chargefee.doubleValue());
+					area.setExserverMoney(serverfee.doubleValue());
+					if (hour > nowhour && minute > nowminute) {
+						break;
+					}
 				}
 			}
+			map.put("areainfo", area);
 			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
 			e.printStackTrace();
