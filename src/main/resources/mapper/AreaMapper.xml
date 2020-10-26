@@ -5,7 +5,7 @@
 	<sql id="Area_Column_List">
 		id, name, tempid, tempid2, merid, manid, divideinto, address, create_time, update_time,
 		total_online_earn,now_online_earn,total_coins_earn,now_coins_earn,wallet_earn,
-		equ_earn,card_earn
+		equ_earn,card_earn,lon,lat
 	</sql>
 	
 	<insert id="insertArea" parameterType="com.hedong.hedongwx.entity.Area" useGeneratedKeys="true"

@@ -2,6 +2,7 @@ package com.hedong.hedongwx.web.controller.webpc;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSONArray;
 import com.hedong.hedongwx.utils.JedisUtils;
 import com.hedong.hedongwx.utils.SnowflakeIdWorkerUtil;
+import org.apache.poi.xslf.usermodel.Placeholder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -254,7 +256,9 @@ public class SystemSettingController {
             JSONArray objects = JSONArray.parseArray(timeInfoList);
             String code = request.getParameter("code");
             if (code != null) {
-                for (int i = 0; i < objects.size(); i++) {
+
+                List dataArr = JSONArray.parseArray(timeInfoList,Map.class);
+                for (int i = 0; i < dataArr.size(); i++) {
                     String timeInfo = objects.getString(i);
                     JSONObject jsonObject = JSON.parseObject(timeInfo);
                     String code1 = jsonObject.getString("code");
@@ -293,7 +297,7 @@ public class SystemSettingController {
                         map.put("type", request.getParameter("type"));
                         map.put("minute", Integer.parseInt(request.getParameter("minute")));
                         net.sf.json.JSONObject jsonMap = net.sf.json.JSONObject.fromObject(map);
-                        objects.add(jsonMap);
+                         objects.add(i,jsonMap);
                     }
                 }
             } else {

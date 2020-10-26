@@ -50,7 +50,6 @@ public class AreaServiceImpl implements AreaService {
 	@Override
 	public int insertArea(Area area) {
 		areaDao.insertArea(area);
-		System.err.println(area+"------------------------");
 		Integer aid = CommUtil.toInteger(area.getId());
 		String areaOnlyCode = DisposeUtil.completeNum(aid.toString(),6);
 		Area updateArea = new Area();
