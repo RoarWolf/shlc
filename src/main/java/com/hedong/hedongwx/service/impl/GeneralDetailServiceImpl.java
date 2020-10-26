@@ -67,7 +67,7 @@ public class GeneralDetailServiceImpl implements GeneralDetailService {
 	public Map<String, Object> selectGenWalletDetailByUid(Integer uid, Integer startnum) {
 		Map<String,Object> map = new HashMap<>();
 		try {
-			List<GeneralDetail> walletDetail = generalDetailDao.selectGenWalletDetailByUid(uid, startnum * 10);
+			List<GeneralDetail> walletDetail = generalDetailDao.selectGenWalletDetailByUid(uid, (startnum-1)* 10);
 			int total = generalDetailDao.selectGenWalletDetailtotal(uid);
 			if (walletDetail == null) {
 				walletDetail = new ArrayList<>();
