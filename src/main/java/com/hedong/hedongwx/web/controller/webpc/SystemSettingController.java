@@ -256,7 +256,6 @@ public class SystemSettingController {
             JSONArray objects = JSONArray.parseArray(timeInfoList);
             String code = request.getParameter("code");
             if (code != null) {
-
                 List dataArr = JSONArray.parseArray(timeInfoList,Map.class);
                 for (int i = 0; i < dataArr.size(); i++) {
                     String timeInfo = objects.getString(i);
@@ -291,11 +290,11 @@ public class SystemSettingController {
                         }
                         objects.remove(i);
                         map.put("code", code);
-                        map.put("chargefee", new BigDecimal(request.getParameter("chargefee")));
-                        map.put("hour", Integer.parseInt(request.getParameter("hour")));
-                        map.put("serverfee", new BigDecimal(request.getParameter("serverfee")));
+                        map.put("chargefee", request.getParameter("chargefee"));
+                        map.put("hour", request.getParameter("hour"));
+                        map.put("serverfee",request.getParameter("serverfee"));
                         map.put("type", request.getParameter("type"));
-                        map.put("minute", Integer.parseInt(request.getParameter("minute")));
+                        map.put("minute",request.getParameter("minute"));
                         net.sf.json.JSONObject jsonMap = net.sf.json.JSONObject.fromObject(map);
                          objects.add(i,jsonMap);
                     }
@@ -315,11 +314,11 @@ public class SystemSettingController {
                 }
                 Map<String, Object> map1 = new HashMap<>();
                 map1.put("code", SnowflakeIdWorkerUtil.SIWU.nextId());
-                map1.put("chargefee", new BigDecimal(request.getParameter("chargefee")));
-                map1.put("hour", Integer.parseInt(request.getParameter("hour")));
-                map1.put("serverfee", new BigDecimal(request.getParameter("serverfee")));
+                map1.put("chargefee",request.getParameter("chargefee"));
+                map1.put("hour", request.getParameter("hour"));
+                map1.put("serverfee", request.getParameter("serverfee"));
                 map1.put("type", request.getParameter("type"));
-                map1.put("minute", Integer.parseInt(request.getParameter("minute")));
+                map1.put("minute", request.getParameter("minute"));
                 net.sf.json.JSONObject jsonMap = net.sf.json.JSONObject.fromObject(map1);
                 objects.add(jsonMap);
             }

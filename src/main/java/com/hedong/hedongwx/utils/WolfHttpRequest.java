@@ -24,8 +24,10 @@ import com.alibaba.fastjson.JSON;
  * @Date 2019年10月21日
  */
 public class WolfHttpRequest {
-	
-	public static final String domain_url = "http://ck.taifengkeji.com:8081/";
+
+	//public static final String domain_url = "http://ck.taifengkeji.com:8081/";
+
+	public static final String domain_url = "https://zylc-ev.com:8081/";
 	
 	/** 付款下发充电*/
 	public static final String SEND_PAY_URL = domain_url + "deviceConnect/startCharge";
