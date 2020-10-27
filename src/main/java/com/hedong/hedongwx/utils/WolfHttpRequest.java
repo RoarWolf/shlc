@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -37,9 +39,13 @@ public class WolfHttpRequest {
 	public static final String SEND_YUYUE_URL = domain_url + "deviceConnect/yuyueCharge";
 	/** 停止充电*/
 	public static final String SEND_STOP_URL = domain_url + "deviceConnect/stopCharge";
+	
+	public static void main(String[] args) {
+		sendChargePaydata("1027520102030001", 1, 1, 1.0, "1027520102030001");
+	}
 
-	public static Map<String,String> httpconnectwolf(Map<String, String> map,String url) {
-		HttpClient client = HttpClients.createDefault();
+	public static Map<String,Object> httpconnectwolf(Map<String, String> map,String url) {
+		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost post = new HttpPost(url);
         try {
             List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
@@ -51,24 +57,27 @@ public class WolfHttpRequest {
             HttpResponse response = client.execute(post);
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, "UTF-8");
-            Map<String,String> parse = (Map) JSON.parse(result);
+            System.out.println("result===" + result);
+            Map<String,String> parse1 = (Map) JSON.parse(result);
+            System.out.println(JSON.toJSON(parse1));
+            Map<String,Object> parse = (Map) JSON.parse(result);
             if (parse == null || parse.isEmpty()) {
-            	Map<String,String> resultMap = new HashMap<>();
-            	resultMap.put("wolfcode", "1001");
-            	resultMap.put("wolfmsg", "数据发送异常");
-            	return resultMap;
+            	return CommUtil.responseBuildInfo(1001, "数据发送异常", null);
             }
             return parse;
         } catch (Exception e) {
-        	Map<String,String> resultMap = new HashMap<>();
-        	resultMap.put("wolfcode", "1001");
-        	resultMap.put("wolfmsg", "数据发送异常");
-        	return resultMap;
-//            e.printStackTrace();
-        }
+        	e.printStackTrace();
+        	return CommUtil.responseBuildInfo(1001, "数据发送异常", null);
+        } finally {
+        	try {
+				client.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
-	public static Map<String,String> sendChargePaydata(String devicenum, Integer port, Integer userid, 
+	public static Map<String,Object> sendChargePaydata(String devicenum, Integer port, Integer userid, 
 			Double paymoney, String ordernum) {
 		Map<String,String> map = new HashMap<>();
 		map.put("devicenum", devicenum);
@@ -79,13 +88,13 @@ public class WolfHttpRequest {
 		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_PAY_URL);
 	}
 	
-	public static Map<String,String> sendChargePaydata(String ordernum) {
+	public static Map<String,Object> sendChargePaydata(String ordernum) {
 		Map<String,String> map = new HashMap<>();
 		map.put("ordernum", ordernum);
 		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_PAYBACK_URL);
 	}
 	
-	public static Map<String,String> sendYuyueChargedata(String devicenum, String port, Integer userid, String userType,
+	public static Map<String,Object> sendYuyueChargedata(String devicenum, String port, Integer userid, String userType,
 			String phonenum) {
 		Map<String,String> map = new HashMap<>();
 		map.put("devicenum", devicenum);
@@ -96,7 +105,7 @@ public class WolfHttpRequest {
 		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_YUYUE_URL);
 	}
 	
-	public static Map<String,String> sendStopChargedata(String devicenum, Integer port) {
+	public static Map<String,Object> sendStopChargedata(String devicenum, Integer port) {
 		Map<String,String> map = new HashMap<>();
 		map.put("devicenum", devicenum);
 		map.put("port", port + "");

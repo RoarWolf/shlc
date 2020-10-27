@@ -25,23 +25,22 @@ public class Client {
 		Client client = new Client();
 //		client.connect("127.0.0.1", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
 //		client.connect("121.196.187.251", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
-		client.connect("121.196.187.251", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
-//		client.connect("139.224.255.156", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
+		client.connect("139.224.255.156", 14700, new CompletionHandler<Void, AsynchronousSocketChannel>() {
 
 			@Override
 			public void completed(Void result, AsynchronousSocketChannel channel) {
 				client.read(channel, client);
 
 				System.out.println("连接成功");
-				while (true) {
+//				while (true) {
 					ByteBuffer buffer = client.cmd_25();
 					client.writeBuffer(buffer);
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+//					try {
+//						Thread.sleep(2000);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//				}
 
 			}
 
