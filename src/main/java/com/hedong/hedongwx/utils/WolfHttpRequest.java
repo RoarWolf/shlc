@@ -29,7 +29,7 @@ public class WolfHttpRequest {
 
 	//public static final String domain_url = "http://ck.taifengkeji.com:8081/";
 
-	public static final String domain_url = "https://zylc-ev.com:8081/";
+	public static final String domain_url = "http://139.224.255.156:8081/";
 	
 	/** 付款下发充电*/
 	public static final String SEND_PAY_URL = domain_url + "deviceConnect/startCharge";
@@ -43,6 +43,9 @@ public class WolfHttpRequest {
 	public static void main(String[] args) {
 		sendChargePaydata("1027520102030001", 1, 1, 1.0, "1027520102030001");
 	}
+
+
+
 
 	public static Map<String,Object> httpconnectwolf(Map<String, String> map,String url) {
 		CloseableHttpClient client = HttpClients.createDefault();

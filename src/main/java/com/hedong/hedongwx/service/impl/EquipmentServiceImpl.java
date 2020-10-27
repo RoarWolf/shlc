@@ -772,9 +772,9 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     /**
+     * @return maxeRecord hd_realchargerecord
      * @Description： 根据条件查询数据的函数情况  1：根据充电id(chargeid)
      * @author： origin 
-     * @return maxeRecord hd_realchargerecord
      */
     @Override
     public Map<String, Object> functionRecord(Integer orderId) {
@@ -2764,8 +2764,8 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public boolean selectDeviceExsit(String devicenum) {
-    	String selectDeviceExsit = equipmentNewDao.selectDeviceExsit(devicenum);
-    	System.out.println("设备：" + selectDeviceExsit);
+        String selectDeviceExsit = equipmentNewDao.selectDeviceExsit(devicenum);
+        System.out.println("设备：" + selectDeviceExsit);
         try {
             if (selectDeviceExsit != null) {
                 return true;
@@ -2779,14 +2779,35 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public Map<String, Object> insertEquipmentNew(EquipmentNew equ) {
         try {
-            equ.setCreateTime(new Date());
-            equipmentNewDao.insertEquipmentNew(equ);
-            List<AllPortStatus> allPortStatuses = allPortStatusDao.findPortStatusListByEquipmentnum(equ.getCode(), 10);
-            if (allPortStatuses.size() > 0&&equ.getAid()!=null) {
-            AllPortStatus allPortStatus = new AllPortStatus();
-            allPortStatus.setAid(equ.getAid());
-            allPortStatus.setEquipmentnum(equ.getCode());
-            allPortStatusDao.updateAllPortStatus(allPortStatus);
+
+            if (equ.getCode() != null) {
+                int codeNext = Integer.parseInt(equ.getCode().substring(4, 6));
+                if(1 <= codeNext && codeNext <= 31||51 <= codeNext && codeNext <= 81){
+                    if (51 <= codeNext && codeNext <= 81) {
+                        codeNext = codeNext - 50;
+                    }
+                    if (1 <= codeNext && codeNext <= 31) {
+                        for (int i = 0; i < codeNext; i++) {
+                            AllPortStatus allPortStatus = new AllPortStatus();
+                            allPortStatus.setAid(equ.getAid());
+                            allPortStatus.setEquipmentnum(equ.getCode());
+                            allPortStatus.setPort(i);
+                            allPortStatus.setUpdateTime(new Date());
+                            allPortStatusDao.insertPortStatus(allPortStatus);
+                        }
+                    }
+                }else {
+                    return CommUtil.responseBuildInfo(201, "设备编号设置的不正确", null);
+                }
+                equ.setCreateTime(new Date());
+                equipmentNewDao.insertEquipmentNew(equ);
+                List<AllPortStatus> allPortStatuses = allPortStatusDao.findPortStatusListByEquipmentnum(equ.getCode(), 10);
+                if (allPortStatuses.size() > 0 && equ.getAid() != null) {
+                    AllPortStatus allPortStatus = new AllPortStatus();
+                    allPortStatus.setAid(equ.getAid());
+                    allPortStatus.setEquipmentnum(equ.getCode());
+                    allPortStatusDao.updateAllPortStatus(allPortStatus);
+                }
             }
             return CommUtil.responseBuildInfo(200, "添加成功", null);
         } catch (Exception e) {
@@ -2795,12 +2816,19 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
+    public static void main(String[] args) {
+        String code = "1027520102030001";
+        int codeNext = Integer.parseInt(code.substring(4, 6));
+        System.err.println(codeNext);
+    }
+
+
     @Override
     public Map<String, Object> updateEquipmentNew(EquipmentNew equ) {
         try {
             equipmentNewDao.updateEquipmentNew(equ);
             List<AllPortStatus> allPortStatuses = allPortStatusDao.findPortStatusListByEquipmentnum(equ.getCode(), 10);
-            if (allPortStatuses.size() > 0&&equ.getAid()!=null) {
+            if (allPortStatuses.size() > 0 && equ.getAid() != null) {
                 AllPortStatus allPortStatus = new AllPortStatus();
                 allPortStatus.setAid(equ.getAid());
                 allPortStatus.setEquipmentnum(equ.getCode());

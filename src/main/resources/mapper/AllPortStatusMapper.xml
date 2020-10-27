@@ -44,9 +44,11 @@
 		</if>
 	</update>
 	
-	<insert id="insertPortStatus" parameterType="com.hedong.hedongwx.entity.Area">
+	<insert id="insertPortStatus" parameterType="com.hedong.hedongwx.entity.AllPortStatus">
 		insert into hd_allportstatus (equipmentnum,port,port_status,time,power,elec,update_time)
 		values (#{equipmentnum},#{port},#{portStatus},#{time},#{power},#{elec},now())
 	</insert>
+
+
 	
 </mapper>

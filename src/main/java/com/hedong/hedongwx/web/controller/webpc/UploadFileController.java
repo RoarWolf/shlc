@@ -34,10 +34,10 @@ public class UploadFileController {
 
 //	private static String key = "";// <key>
 
-	private static String endpoint = "https://oss-cn-hangzhou.aliyuncs.com";// <endpoint, http://oss-cn-hangzhou.aliyuncs.com>
-	private static String accessKeyId = "LTAI4GDvNccMP975Q14kZcVL";// <accessKeyId>
-	private static String accessKeySecret = "xPNORqdQvOBkGJtAMaW74ZwSikyUQV";// <accessKeySecret>
-	private static String bucketName = "xukedeude";// <bucketName>需要修改  桶名
+	private static String endpoint = "https://oss-cn-shanghai.aliyuncs.com";// <endpoint, http://oss-cn-hangzhou.aliyuncs.com>
+	private static String accessKeyId = "LTAI4GHLWGjGJhsLCAbZ33xo";// <accessKeyId>
+	private static String accessKeySecret = "cG8EqF7azmGvrhkU6AmqAd3Z5Wo6bw";// <accessKeySecret>
+	private static String bucketName = "cdzimages";// <bucketName>需要修改  桶名
 	
 	/**
 	 * 上传文件
@@ -81,7 +81,7 @@ public class UploadFileController {
 		}
 		long endTime = System.currentTimeMillis();// 结束时间
 		// 出参
-		String baseFilePath = "https://xukedeude.oss-cn-hangzhou.aliyuncs.com/";//前半段修改成桶名
+		String baseFilePath = "https://cdzimages.oss-cn-shanghai.aliyuncs.com/";//前半段修改成桶名
 		Map<String, Object> respMap = new HashMap<String, Object>();
 		respMap.put("uploadFileName", uploadFile.getOriginalFilename());// 文件名称
 		respMap.put("uploadFilePath", baseFilePath + key);// 访问路径
