@@ -902,15 +902,15 @@ public class AreaServiceImpl implements AreaService {
 							Integer minute = Integer.parseInt( map2.get("minute"));
 							int nowhour = DisposeUtil.getDateTime(4, 0);
 							int nowminute = DisposeUtil.getDateTime(5, 0);
+							if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
+								break;
+							}
 							Double chargefee = Double.parseDouble( map2.get("chargefee"));
 							Double serverfee = Double.parseDouble( map2.get("serverfee"));
 							area.setDCchargeMoney(chargefee.doubleValue());
 							area.setDCserverMoney(serverfee.doubleValue());
 							area.setExchargeMoney(chargefee.doubleValue());
 							area.setExserverMoney(serverfee.doubleValue());
-							if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
-								break;
-							}
 						}
 					}
 				}
@@ -944,15 +944,15 @@ public class AreaServiceImpl implements AreaService {
 					Integer minute = Integer.parseInt( map2.get("minute"));
 					int nowhour = DisposeUtil.getDateTime(4, 0);
 					int nowminute = DisposeUtil.getDateTime(5, 0);
+					if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
+						break;
+					}
 					Double chargefee = Double.parseDouble( map2.get("chargefee"));
 					Double serverfee = Double.parseDouble( map2.get("serverfee"));
 					area.setDCchargeMoney(chargefee.doubleValue());
 					area.setDCserverMoney(serverfee.doubleValue());
 					area.setExchargeMoney(chargefee.doubleValue());
 					area.setExserverMoney(serverfee.doubleValue());
-					if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
-						break;
-					}
 				}
 			}
 			map.put("areainfo", area);
