@@ -49,6 +49,9 @@
 		values (#{equipmentnum},#{port},#{portStatus},#{time},#{power},#{elec},now())
 	</insert>
 
-
+	<insert id="insertPortStatusWeb" parameterType="com.hedong.hedongwx.entity.AllPortStatus">
+		insert into hd_allportstatus (equipmentnum,port,update_time,aid)
+		values (#{equipmentnum},#{port},now(),aid)
+	</insert>
 	
 </mapper>

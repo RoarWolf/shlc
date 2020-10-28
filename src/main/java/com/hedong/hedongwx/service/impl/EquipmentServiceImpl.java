@@ -2779,7 +2779,6 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public Map<String, Object> insertEquipmentNew(EquipmentNew equ) {
         try {
-
             if (equ.getCode() != null) {
                 int codeNext = Integer.parseInt(equ.getCode().substring(4, 6));
                 if(1 <= codeNext && codeNext <= 31||51 <= codeNext && codeNext <= 81){
@@ -2793,7 +2792,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                             allPortStatus.setEquipmentnum(equ.getCode());
                             allPortStatus.setPort(i);
                             allPortStatus.setUpdateTime(new Date());
-                            allPortStatusDao.insertPortStatus(allPortStatus);
+                            allPortStatusDao.insertPortStatusWeb(allPortStatus);
                         }
                     }
                 }else {

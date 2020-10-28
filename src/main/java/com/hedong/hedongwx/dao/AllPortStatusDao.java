@@ -47,5 +47,12 @@ public interface AllPortStatusDao {
 	 * @return
 	 */
 	int insertPortStatus(AllPortStatus allPortStatus);
+
+	/**
+	 *新增设备同步信息
+	 * @param allPortStatus
+	 * @return
+	 */
+	int insertPortStatusWeb(AllPortStatus allPortStatus);
 	
 }
