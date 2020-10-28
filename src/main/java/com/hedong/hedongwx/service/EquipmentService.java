@@ -472,6 +472,7 @@ public interface EquipmentService {
 	 * @return
 	 */
 	boolean selectDeviceExsit(String devicenum);
+
 	
 	public Map<String, Object> updateEquipmentNewData(String code, String hardversion, String softversion,
 			String subHardversion, String subSoftversion, Integer dcModeltype, Integer dcModelnum, Integer dcModelpower,

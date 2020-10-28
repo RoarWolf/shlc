@@ -10,11 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONArray;
+import com.hedong.hedongwx.entity.ChargingTemplate;
+import com.hedong.hedongwx.service.ChargingTemplateService;
 import com.hedong.hedongwx.utils.JedisUtils;
 import com.hedong.hedongwx.utils.SnowflakeIdWorkerUtil;
 import org.apache.poi.xslf.usermodel.Placeholder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -43,6 +46,9 @@ public class SystemSettingController {
     private FeescaleService feescaleService;
     @Autowired
     private StatisticsService statisticsService;
+
+    @Autowired
+    private ChargingTemplateService chargingTemplateService;
 
     /**
      * @Description：根据指定天数，处理商户的消耗电量和消耗时间
@@ -338,29 +344,56 @@ public class SystemSettingController {
      */
     @RequestMapping("/delBillingBilling")
     @ResponseBody
-    public Object delBillingBilling(String code) {
-        Object object=null;
-        Map<String, String> result = JedisUtils.hgetAll("billingInfo");
-        String timeInfoList = result.get("timeInfo");
-        JSONArray objects = JSONArray.parseArray(timeInfoList);
-        if (code != null) {
-            for (int i = 0; i < objects.size(); i++) {
-                String timeInfo = objects.getString(i);
-                JSONObject jsonObject = JSON.parseObject(timeInfo);
-                String code1 = jsonObject.getString("code");
-                if (code.equals(code1)) {
-                    objects.remove(i);
-                }
-            }
-            String timeInfos = objects.toJSONString();
-            Map<String, String> mapInsert = new HashMap<>();
-            mapInsert.put("timeInfo", timeInfos);
-            mapInsert.put("timenum", objects.size()+"");
-            JedisUtils.hmset("billingInfo", mapInsert);
-            object= JSON.toJSON(CommUtil.responseBuild(200, "删除成功", ""));
-        } else {
-            object=   JSON.toJSON(CommUtil.responseBuild(400, "code不能为空", ""));
-        }
-        return object;
+    public Object delBillingBilling(Integer id) {
+        return chargingTemplateService.delTemplateById(id);
     }
+
+
+    /**
+     * 计费模板查询
+     *
+     * @return
+     */
+    @RequestMapping("/selectAllTemplate")
+    @ResponseBody
+    public Object selectAllTemplate() {
+         List<ChargingTemplate> templates = chargingTemplateService.selectAllTemplate();
+        return JSON.toJSON(CommUtil.responseBuild(200, "查询成功", templates));
+    }
+    /**
+     * 计费模板修改
+     *
+     * @return
+     */
+    @RequestMapping("/updateChargingById")
+    @ResponseBody
+    public Object updateChargingById(@RequestBody ChargingTemplate chargingTemplate) {
+        return  chargingTemplateService.updateChargingById(chargingTemplate);
+    }
+
+    /**
+     * 计费模板新增
+     *
+     * @return
+     */
+    @RequestMapping("/insertCharging")
+    @ResponseBody
+    public Object insertCharging(@RequestBody ChargingTemplate chargingTemplate) {
+        return chargingTemplateService.insertCharging(chargingTemplate);
+    }
+
+
+    /**
+     * 获取所有的父类的计费模板
+     *
+     * @return
+     */
+    @RequestMapping("/selectAllTemplateParent")
+    @ResponseBody
+    public Object selectAllTemplateParent() {
+        return chargingTemplateService.selectAllTemplateParent();
+    }
+
+
+
 }

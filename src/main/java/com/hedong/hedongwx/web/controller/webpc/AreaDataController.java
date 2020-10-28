@@ -407,6 +407,7 @@ public class AreaDataController {
             area.setLat(new BigDecimal(request.getParameter("lat")));
             area.setLon(new BigDecimal(request.getParameter("lon")));
             area.setCreateTime(new Date());
+            area.setTempid(Integer.parseInt(request.getParameter("tempId")));
             area.setAreaImg(request.getParameter("areaImg"));
             areaService.insertArea(area);
             map.put("code", 200);
