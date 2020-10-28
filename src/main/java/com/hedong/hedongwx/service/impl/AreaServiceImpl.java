@@ -908,7 +908,7 @@ public class AreaServiceImpl implements AreaService {
 							area.setDCserverMoney(serverfee.doubleValue());
 							area.setExchargeMoney(chargefee.doubleValue());
 							area.setExserverMoney(serverfee.doubleValue());
-							if (hour > nowhour && minute > nowminute) {
+							if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
 								break;
 							}
 						}
@@ -950,7 +950,7 @@ public class AreaServiceImpl implements AreaService {
 					area.setDCserverMoney(serverfee.doubleValue());
 					area.setExchargeMoney(chargefee.doubleValue());
 					area.setExserverMoney(serverfee.doubleValue());
-					if (hour > nowhour && minute > nowminute) {
+					if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
 						break;
 					}
 				}
