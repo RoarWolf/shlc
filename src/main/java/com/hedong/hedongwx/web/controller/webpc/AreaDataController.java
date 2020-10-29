@@ -437,6 +437,7 @@ public class AreaDataController {
             area.setLon(new BigDecimal(request.getParameter("lon")));
             area.setAreaOnlyCode(request.getParameter("area_only_code"));
             area.setAreaImg(request.getParameter("areaImg"));
+            area.setTempid(Integer.parseInt(request.getParameter("tempId")));
             area.setUpdateTime(new Date());
             areaService.updateByArea(area);
             map.put("code", 200);

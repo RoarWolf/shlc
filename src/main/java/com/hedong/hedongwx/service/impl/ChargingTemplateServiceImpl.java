@@ -34,7 +34,7 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
 
     @Override
     public Object updateChargingById(ChargingTemplate chargingTemplate) {
-
+        chargingTemplate.setUpdateTme(new Date());
         if (chargingTemplate.getParentId() != 0) {
             int time = chargingTemplate.getHour() * 60 + chargingTemplate.getMinute();
             List<ChargingTemplate> childTemplates = chargingTemplateDao.selectAllTemplate(chargingTemplate.getParentId());
@@ -74,6 +74,8 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
 
     @Override
     public Object insertCharging(ChargingTemplate chargingTemplate) {
+        chargingTemplate.setCreateTime(new Date());
+        chargingTemplate.setUpdateTme(new Date());
         if (chargingTemplate.getParentId() != 0) {
             List<ChargingTemplate> childTemplates = chargingTemplateDao.selectAllTemplate(chargingTemplate.getParentId());
             ChargingTemplate template = childTemplates.get(childTemplates.size() - 1);
