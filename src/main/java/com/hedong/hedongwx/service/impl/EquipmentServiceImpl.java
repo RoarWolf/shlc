@@ -2791,7 +2791,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                             AllPortStatus allPortStatus = new AllPortStatus();
                             allPortStatus.setAid(equ.getAid());
                             allPortStatus.setEquipmentnum(equ.getCode());
-                            allPortStatus.setPort(i);
+                            allPortStatus.setPort(i+1);
                             allPortStatus.setUpdateTime(new Date());
                             allPortStatusDao.insertPortStatusWeb(allPortStatus);
                         }

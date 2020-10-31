@@ -34,26 +34,31 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
 
     @Override
     public Object updateChargingById(ChargingTemplate chargingTemplate) {
-        chargingTemplate.setUpdateTme(new Date());
+        chargingTemplate.setUpdateTime(new Date());
         if (chargingTemplate.getParentId() != 0) {
             int time = chargingTemplate.getHour() * 60 + chargingTemplate.getMinute();
             List<ChargingTemplate> childTemplates = chargingTemplateDao.selectAllTemplate(chargingTemplate.getParentId());
-            for (int i = 0; i < childTemplates.size(); i++) {
-                if (chargingTemplate.getId() == childTemplates.get(i).getId() && i == 0) {//如果修改的是第一条判断是否大于第二条数据
-                    int timeNext = childTemplates.get(i).getHour() * 60 + childTemplates.get(i).getMinute();
-                    if (time > timeNext) {
-                        return JSON.toJSON(CommUtil.responseBuild(400, "时间设置的不对", ""));
-                    }
-                } else if (chargingTemplate.getId() == childTemplates.get(i).getId() && i == childTemplates.size() - 1) {//如果修改的是最后一条判断是否大于倒数第二条
-                    int timeOld = childTemplates.get(i).getHour() * 60 + childTemplates.get(i - 1).getMinute();
-                    if (time < timeOld) {
-                        return JSON.toJSON(CommUtil.responseBuild(400, "时间设置的不对", ""));
-                    }
-                } else {
-                    int timeNext = childTemplates.get(i).getHour() * 60 + childTemplates.get(i + 1).getMinute();
-                    int timeOld = childTemplates.get(i).getHour() * 60 + childTemplates.get(i - 1).getMinute();
-                    if (timeOld > time || time > timeNext) {
-                        return JSON.toJSON(CommUtil.responseBuild(400, "时间设置的不对", ""));
+            if(childTemplates.size()>1){
+                for (int i = 0; i < childTemplates.size(); i++) {
+                    if(chargingTemplate.getId().equals(childTemplates.get(i).getId())){
+                        System.err.println(childTemplates.get(i).getId()+i);
+                        if (i == 0) {//如果修改的是第一条判断是否大于第二条数据
+                            int timeNext = childTemplates.get(i+1).getHour() * 60 + childTemplates.get(i+1).getMinute();
+                            if (time > timeNext) {
+                                return JSON.toJSON(CommUtil.responseBuild(400, "时间设置的不对", ""));
+                            }
+                        } else if (i == childTemplates.size() - 1) {//如果修改的是最后一条判断是否大于倒数第二条
+                            int timeOld = childTemplates.get(i-1).getHour() * 60 + childTemplates.get(i - 1).getMinute();
+                            if (time < timeOld) {
+                                return JSON.toJSON(CommUtil.responseBuild(400, "时间设置的不对", ""));
+                            }
+                        } else {
+                            int timeNext = childTemplates.get(i+1).getHour() * 60 + childTemplates.get(i + 1).getMinute();
+                            int timeOld = childTemplates.get(i-1).getHour() * 60 + childTemplates.get(i - 1).getMinute();
+                            if (timeOld > time || time > timeNext) {
+                                return JSON.toJSON(CommUtil.responseBuild(400, "时间设置的不对", ""));
+                            }
+                        }
                     }
                 }
             }
@@ -61,6 +66,9 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
         chargingTemplateDao.updateChargingById(chargingTemplate);
         return JSON.toJSON(CommUtil.responseBuild(200, "修改成功", ""));
     }
+
+
+
 
     @Override
     public List<ChargingTemplate> selectAllTemplate() {
@@ -75,27 +83,44 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
     @Override
     public Object insertCharging(ChargingTemplate chargingTemplate) {
         chargingTemplate.setCreateTime(new Date());
-        chargingTemplate.setUpdateTme(new Date());
+        chargingTemplate.setUpdateTime(new Date());
         if (chargingTemplate.getParentId() != 0) {
             List<ChargingTemplate> childTemplates = chargingTemplateDao.selectAllTemplate(chargingTemplate.getParentId());
-            ChargingTemplate template = childTemplates.get(childTemplates.size() - 1);
-            int time = chargingTemplate.getHour() * 60 + chargingTemplate.getMinute();
-            int timeLast = template.getHour() * 60 + chargingTemplate.getMinute();
-            if (time < timeLast) {
-                return JSON.toJSON(CommUtil.responseBuild(400, "时间设置的不对", ""));
+            if(childTemplates.size()>12){
+                return JSON.toJSON(CommUtil.responseBuild(400, "最多设置12数据", ""));
             }
+            if(childTemplates.size()>1){
+                ChargingTemplate template = childTemplates.get(childTemplates.size() - 1);
+                int time = chargingTemplate.getHour() * 60 + chargingTemplate.getMinute();
+                int timeLast = template.getHour() * 60 + template.getMinute();
+                if (time < timeLast) {
+                    return JSON.toJSON(CommUtil.responseBuild(400, "时间设置的不对", ""));
+                }
+            }
+            chargingTemplateDao.insertCharging(chargingTemplate);
+        }else {
+            ChargingTemplate template = new ChargingTemplate();
+            template.setCreateTime(new Date());
+            template.setUpdateTime(new Date());
+            template.setChargefee(chargingTemplate.getChargefee());
+            template.setHour(chargingTemplate.getHour());
+            template.setMinute(chargingTemplate.getMinute());
+            template.setServerfee(chargingTemplate.getServerfee());
+            template.setType(chargingTemplate.getType());
+            chargingTemplateDao.insertCharging(chargingTemplate);
+            template.setParentId(chargingTemplate.getId());
+            chargingTemplateDao.insertCharging(template);
         }
-        chargingTemplateDao.insertCharging(chargingTemplate);
         return JSON.toJSON(CommUtil.responseBuild(200, "新增成功", ""));
     }
 
     @Override
     public Object delTemplateById(Integer id) {
         ChargingTemplate chargingTemplate = chargingTemplateDao.selectAllTemplateById(id);
-        if (chargingTemplate.getParentId() != 0) {
-            chargingTemplateDao.delTemplateById(id,null);
-        }else {
-            chargingTemplateDao.delTemplateById(id,id);
+        System.err.println(chargingTemplate);
+        chargingTemplateDao.delTemplateById(id);
+        if (chargingTemplate.getParentId() == 0) {
+            chargingTemplateDao.delTemplateByParentId(id);
         }
         return JSON.toJSON(CommUtil.responseBuild(200, "删除成功", ""));
     }
@@ -103,6 +128,14 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
     @Override
     public List<ChargingTemplate> selectAllTemplateParent() {
         return chargingTemplateDao.selectAllTemplate(0);
+    }
+
+    @Override
+    public Object updateChargingStatus(ChargingTemplate chargingTemplate) {
+        chargingTemplateDao.updateChargingStatus();
+        chargingTemplate.setIsDefault("1");
+        chargingTemplateDao.updateChargingById(chargingTemplate);
+        return JSON.toJSON(CommUtil.responseBuild(200, "修改成功", ""));
     }
 
 

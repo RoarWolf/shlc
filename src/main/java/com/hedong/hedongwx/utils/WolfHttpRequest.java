@@ -27,9 +27,9 @@ import com.alibaba.fastjson.JSON;
  */
 public class WolfHttpRequest {
 
-	//public static final String domain_url = "http://ck.taifengkeji.com:8081/";
+	public static final String domain_url = "http://ck.taifengkeji.com:8081/";
 
-	public static final String domain_url = "http://139.224.255.156:8081/";
+	//public static final String domain_url = "http://139.224.255.156:8081/";
 	
 	/** 付款下发充电*/
 	public static final String SEND_PAY_URL = domain_url + "deviceConnect/startCharge";

@@ -20,7 +20,7 @@ public class ChargingTemplate implements Serializable {
 	/**
 	 *更新时间
 	 **/
-	private Date updateTme;
+	private Date updateTime;
 	/**
 	 *父类id
 	 **/
@@ -58,7 +58,15 @@ public class ChargingTemplate implements Serializable {
 	 **/
 	private Integer minute;
 
+	/**
+	 *电流类型1直流,2交流
+	 **/
+	private String currentType;
 
+	/**
+	 *是否是默认版本1是2否
+	 **/
+	private String isDefault;
 	/**
 	 *子模板信息
 	 **/

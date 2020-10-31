@@ -26,5 +26,6 @@ public interface ChargingTemplateService {
     /*获取所有的父类计费模板信息*/
     List<ChargingTemplate> selectAllTemplateParent();
 
-
+    /*修改计费模板信息*/
+    Object updateChargingStatus(ChargingTemplate chargingTemplate);
 }

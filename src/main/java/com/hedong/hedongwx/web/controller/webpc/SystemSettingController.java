@@ -367,7 +367,7 @@ public class SystemSettingController {
      */
     @RequestMapping("/updateChargingById")
     @ResponseBody
-    public Object updateChargingById(@RequestBody ChargingTemplate chargingTemplate) {
+    public Object updateChargingById(ChargingTemplate chargingTemplate) {
         return  chargingTemplateService.updateChargingById(chargingTemplate);
     }
 
@@ -378,7 +378,7 @@ public class SystemSettingController {
      */
     @RequestMapping("/insertCharging")
     @ResponseBody
-    public Object insertCharging(@RequestBody ChargingTemplate chargingTemplate) {
+    public Object insertCharging(ChargingTemplate chargingTemplate) {
         return chargingTemplateService.insertCharging(chargingTemplate);
     }
 
@@ -394,6 +394,15 @@ public class SystemSettingController {
         return chargingTemplateService.selectAllTemplateParent();
     }
 
-
+    /**
+     * 修改计费模板状态
+     *
+     * @return
+     */
+    @RequestMapping("/updateChargingStatus")
+    @ResponseBody
+    public Object updateChargingStatus(ChargingTemplate chargingTemplate) {
+        return chargingTemplateService.updateChargingStatus(chargingTemplate);
+    }
 
 }

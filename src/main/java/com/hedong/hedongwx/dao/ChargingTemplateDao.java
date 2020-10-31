@@ -26,10 +26,24 @@ public interface ChargingTemplateDao {
 	int updateChargingById(ChargingTemplate chargingTemplate);
 
 	/**
+	 * 修改计费模板默认状态
+	 * @param chargingTemplate
+	 * @return
+	 */
+	int updateChargingStatus();
+
+	/**
 	 * 删除计费模板
 	 * @param id
 	 * @return
 	 */
-	int delTemplateById(@Param("id") Integer id,@Param("parentId") Integer parentId);
+	int delTemplateById(@Param("id") Integer id);
+
+	/**
+	 * 删除计费模板
+	 * @param parentId
+	 * @return
+	 */
+	int delTemplateByParentId(@Param("parentId") Integer parentId);
 
 }

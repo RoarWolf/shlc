@@ -3,166 +3,176 @@
 <mapper namespace="com.hedong.hedongwx.dao.ChargingTemplateDao">
 
 
-	<sql id="User_Column_List">
-		id, create_time, update_time, parent_id, billver, parkingfee, timenum, chargefee, hour, serverfee, type,minute
+    <sql id="User_Column_List">
+		id, create_time, update_time, parent_id, billver, parkingfee, timenum, chargefee, hour, serverfee, type,minute,current_type,is_default
 	</sql>
 
-	<select id="selectAllTemplate" resultType="com.hedong.hedongwx.entity.ChargingTemplate" >
-		select
-		<include refid="User_Column_List" />
-		from hd_charging_template where parent_id=#{parentId}
-		order by hour,minute asc
+    <select id="selectAllTemplate" resultType="com.hedong.hedongwx.entity.ChargingTemplate">
+        select
+        <include refid="User_Column_List"/>
+        from hd_charging_template where parent_id=#{parentId}
+        order by hour,minute asc
 
-	</select>
+    </select>
 
-	<!--根据id查询站点信息-->
-	<select id="selectAllTemplateById" resultType="com.hedong.hedongwx.entity.ChargingTemplate" >
-		select
-		<include refid="User_Column_List" />
-		from hd_charging_template where id=#{id}
-
-
-	</select>
-	<!--新增计费模板信息-->
-	<insert id="insertCharging" parameterType="com.hedong.hedongwx.entity.ChargingTemplate">
-		insert into hd_charging_template
-	    <trim prefix="(" suffix=")" suffixOverrides="," >
-	      <if test="createTime != null" >
-			  create_time,
-	      </if>
-	      <if test="updateTime != null" >
-			  update_time,
-	      </if>
-	      <if test="parentId != null" >
-			  parent_id,
-	      </if>
-	      <if test="billver != null" >
-			  billver,
-	      </if>
-	      <if test="parkingfee != null" >
-			  parkingfee,
-	      </if>
-	      <if test="timenum != null" >
-			  timenum,
-	      </if>
-	      <if test="chargefee != null" >
-			  chargefee,
-	      </if>
-	      <if test="hour != null" >
-			  hour,
-	      </if>
-	      <if test="serverfee != null" >
-			  serverfee,
-	      </if>
-	      <if test="type != null" >
-			  type,
-	      </if>
-	      <if test="minute != null" >
-			  minute,
-	      </if>
-
-	    </trim>
-	    <trim prefix="values (" suffix=")" suffixOverrides="," >
-
-			<if test="createTime != null" >
-				#{createTime},
-			</if>
-			<if test="updateTime != null" >
-				#{updateTime},
-			</if>
-			<if test="parentId != null" >
-				#{parentId},
-			</if>
-			<if test="billver != null" >
-				#{billver},
-			</if>
-			<if test="parkingfee != null" >
-				#{parkingfee},
-			</if>
-			<if test="timenum != null" >
-				#{timenum},
-			</if>
-			<if test="chargefee != null" >
-				#{chargefee},
-			</if>
-			<if test="hour != null" >
-				#{hour},
-			</if>
-			<if test="serverfee != null" >
-				#{serverfee},
-			</if>
-			<if test="type != null" >
-				#{type},
-			</if>
-			<if test="minute != null" >
-				#{minute},
-			</if>
-
-	    </trim>
-	</insert>
-	
-
-	
-
-	<!--修改计费模板信息-->
-	<update id="updateChargingById" parameterType="com.hedong.hedongwx.entity.ChargingTemplate">
-		update hd_charging_template
-		<set>
-			<if test="createTime != null">
-				create_time = #{createTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="updateTime != null">
-				update_time = #{updateTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="parentId != null">
-				parent_id = #{parentId,jdbcType=INTEGER},
-			</if>
-			<if test="billver != null">
-				billver = #{billver,jdbcType=VARCHAR},
-			</if>
-			<if test="parkingfee != null">
-				parkingfee = #{parkingfee},
-			</if>
-			<if test="chargefee != null">
-				chargefee = #{chargefee},
-			</if>
-			<if test="hour != null">
-				hour = #{hour,jdbcType=INTEGER},
-			</if>
-			<if test="serverfee != null">
-				serverfee = #{serverfee},
-			</if>
-			<if test="type != null">
-				type = #{type,jdbcType=VARCHAR},
-			</if>
-			<if test="minute != null">
-				minute = #{minute,jdbcType=INTEGER},
-			</if>
-		</set>
-		where id = #{id,jdbcType=INTEGER}
-	</update>
-
-	<!--根据id删除模板信息-->
-	<delete id="delTemplateById" parameterType="int">
-		DELETE FROM hd_charging_template  WHERE
-		<if test="id!=null">
-			id = #{id,jdbcType=INTEGER}
-		</if>
-		<if test="parentId!=null">
-			parent_id = #{parentId,jdbcType=INTEGER}
-		</if>
+    <!--根据id查询站点信息-->
+    <select id="selectAllTemplateById" resultType="com.hedong.hedongwx.entity.ChargingTemplate">
+        select
+        <include refid="User_Column_List"/>
+        from hd_charging_template where id=#{id}
 
 
-	</delete>
-	
+    </select>
+    <!--新增计费模板信息-->
+    <insert id="insertCharging" parameterType="com.hedong.hedongwx.entity.ChargingTemplate" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into hd_charging_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="billver != null">
+                billver,
+            </if>
+            <if test="parkingfee != null">
+                parkingfee,
+            </if>
+            <if test="timenum != null">
+                timenum,
+            </if>
+            <if test="chargefee != null">
+                chargefee,
+            </if>
+            <if test="hour != null">
+                hour,
+            </if>
+            <if test="serverfee != null">
+                serverfee,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="minute != null">
+                minute,
+            </if>
+            <if test="currentType != null">
+                current_type,
+            </if>
+            <if test="isDefault != null">
+                is_default,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="parentId != null">
+                #{parentId},
+            </if>
+            <if test="billver != null">
+                #{billver},
+            </if>
+            <if test="parkingfee != null">
+                #{parkingfee},
+            </if>
+            <if test="timenum != null">
+                #{timenum},
+            </if>
+            <if test="chargefee != null">
+                #{chargefee},
+            </if>
+            <if test="hour != null">
+                #{hour},
+            </if>
+            <if test="serverfee != null">
+                #{serverfee},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="minute != null">
+                #{minute},
+            </if>
+            <if test="currentType != null">
+                #{currentType},
+            </if>
+            <if test="isDefault != null">
+                #{isDefault},
+            </if>
+        </trim>
+    </insert>
 
 
-	
+    <!--修改计费模板信息-->
+    <update id="updateChargingById" parameterType="com.hedong.hedongwx.entity.ChargingTemplate">
+        update hd_charging_template
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="billver != null">
+                billver = #{billver,jdbcType=VARCHAR},
+            </if>
+            <if test="parkingfee != null">
+                parkingfee = #{parkingfee},
+            </if>
+            <if test="chargefee != null">
+                chargefee = #{chargefee},
+            </if>
+            <if test="hour != null">
+                hour = #{hour,jdbcType=INTEGER},
+            </if>
+            <if test="serverfee != null">
+                serverfee = #{serverfee},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="minute != null">
+                minute = #{minute,jdbcType=INTEGER},
+            </if>
+            <if test="currentType != null">
+                current_type = #{currentType},
+            </if>
+            <if test="isDefault != null">
+                is_default = #{isDefault},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 
+    <!--根据id删除模板信息-->
+    <delete id="delTemplateById">
+        DELETE FROM hd_charging_template where id = #{id}
 
+    </delete>
 
+    <!--根据id删除模板信息-->
+    <delete id="delTemplateByParentId">
+        DELETE FROM hd_charging_template where parent_id = #{parentId}
+    </delete>
 
-	
-	
-		
+    <!--修改计费模板信息-->
+    <update id="updateChargingStatus">
+        update hd_charging_template
+        <set>
+                is_default = '2'
+        </set>
+    </update>
 </mapper>
