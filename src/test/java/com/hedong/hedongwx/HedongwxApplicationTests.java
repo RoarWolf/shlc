@@ -34,9 +34,8 @@
 //
 //	@Test
 //    public void dealerIncomeCollect(){
-//		List<Integer> list = new ArrayList<>();
-//		list.add(1);
-//		adminService.updateAdminMenu(1, list);
+//		Map<String, Object> queryAreaRecently = areaService.queryAreaRecently(121.4696, 31.3640, 50000.0, -1, 1, null);
+//		System.out.println(JSON.toJSONString(queryAreaRecently));
 //	}
 //	
 //}

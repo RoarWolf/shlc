@@ -884,9 +884,6 @@ public class AreaServiceImpl implements AreaService {
 	public Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum, Integer distanceSort, String areaname) {
 		Map<String,Object> map = new HashMap<>();
 		try {
-			if (startnum < 0) {
-				startnum = 0;
-			}
 			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum * 10, distanceSort, areaname);
 			if (arealist == null) {
 				arealist = new ArrayList<>();
