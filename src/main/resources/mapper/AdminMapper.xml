@@ -26,7 +26,7 @@
 	</select>
 	
 	<select id="selectAdminList"  parameterType="com.hedong.hedongwx.entity.Admin" resultType="com.hedong.hedongwx.entity.Admin">
-		select id,name,username,enabled from hd_admin
+		select id,name,username,enabled,password from hd_admin
 		<where>
 			<if test="name != null and name != ''"> and name like '%${name}%' </if>
 			<if test="username != null and username != ''"> and username like '%${username}%' </if>
