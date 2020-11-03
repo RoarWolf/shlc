@@ -248,9 +248,9 @@ public interface AreaDao {
 	 */
 	Map<String, Object> inquireAreaOnlineCard(@Param("aid")Integer aid);
 	
-	List<Area> queryAreaRecently(@Param("lon")Double lon,@Param("lat")Double lat,@Param("distance")Double distance, @Param("startnum")Integer startnum, @Param("distanceSort")Integer distanceSort, @Param("areaname")String areaname);
+	List<Area> queryAreaRecently(@Param("lon")Double lon,@Param("lat")Double lat,@Param("distance")Double distance, @Param("startnum")Integer startnum, @Param("distanceSort")Integer distanceSort, @Param("areaname")String areaname, @Param("hour")Integer hour, @Param("minute")Integer minute);
 	
-	Area queryAreaInfo(@Param("lon")Double lon,@Param("lat")Double lat,@Param("id")Integer id);
+	Area queryAreaInfo(@Param("lon")Double lon,@Param("lat")Double lat,@Param("id")Integer id, @Param("hour")Integer hour, @Param("minute")Integer minute);
 	
 	List<Map<String, Object>> queryAreaRecently2(@Param("lon")Double lon,@Param("lat")Double lat,@Param("distance")Double distance, @Param("startnum")Integer startnum, @Param("distanceSort")Integer distanceSort);
 }

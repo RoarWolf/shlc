@@ -883,34 +883,34 @@ public class AreaServiceImpl implements AreaService {
 	@Override
 	public Map<String,Object> queryAreaRecently(Double lon, Double lat, Double distance, Integer startnum, Integer distanceSort, String areaname) {
 		Map<String,Object> map = new HashMap<>();
+		int nowhour = DisposeUtil.getDateTime(4, 0);
+		int nowminute = DisposeUtil.getDateTime(5, 0);
 		try {
-			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum * 10, distanceSort, areaname);
+			List<Area> arealist = areaDao.queryAreaRecently(lon, lat, distance, startnum * 10, distanceSort, areaname, nowhour, nowminute);
 			if (arealist == null) {
 				arealist = new ArrayList<>();
 			} else {
-				for (Area area : arealist) {
-					Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
-					int timenum = Integer.parseInt(billingParam.get("timenum"));
-					if (timenum > 0) {
-						String timeInfoStr = billingParam.get("timeInfo");
-						List<Map<String, String>> timeInfo = (List<Map<String, String>>) JSON.parse(timeInfoStr);
-						for (Map<String, String> map2 : timeInfo) {
-							Integer hour = Integer.parseInt(map2.get("hour")) ;
-							Integer minute = Integer.parseInt( map2.get("minute"));
-							int nowhour = DisposeUtil.getDateTime(4, 0);
-							int nowminute = DisposeUtil.getDateTime(5, 0);
-							if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
-								break;
-							}
-							Double chargefee = Double.parseDouble( map2.get("chargefee"));
-							Double serverfee = Double.parseDouble( map2.get("serverfee"));
-							area.setDCchargeMoney(chargefee.doubleValue());
-							area.setDCserverMoney(serverfee.doubleValue());
-							area.setExchargeMoney(chargefee.doubleValue());
-							area.setExserverMoney(serverfee.doubleValue());
-						}
-					}
-				}
+//				for (Area area : arealist) {
+//					Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
+//					int timenum = Integer.parseInt(billingParam.get("timenum"));
+//					if (timenum > 0) {
+//						String timeInfoStr = billingParam.get("timeInfo");
+//						List<Map<String, String>> timeInfo = (List<Map<String, String>>) JSON.parse(timeInfoStr);
+//						for (Map<String, String> map2 : timeInfo) {
+//							Integer hour = Integer.parseInt(map2.get("hour")) ;
+//							Integer minute = Integer.parseInt( map2.get("minute"));
+//							if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
+//								break;
+//							}
+//							Double chargefee = Double.parseDouble( map2.get("chargefee"));
+//							Double serverfee = Double.parseDouble( map2.get("serverfee"));
+//							area.setDCchargeMoney(chargefee.doubleValue());
+//							area.setDCserverMoney(serverfee.doubleValue());
+//							area.setExchargeMoney(chargefee.doubleValue());
+//							area.setExserverMoney(serverfee.doubleValue());
+//						}
+//					}
+//				}
 			}
 			map.put("arealist", arealist);
 			map.put("startnum", startnum + 1);
@@ -925,33 +925,29 @@ public class AreaServiceImpl implements AreaService {
 	@Override
 	public Map<String, Object> queryAreaInfo(Double lon, Double lat, Integer id) {
 		Map<String,Object> map = new HashMap<>();
+		int nowhour = DisposeUtil.getDateTime(4, 0);
+		int nowminute = DisposeUtil.getDateTime(5, 0);
 		try {
-			Area area = areaDao.queryAreaInfo(lon, lat, id);
-			if (area != null) {
-				area.setExAllnum(0);
-				area.setExfreenum(0);
-			}
-			Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
-			int timenum = Integer.parseInt(billingParam.get("timenum"));
-			if (timenum > 0) {
-				String timeInfoStr = billingParam.get("timeInfo");
-				List<Map<String, String>> timeInfo = (List<Map<String, String>>) JSON.parse(timeInfoStr);
-				for (Map<String, String> map2 : timeInfo) {
-					Integer hour = Integer.parseInt(map2.get("hour")) ;
-					Integer minute = Integer.parseInt( map2.get("minute"));
-					int nowhour = DisposeUtil.getDateTime(4, 0);
-					int nowminute = DisposeUtil.getDateTime(5, 0);
-					if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
-						break;
-					}
-					Double chargefee = Double.parseDouble( map2.get("chargefee"));
-					Double serverfee = Double.parseDouble( map2.get("serverfee"));
-					area.setDCchargeMoney(chargefee.doubleValue());
-					area.setDCserverMoney(serverfee.doubleValue());
-					area.setExchargeMoney(chargefee.doubleValue());
-					area.setExserverMoney(serverfee.doubleValue());
-				}
-			}
+			Area area = areaDao.queryAreaInfo(lon, lat, id, nowhour, nowminute);
+//			Map<String, String> billingParam = JedisUtils.hgetAll("billingInfo");
+//			int timenum = Integer.parseInt(billingParam.get("timenum"));
+//			if (timenum > 0) {
+//				String timeInfoStr = billingParam.get("timeInfo");
+//				List<Map<String, String>> timeInfo = (List<Map<String, String>>) JSON.parse(timeInfoStr);
+//				for (Map<String, String> map2 : timeInfo) {
+//					Integer hour = Integer.parseInt(map2.get("hour")) ;
+//					Integer minute = Integer.parseInt( map2.get("minute"));
+//					if (hour > nowhour || (hour == nowhour && minute > nowminute)) {
+//						break;
+//					}
+//					Double chargefee = Double.parseDouble( map2.get("chargefee"));
+//					Double serverfee = Double.parseDouble( map2.get("serverfee"));
+//					area.setDCchargeMoney(chargefee.doubleValue());
+//					area.setDCserverMoney(serverfee.doubleValue());
+//					area.setExchargeMoney(chargefee.doubleValue());
+//					area.setExserverMoney(serverfee.doubleValue());
+//				}
+//			}
 			map.put("areainfo", area);
 			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {

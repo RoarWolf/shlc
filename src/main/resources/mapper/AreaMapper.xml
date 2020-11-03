@@ -312,19 +312,28 @@
 	
 	<!-- 查询距离最近的站点 -->
 	<select id="queryAreaRecently" resultType="com.hedong.hedongwx.entity.Area">
-		select
+		select a.id,
 	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{lat}*PI()/180-lat*PI()/180)/2),2)+
 	    COS(#{lat}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{lon}*PI()/180- 
-	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,IFNULL(s.DCAllnum,0) as DCAllnum,a.id,a.`name`,a.lat,a.lon,a.address
+	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,
+	    IFNULL(s.DCAllnum,0) as DCAllnum,a.`name`,a.lat,a.lon,a.address,
+	    IFNULL(ct.chargefee,0) as DCchargeMoney,IFNULL(ct.serverfee,0) as DCserverMoney,
+	    IFNULL(ct.chargefee,0) as exchargeMoney,IFNULL(ct.serverfee,0) as exserverMoney
 		FROM hd_area a
 		LEFT JOIN 
 		(SELECT ap.aid,
 		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as DCfreenum, COUNT(ap.port_status) as DCAllnum 
 		FROM hd_allportstatus ap GROUP BY ap.aid) s 
 		on s.aid = a.id
-		<if test="areaname != null and areaname != ''">
-			where name like '%${areaname}%' 
-		</if>
+		LEFT JOIN
+		(SELECT chargefee,serverfee,`hour`,`minute`,parent_id 
+		from hd_charging_template WHERE `hour` &lt; #{hour} or (`hour` = #{hour} and `minute` &lt;= #{minute}) ORDER BY id DESC LIMIT 1) ct on ct.parent_id = a.tempid
+		<where>
+			<if test="areaname != null and areaname != ''">
+				and name like '%${areaname}%' 
+			</if>
+			
+		</where>
 		HAVING distance &lt;= #{distance} 
 		<if test="distanceSort == 1">
 			order by distance 
@@ -339,13 +348,18 @@
 		select
 	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{lat}*PI()/180-lat*PI()/180)/2),2)+
 	    COS(#{lat}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{lon}*PI()/180- 
-	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,IFNULL(s.DCAllnum,0) as DCAllnum,a.id,a.`name`,a.lat,a.lon,a.address,a.area_img
+	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,IFNULL(s.DCAllnum,0) as DCAllnum,a.id,a.`name`,a.lat,a.lon,a.address,a.area_img,
+	    IFNULL(ct.chargefee,0) as DCchargeMoney,IFNULL(ct.serverfee,0) as DCserverMoney,
+	    IFNULL(ct.chargefee,0) as exchargeMoney,IFNULL(ct.serverfee,0) as exserverMoney
 		FROM hd_area a
 		LEFT JOIN 
 		(SELECT ap.aid,
 		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as DCfreenum,COUNT(ap.port_status) as DCAllnum 
 		FROM hd_allportstatus ap GROUP BY ap.aid) s 
 		on s.aid = a.id
+		LEFT JOIN
+		(SELECT chargefee,serverfee,parent_id 
+		from hd_charging_template WHERE `hour` &lt; #{hour} or (`hour` = #{hour} and `minute` &lt;= #{minute}) ORDER BY id DESC LIMIT 1) ct on ct.parent_id = a.tempid
 		where a.id = #{id}
 	</select>
 	
