@@ -42,6 +42,8 @@ public class EquipmentNew {
     private Integer aid;//站点id
 
     private String remark;//充电桩名称
+    
+    private String clientDevicenum;//充电桩名称
 
     public String getCode() {
         return code;
@@ -194,6 +196,14 @@ public class EquipmentNew {
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
     }
+
+	public String getClientDevicenum() {
+		return clientDevicenum;
+	}
+
+	public void setClientDevicenum(String clientDevicenum) {
+		this.clientDevicenum = clientDevicenum;
+	}
 
 	@Override
 	public String toString() {

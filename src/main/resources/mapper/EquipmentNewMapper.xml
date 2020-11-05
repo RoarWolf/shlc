@@ -216,6 +216,10 @@
 	<select id="selectDeviceExsit" resultType="java.lang.String">
 		select code from hd_equipment_new where code = #{devicenum}
 	</select>
+	
+	<select id="selectDeviceExsitByClientDevicenum" resultType="java.lang.String">
+		select code from hd_equipment_new where client_devicenum = #{clientDevicenum}
+	</select>
 
 	
 	<select id="selectDeviceInfo" resultType="com.hedong.hedongwx.entity.EquipmentNew" parameterType="java.lang.String">

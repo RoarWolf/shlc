@@ -472,6 +472,13 @@ public interface EquipmentService {
 	 * @return
 	 */
 	boolean selectDeviceExsit(String devicenum);
+	
+	/**
+	 * 根据客户定义设备编号查询充电桩是否存在
+	 * @param devicenum
+	 * @return
+	 */
+	public String selectDeviceExsitByClientDevicenum(String clientDevicenum);
 
 	
 	public Map<String, Object> updateEquipmentNewData(String code, String hardversion, String softversion,

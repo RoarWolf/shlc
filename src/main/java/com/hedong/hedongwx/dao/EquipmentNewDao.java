@@ -15,6 +15,8 @@ public interface EquipmentNewDao {
 	int updateEquipmentNew(EquipmentNew equipmentNew);
 	
 	String selectDeviceExsit(@Param("devicenum") String devicenum);
+	
+	String selectDeviceExsitByClientDevicenum(@Param("clientDevicenum") String clientDevicenum);
 
 	//查询设备列表 (跳转设备列表)
 	List<Map<String, Object>> selectEquList(Parameters parameters);
