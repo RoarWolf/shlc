@@ -1,5 +1,8 @@
 package com.hedong.hedongwx.web.controller.applet;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -8,11 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hedong.hedongwx.entity.AllPortStatus;
-import com.hedong.hedongwx.entity.Equipment;
 import com.hedong.hedongwx.service.AllPortStatusService;
 import com.hedong.hedongwx.service.EquipmentService;
 import com.hedong.hedongwx.utils.CommUtil;
-import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.WolfHttpRequest;
 
@@ -65,15 +66,20 @@ public class ModelToEquipment {
 	 */
 	@PostMapping("/yuyueCharge")
 	public Object yuyueCharge(String devicenum, String port) {
-		boolean selectDeviceExsit = equipmentService.selectDeviceExsit(devicenum);
-		System.out.println("查询设备：" + selectDeviceExsit);
-		if (!selectDeviceExsit) {
+//		boolean selectDeviceExsit = equipmentService.selectDeviceExsit(devicenum);
+//		if (!selectDeviceExsit) {
+//			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
+//		}
+		String realDevicenum = equipmentService.selectDeviceExsitByClientDevicenum(devicenum);
+		if (realDevicenum == null) {
 			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
 		}
 //		String useridStr = DisposeUtil.completeNum(userid + "", 8);
-		AllPortStatus allPortStatus = allPortStatusService.findPortStatusByEquipmentnumAndPort(devicenum, Integer.parseInt(port));
+		AllPortStatus allPortStatus = allPortStatusService.findPortStatusByEquipmentnumAndPort(realDevicenum, Integer.parseInt(port));
+		Map<String, Object> map = new HashMap<>();
+		map.put("devicenum", realDevicenum);
 		if (allPortStatus.getPortStatus() == 1) {
-			return CommUtil.responseBuildInfo(1000, "枪号可用", null);
+			return CommUtil.responseBuildInfo(1000, "枪号可用", map);
 		} else {
 			return CommUtil.responseBuildInfo(1001, "枪被占用，不可用", null);
 		}
