@@ -86,6 +86,9 @@
 			<if test="remark != null">
 				remark,
 			</if>
+			<if test="clientDevicenum != null">
+				client_devicenum,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="code != null">
@@ -144,6 +147,9 @@
 			</if>
 			<if test="remark != null">
 				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="clientDevicenum != null">
+				#{clientDevicenum,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -207,6 +213,9 @@
 			</if>
 			<if test="remark != null">
 				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="clientDevicenum != null">
+				client_devicenum = #{clientDevicenum,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where code = #{code,jdbcType=VARCHAR}
