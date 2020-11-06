@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.hedong.hedongwx.entity.Area;
 import com.hedong.hedongwx.entity.AreaRelevance;
 import com.hedong.hedongwx.entity.Areastatistics;
+import com.hedong.hedongwx.entity.ChargingTemplate;
 import com.hedong.hedongwx.entity.Parameters;
 
 public interface AreaDao {
@@ -249,6 +250,8 @@ public interface AreaDao {
 	Map<String, Object> inquireAreaOnlineCard(@Param("aid")Integer aid);
 	
 	List<Area> queryAreaRecently(@Param("lon")Double lon,@Param("lat")Double lat,@Param("distance")Double distance, @Param("startnum")Integer startnum, @Param("distanceSort")Integer distanceSort, @Param("areaname")String areaname, @Param("hour")Integer hour, @Param("minute")Integer minute);
+	
+	ChargingTemplate queryAreaChargeTemp(@Param("tempid")Integer tempid, @Param("hour")Integer hour, @Param("minute")Integer minute);
 	
 	Area queryAreaInfo(@Param("lon")Double lon,@Param("lat")Double lat,@Param("id")Integer id, @Param("hour")Integer hour, @Param("minute")Integer minute);
 	

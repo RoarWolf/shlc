@@ -343,6 +343,14 @@
 		</if>
 	</select>
 	
+	<!-- 查询距离最近的站点 -->
+	<select id="queryAreaChargeTemp" resultType="com.hedong.hedongwx.entity.ChargingTemplate">
+		SELECT chargefee,serverfee,`hour`,`minute`,parent_id 
+		from hd_charging_template
+		WHERE parent_id = #{tempid} and (`hour` &lt; #{hour} or (`hour` = #{hour} and `minute` &lt;= #{minute})) 
+		ORDER BY id DESC LIMIT 1
+	</select>
+	
 	<!-- 查询站点详情 -->
 	<select id="queryAreaInfo" resultType="com.hedong.hedongwx.entity.Area">
 		select
@@ -358,9 +366,8 @@
 		FROM hd_allportstatus ap GROUP BY ap.aid) s 
 		on s.aid = a.id
 		LEFT JOIN
-		(SELECT chargefee,serverfee,parent_id 
-		from hd_charging_template WHERE `hour` &lt; #{hour} or (`hour` = #{hour} and `minute` &lt;= #{minute}) ORDER BY id DESC LIMIT 1) ct on ct.parent_id = a.tempid
-		where a.id = #{id}
+		hd_charging_template ct on ct.parent_id = a.tempid
+		where a.id = #{id} and (`hour` &lt; #{hour} or (`hour` = #{hour} and `minute` &lt;= #{minute})) ORDER BY id DESC LIMIT 1)
 	</select>
 	
 	<select id="queryAreaRecently2" resultType="java.util.Map">

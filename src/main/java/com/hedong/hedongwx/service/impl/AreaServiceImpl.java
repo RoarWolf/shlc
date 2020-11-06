@@ -25,6 +25,7 @@ import com.hedong.hedongwx.entity.Area;
 import com.hedong.hedongwx.entity.AreaRelevance;
 import com.hedong.hedongwx.entity.Areastatistics;
 import com.hedong.hedongwx.entity.ChargeRecordCopy;
+import com.hedong.hedongwx.entity.ChargingTemplate;
 import com.hedong.hedongwx.entity.OnlineCard;
 import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.User;
@@ -911,6 +912,22 @@ public class AreaServiceImpl implements AreaService {
 //						}
 //					}
 //				}
+				for (Area area : arealist) {
+					Integer tempid = area.getTempid();
+					double dCchargeMoney = 0.0;
+					double dCserverMoney = 0.0;
+					if (tempid != null && tempid != 0) {
+						ChargingTemplate chargingTemplate = areaDao.queryAreaChargeTemp(tempid, nowhour, nowminute);
+						if (chargingTemplate != null) {
+							dCchargeMoney = chargingTemplate.getChargefee().doubleValue();
+							dCserverMoney = chargingTemplate.getServerfee().doubleValue();
+						}
+					}
+					area.setDCchargeMoney(dCchargeMoney);
+					area.setDCserverMoney(dCserverMoney);
+					area.setExchargeMoney(dCchargeMoney);
+					area.setExserverMoney(dCserverMoney);
+				}
 			}
 			map.put("arealist", arealist);
 			map.put("startnum", startnum + 1);
