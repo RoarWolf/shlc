@@ -4,13 +4,11 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hedong.hedongwx.entity.CodeSystemParam;
@@ -18,7 +16,6 @@ import com.hedong.hedongwx.entity.Equipment;
 import com.hedong.hedongwx.entity.Realchargerecord;
 import com.hedong.hedongwx.entity.TemplateParent;
 import com.hedong.hedongwx.entity.TemplateSon;
-import com.hedong.hedongwx.service.ActiveMqProducer;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DBUtils;
 import com.hedong.hedongwx.utils.JedisUtils;
@@ -26,9 +23,6 @@ import com.hedong.hedongwx.utils.JedisUtils;
 @Service
 public class Equipmenthandler {
 	
-	@Autowired
-	private ActiveMqProducer activeMqProducer;
-
 	/**
 	 * 获取所有软件版本为00的设备
 	 * 

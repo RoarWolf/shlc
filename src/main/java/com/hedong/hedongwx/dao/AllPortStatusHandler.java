@@ -4,18 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hedong.hedongwx.entity.AllPortStatus;
-import com.hedong.hedongwx.service.ActiveMqProducer;
 import com.hedong.hedongwx.utils.DBUtils;
 
 @Service
 public class AllPortStatusHandler {
-	
-	@Autowired
-	private ActiveMqProducer activeMqProducer;
 	
 	public static void main(String[] args) {
 		new AllPortStatusHandler().updateAllPortStatus1("000001", (byte) 1, (byte) 1,(short)  1,(short)  1, (short) 1, 1, 1);
@@ -67,11 +62,6 @@ public class AllPortStatusHandler {
 			ps.setDouble(8, port_a);
 			String sqlString = DBUtils.getSQLString(ps);
 			System.out.println("sqlString===" + sqlString);
-			if (activeMqProducer == null) {
-				System.out.println("activeMqProducer===" + null);
-			} else {
-				activeMqProducer.sendMessage("sql", sqlString);
-			}
 //			ps.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -134,7 +124,6 @@ public class AllPortStatusHandler {
 			String sql = "update hd_allportstatus set port_status="
 					+ portStatus + ",time=" + time + ",power=" + power + ",elec=" + elec + ",port_v="
 					+ port_v + ",port_a=" + port_a + ", update_time=now() where equipmentnum='" + code + "' and port = " + port;
-			activeMqProducer.sendMessage("sql", sql);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

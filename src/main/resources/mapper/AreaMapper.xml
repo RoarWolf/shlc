@@ -367,7 +367,7 @@
 		on s.aid = a.id
 		LEFT JOIN
 		hd_charging_template ct on ct.parent_id = a.tempid
-		where a.id = #{id} and (`hour` &lt; #{hour} or (`hour` = #{hour} and `minute` &lt;= #{minute})) ORDER BY id DESC LIMIT 1)
+		where a.id = #{id} and (ct.`hour` &lt; #{hour} or (ct.`hour` = #{hour} and ct.`minute` &lt;= #{minute})) ORDER BY ct.id DESC LIMIT 1
 	</select>
 	
 	<select id="queryAreaRecently2" resultType="java.util.Map">
