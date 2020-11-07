@@ -64,7 +64,9 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
 				List<String> devicelist = equipmentNewDao.selectDevicenumByTempid(chargingTemplate.getParentId());
 				if (devicelist != null && devicelist.size() > 0) {
 					for (String string : devicelist) {
-						WolfHttpRequest.sendSetBilling(string);
+						if (string.length() == 16) {
+							WolfHttpRequest.sendSetBilling(string);
+						}
 					}
 				}
 			} 
