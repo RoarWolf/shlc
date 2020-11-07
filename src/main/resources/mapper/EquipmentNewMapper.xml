@@ -240,4 +240,8 @@
 	<delete id="delEquipmentNewById" parameterType="java.lang.String">
 		DELETE FROM hd_equipment_new  WHERE code = #{code,jdbcType=VARCHAR}
 	</delete>
+	
+	<select id="selectDevicenumByTempid" resultType="java.lang.String">
+		SELECT code from hd_equipment_new where aid in (SELECT id from hd_area where tempid = #{tempid})
+	</select>
 </mapper>

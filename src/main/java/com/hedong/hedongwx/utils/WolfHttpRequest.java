@@ -39,6 +39,8 @@ public class WolfHttpRequest {
 	public static final String SEND_YUYUE_URL = domain_url + "deviceConnect/yuyueCharge";
 	/** 停止充电*/
 	public static final String SEND_STOP_URL = domain_url + "deviceConnect/stopCharge";
+	/** 设置费率*/
+	public static final String SEND_SETBILLING_URL = domain_url + "deviceConnect/setBilling";
 	
 	public static void main(String[] args) {
 		sendChargePaydata("1027520102030001", 1, 1, 1.0, "1027520102030001");
@@ -113,6 +115,12 @@ public class WolfHttpRequest {
 		map.put("devicenum", devicenum);
 		map.put("port", port + "");
 		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_STOP_URL);
+	}
+	
+	public static Map<String,Object> sendSetBilling(String devicenum) {
+		Map<String,String> map = new HashMap<>();
+		map.put("devicenum", devicenum);
+		return WolfHttpRequest.httpconnectwolf(map, WolfHttpRequest.SEND_SETBILLING_URL);
 	}
 	
 }

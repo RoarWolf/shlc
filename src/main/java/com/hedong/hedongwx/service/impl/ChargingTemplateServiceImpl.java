@@ -10,15 +10,22 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.dao.ChargingTemplateDao;
+import com.hedong.hedongwx.dao.EquipmentNewDao;
 import com.hedong.hedongwx.entity.ChargingTemplate;
 import com.hedong.hedongwx.service.ChargingTemplateService;
 import com.hedong.hedongwx.utils.CommUtil;
+import com.hedong.hedongwx.utils.WolfHttpRequest;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class ChargingTemplateServiceImpl implements ChargingTemplateService {
 
     @Resource
     ChargingTemplateDao chargingTemplateDao;
+    @Resource
+    EquipmentNewDao equipmentNewDao;
 
     @Override
     public Object updateChargingById(ChargingTemplate chargingTemplate) {
@@ -51,7 +58,19 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
                 }
             }
         }
-        chargingTemplateDao.updateChargingById(chargingTemplate);
+        int updateResult = chargingTemplateDao.updateChargingById(chargingTemplate);
+        try {
+			if (updateResult > 0) {
+				List<String> devicelist = equipmentNewDao.selectDevicenumByTempid(chargingTemplate.getParentId());
+				if (devicelist != null && devicelist.size() > 0) {
+					for (String string : devicelist) {
+						WolfHttpRequest.sendSetBilling(string);
+					}
+				}
+			} 
+		} catch (Exception e) {
+			log.info("向设备发送最新费率失败：" + e.getMessage());
+		}
         return JSON.toJSON(CommUtil.responseBuild(200, "修改成功", ""));
     }
 
