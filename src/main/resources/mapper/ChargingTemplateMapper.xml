@@ -127,7 +127,7 @@
                 parent_id = #{parentId,jdbcType=INTEGER},
             </if>
             <if test="billver != null">
-                billver = #{billver,jdbcType=VARCHAR},
+                billver = #{billver},
             </if>
             <if test="parkingfee != null">
                 parkingfee = #{parkingfee},
@@ -142,7 +142,7 @@
                 serverfee = #{serverfee},
             </if>
             <if test="type != null">
-                type = #{type,jdbcType=VARCHAR},
+                type = #{type},
             </if>
             <if test="minute != null">
                 minute = #{minute,jdbcType=INTEGER},
@@ -172,7 +172,7 @@
     <update id="updateChargingStatus">
         update hd_charging_template
         <set>
-                is_default = '2'
+                is_default = 2
         </set>
     </update>
 </mapper>

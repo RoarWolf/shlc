@@ -217,6 +217,7 @@
 			<if test="clientDevicenum != null">
 				client_devicenum = #{clientDevicenum,jdbcType=VARCHAR},
 			</if>
+
 		</set>
 		where code = #{code,jdbcType=VARCHAR}
 	</update>

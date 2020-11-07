@@ -121,7 +121,7 @@ public class ChargingTemplateServiceImpl implements ChargingTemplateService {
     @Override
     public Object updateChargingStatus(ChargingTemplate chargingTemplate) {
         chargingTemplateDao.updateChargingStatus();
-        chargingTemplate.setIsDefault("1");
+        chargingTemplate.setIsDefault(1);
         chargingTemplateDao.updateChargingById(chargingTemplate);
         return JSON.toJSON(CommUtil.responseBuild(200, "修改成功", ""));
     }

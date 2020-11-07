@@ -28,7 +28,7 @@ public class ChargingTemplate implements Serializable {
 	/**
 	 *计费版本
 	 **/
-	private String billver;
+	private BigDecimal billver;
 	/**
 	 *停车费
 	 **/
@@ -52,7 +52,7 @@ public class ChargingTemplate implements Serializable {
 	/**
 	 *类型1-尖,2-峰,3-平,4-谷
 	 **/
-	private String type;
+	private Integer type;
 	/**
 	 *分钟
 	 **/
@@ -66,7 +66,7 @@ public class ChargingTemplate implements Serializable {
 	/**
 	 *是否是默认版本1是2否
 	 **/
-	private String isDefault;
+	private Integer isDefault;
 	/**
 	 *子模板信息
 	 **/
