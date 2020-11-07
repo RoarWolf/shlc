@@ -66,20 +66,14 @@ public class ModelToEquipment {
 	 */
 	@PostMapping("/yuyueCharge")
 	public Object yuyueCharge(String devicenum, String port) {
-//		boolean selectDeviceExsit = equipmentService.selectDeviceExsit(devicenum);
-//		if (!selectDeviceExsit) {
-//			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
-//		}
-		String realDevicenum = equipmentService.selectDeviceExsitByClientDevicenum(devicenum);
-		if (realDevicenum == null) {
+		boolean selectDeviceExsit = equipmentService.selectDeviceExsit(devicenum);
+		if (!selectDeviceExsit) {
 			return CommUtil.responseBuildInfo(1003, "当前设备不存在", null);
 		}
 //		String useridStr = DisposeUtil.completeNum(userid + "", 8);
-		AllPortStatus allPortStatus = allPortStatusService.findPortStatusByEquipmentnumAndPort(realDevicenum, Integer.parseInt(port));
-		Map<String, Object> map = new HashMap<>();
-		map.put("devicenum", realDevicenum);
+		AllPortStatus allPortStatus = allPortStatusService.findPortStatusByEquipmentnumAndPort(devicenum, Integer.parseInt(port));
 		if (allPortStatus.getPortStatus() == 1) {
-			return CommUtil.responseBuildInfo(1000, "枪号可用", map);
+			return CommUtil.responseBuildInfo(1000, "枪号可用", null);
 		} else {
 			return CommUtil.responseBuildInfo(1001, "枪被占用，不可用", null);
 		}

@@ -604,7 +604,9 @@
 	
 	<!-- 查询用户订单列表 -->
 	<select id="queryChargeRecord" resultType="com.hedong.hedongwx.entity.ChargeRecordCopy">
-		select e.remark as equipmentnick,c.id,c.port,c.ordernum,c.equipmentnum,(c.paymoney - c.refund_money - c.server_money) as chargemoney,c.create_time from hd_chargerecord_copy c
+		select e.remark as equipmentnick,c.id,c.port,c.ordernum,c.equipmentnum,
+		(c.paymoney - c.refund_money - c.server_money) as chargemoney,c.create_time,c.server_money
+		 from hd_chargerecord_copy c
 		LEFT JOIN hd_equipment_new e on e.`code` = c.equipmentnum
 		where c.uid = #{uid} and c.status = #{status} order by c.id desc limit #{startnum}, 10
 	</select>
