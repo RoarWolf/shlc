@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -59,7 +58,6 @@ import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.JedisUtils;
-import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.StringUtil;
 import com.hedong.hedongwx.utils.TempMsgUtil;
 import com.hedong.hedongwx.utils.WXPayConfigImpl;

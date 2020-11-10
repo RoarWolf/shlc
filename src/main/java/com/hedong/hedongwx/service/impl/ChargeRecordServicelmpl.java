@@ -935,50 +935,52 @@ public class ChargeRecordServicelmpl implements ChargeRecordService{
 		return CommUtil.responseBuildInfo(1000, "付款成功，余额修改成功", map);
 	}
 
+	@Transactional
 	@Override
-	public Map<String, Object> stopChargeRecord(String ordernum, String begintime, String endtime,
-			Double chargeMoney,Double serverMoney, Integer resultInfo, Integer useElec) {
-		try {
-			ChargeRecordCopy chargeRecordCopy = chargeRecordDao.selectChargeRecordInfo(ordernum);
-			if (chargeRecordCopy != null) {
-				Double paymoney = chargeRecordCopy.getPaymoney();
-				double chargeAllMoney = CommUtil.addBig(chargeMoney, serverMoney);
-				ChargeRecordCopy chargeRecord = new ChargeRecordCopy();
-				chargeRecord.setId(chargeRecordCopy.getId());
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date begintimeDate = sdf.parse(begintime);
-				Date endtimeDate = sdf.parse(endtime);
-				chargeRecord.setBeginTime(begintimeDate);
-				chargeRecord.setEndTime(endtimeDate);
-				chargeRecord.setChargemoney(chargeMoney);
-				chargeRecord.setServerMoney(serverMoney);
-				chargeRecord.setResultinfo(resultInfo);
-				int usetime = (int) ((endtimeDate.getTime() - begintimeDate.getTime())/60/1000);
-				chargeRecord.setUsetime(usetime);
-				chargeRecord.setUseelec(useElec);
-				chargeRecord.setStatus(1);
-				if (chargeAllMoney == 0) {
-					chargeRecord.setNumber(1);
-				} else {
-					chargeRecord.setNumber(2);
-				}
-				System.out.println("chargeRecord===" + JSON.toJSONString(chargeRecord));
-//				if (paymoney > chargeAllMoney && chargeAllMoney >= 0) {
-//					Double refundMoney = CommUtil.subBig(paymoney, chargeAllMoney);
-//					Integer uid = chargeRecordCopy.getUid();
-//					User user = userService.selectUserById(uid);
-//					User edituser = new User();
-//					edituser.setId(uid);
-//					double balance = CommUtil.addBig(user.getBalance(), refundMoney);
-//					edituser.setBalance(balance);
-//					userService.updateUserById(edituser);
-//					generalDetailService.insertGenDetail(uid, 0, refundMoney, 0.0, refundMoney, balance, balance, 0.0, ordernum, new Date(), 5, "充电");
-//				}
-//				chargeRecordDao.updateChargeRecord(chargeRecordCopy);
+	public Map<String, Object> stopChargeRecord(String ordernum, Double chargeMoney,Double serverMoney, Integer resultInfo, Integer useElec) {
+		ChargeRecordCopy chargeRecordCopy = chargeRecordDao.selectChargeRecordInfo(ordernum);
+		if (chargeRecordCopy != null && chargeRecordCopy.getStatus() == 0) {
+			Double paymoney = chargeRecordCopy.getPaymoney();
+			double chargeAllMoney = CommUtil.addBig(chargeMoney, serverMoney);
+			ChargeRecordCopy chargeRecord = new ChargeRecordCopy();
+			chargeRecord.setId(chargeRecordCopy.getId());
+			Date date = new Date();
+			chargeRecord.setBeginTime(date);
+			chargeRecord.setEndTime(date);
+			chargeRecord.setChargemoney(chargeMoney);
+			chargeRecord.setServerMoney(serverMoney);
+			chargeRecord.setResultinfo(resultInfo);
+			int usetime = (int) ((date.getTime() - date.getTime())/60/1000);
+			chargeRecord.setUsetime(usetime);
+			chargeRecord.setUseelec(useElec);
+			chargeRecord.setStatus(1);
+			if (chargeAllMoney == 0) {
+				chargeRecord.setNumber(1);
+			} else {
+				chargeRecord.setNumber(2);
 			}
-		} catch (ParseException e) {
-			e.printStackTrace();
+			if (paymoney > chargeAllMoney && chargeAllMoney >= 0) {
+				Double refundMoney = CommUtil.subBig(paymoney, chargeAllMoney);
+				Integer uid = chargeRecordCopy.getUid();
+				User user = userService.selectUserById(uid);
+				User edituser = new User();
+				edituser.setId(uid);
+				double balance = CommUtil.addBig(user.getBalance(), refundMoney);
+				edituser.setBalance(balance);
+				generalDetailService.insertGenDetail(uid, 0, refundMoney, 0.0, refundMoney, balance, balance, 0.0, "t" + ordernum, new Date(), 5, "充电");
+				userService.updateUserById(edituser);
+				chargeRecord.setRefundMoney(refundMoney);
+				chargeRecord.setRefundTime(date);
+			}
+			chargeRecordDao.updateChargeRecord(chargeRecord);
+			AllPortStatus allPortStatus = new AllPortStatus();
+			allPortStatus.setEquipmentnum(chargeRecordCopy.getEquipmentnum());
+			allPortStatus.setPort(chargeRecordCopy.getPort());
+			allPortStatus.setPortStatus((byte) 1);
+			allPortStatusService.updateAllPortStatus(allPortStatus);
+			return CommUtil.responseBuild(200, "订单结束退款成功", null);
+		} else {
+			return CommUtil.responseBuild(201, "订单不存在或已结束退款", null);
 		}
-		return null;
 	}
 }

@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hedong.hedongwx.utils.DBUtils;
-import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.TempMsgUtil;
 
 /**

@@ -70,16 +70,12 @@ import com.hedong.hedongwx.service.TemplateService;
 import com.hedong.hedongwx.service.TradeRecordService;
 import com.hedong.hedongwx.service.UserEquipmentService;
 import com.hedong.hedongwx.service.UserService;
-import com.hedong.hedongwx.thread.Server;
 import com.hedong.hedongwx.utils.ByteUtils;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
-import com.hedong.hedongwx.utils.JedisUtils;
 import com.hedong.hedongwx.utils.MD5Util;
-import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.StringUtil;
 import com.hedong.hedongwx.utils.TempMsgUtil;
-import com.hedong.hedongwx.utils.WolfHttpRequest;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;

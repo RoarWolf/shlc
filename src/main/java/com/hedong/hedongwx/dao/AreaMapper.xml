@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hedong.hedongwx.dao.AreaDao">
+	
+	<sql id="Area_Column_List">
+		id, name, tempid, tempid2, merid, manid, divideinto, address, create_time, update_time,
+		total_online_earn,now_online_earn,total_coins_earn,now_coins_earn,wallet_earn,
+		equ_earn,card_earn
+	</sql>
+	
+	<insert id="insertArea" parameterType="com.hedong.hedongwx.entity.Area">
+		insert into hd_area (name, tempid, merid, manid, divideinto, address, create_time)
+		values (#{name}, #{tempid}, #{merid}, #{manid}, #{divideinto}, #{address}, #{createTime})
+	</insert>
+	 
+	 <select id="selectByIdArea" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.Area">
+	 	SELECT a.*,u.username AS mername,u.realname AS dealer,u.phone_num AS uphonenum,mu.username AS mananame,mu.realname AS manarealname,mu.phone_num AS manaphonenum,t.`name` AS temname
+		FROM hd_area a LEFT JOIN hd_user u ON a.merid = u.id LEFT JOIN hd_user mu ON a.manid = mu.id LEFT JOIN hd_templateparent t ON a.tempid = t.id
+		WHERE a.id = #{id,jdbcType=INTEGER}
+	 </select>
+	 
+ 	<select id="selectByParame" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT a.*,u.username AS mername,u.realname AS dealer,u.phone_num AS uphonenum,mu.username AS mananame,mu.realname AS manarealname,mu.phone_num AS manaphonenum,t.`name` AS temname
+		FROM hd_area a LEFT JOIN hd_user u ON a.merid = u.id LEFT JOIN hd_user mu ON a.manid = mu.id LEFT JOIN hd_templateparent t ON a.tempid = t.id
+		<where>
+			<if test="uid!=null and uid!=''"> AND a.merid = #{uid} </if>
+			<if test="remark!=null and remark!=''"> AND a.name LIKE '%${remark}%' </if>
+			<if test="source!=null and source!=''"> AND a.address LIKE '%${source}%' </if>
+			<if test="dealer!=null and dealer!=''"> AND u.username LIKE '%${dealer}%' </if>
+			<if test="realname!=null and realname!=''"> AND u.realname LIKE '%${realname}%' </if>
+			<if test="mobile!=null and mobile!=''"> AND u.phone_num LIKE '%${mobile}%' </if>
+			
+			<if test="username!=null and username!=''"> AND mu.realname LIKE '%${username}%' </if>
+			<if test="phone!=null and phone!=''"> AND mu.phone_num LIKE '%${phone}%' </if>
+			
+			<if test="startTime!=null and startTime!=''"> AND a.create_time &gt;= #{startTime}</if>
+			<if test="endTime!=null and endTime!=''"> AND a.create_time &lt;= #{endTime}</if>
+		</where>
+			 ORDER BY a.create_time DESC
+	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
+	</select>
+	
+	<select id="selectByArea" parameterType="com.hedong.hedongwx.entity.Area" resultType="com.hedong.hedongwx.entity.Area">
+		SELECT 
+		<include refid="Area_Column_List" /> 
+		FROM hd_area 
+		<where>
+			<if test="id != null "> AND id = #{id} </if>
+			<if test="name != null "> AND name LIKE '%${name}%' </if>
+			<if test="tempid != null "> AND tempid = #{tempid} </if>
+			<if test="tempid2 != null "> AND tempid2 = #{tempid2} </if>
+			<if test="merid != null "> AND merid = #{merid} </if>
+			<if test="address != null "> AND address LIKE '%${address}%' </if>
+			<if test="createTime != null "> AND create_time &gt;= #{createTime}</if>
+			<if test="updateTime != null "> AND create_time &lt;= #{updateTime}</if>
+		</where>
+	</select>
+	
+	<select id="selectByAreaId" resultType="com.hedong.hedongwx.entity.Area">
+		SELECT 
+		<include refid="Area_Column_List" /> 
+		FROM hd_area 
+		where id = #{id}
+	</select>
+	
+	<update id="updateByArea" parameterType="com.hedong.hedongwx.entity.Area">
+		update hd_area set
+		<if test="name!=null "> name = #{name}, </if>
+		<if test="address!=null "> address = #{address}, </if>
+		<if test="merid!=null "> merid = #{merid}, </if>
+		<if test="manid!=null "> manid = #{manid}, </if>
+		<if test="tempid!=null "> tempid = #{tempid}, </if>
+		<if test="tempid2!=null "> tempid2 = #{tempid2}, </if>
+		<if test="divideinto != null "> divideinto = #{divideinto}, </if>
+		 update_time = now()
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteByArea" parameterType="com.hedong.hedongwx.entity.Area">
+		DELETE FROM hd_area 
+		<where>
+			<if test="id!=null and id!=''"> AND id = #{id} </if>
+			<if test="merid!=null and merid!=''"> AND merid = #{merid} </if>
+			<if test="tempid!=null and tempid!=''"> AND tempid = #{tempid} </if>
+		</where>
+	</delete>
+	
+	<update id="updatepartner" parameterType="java.lang.Integer">
+		update hd_area set  manid = #{manid} , update_time = now() where id = #{aid}
+	</update>
+	
+	<update id="updatetempid" parameterType="com.hedong.hedongwx.entity.Area">
+		update hd_area set  tempid = #{price} , divideinto =#{divideinto} where tempid = #{tempid}
+	</update>
+	
+	<update id="updatetotempid" parameterType="com.hedong.hedongwx.entity.Area">
+		update hd_area set  tempid2 = #{price} , update_time = now() where tempid2 = #{tempid}
+	</update>
+	
+	<update id="updateAreaEarn">
+		update hd_area <set>
+			<if test="edittype == 1">
+				total_online_earn = total_online_earn + #{money},
+				now_online_earn = now_online_earn + #{money},
+				<if test="wallet != null">
+					wallet_earn = wallet_earn + #{wallet},
+				</if>
+				<if test="equ != null">
+					equ_earn = equ_earn + #{equ},
+				</if>
+				<if test="card != null">
+					card_earn = card_earn + #{card},
+				</if>
+			</if>
+			<if test="edittype == 0">
+				total_online_earn = total_online_earn - #{money},
+				now_online_earn = now_online_earn - #{money},
+				<if test="wallet != null">
+					wallet_earn = wallet_earn - #{wallet},
+				</if>
+				<if test="equ != null">
+					equ_earn = equ_earn - #{equ},
+				</if>
+				<if test="card != null">
+					card_earn = card_earn - #{card},
+				</if>
+			</if>
+			</set> 
+		where id = #{id}
+	</update>
+	
+	<update id="everydayAreaReset">
+		update hd_area set now_online_earn = 0,now_coins_earn = 0
+	</update>
+	
+	<select id="selectAllArea" resultType="com.hedong.hedongwx.entity.Area">
+		select
+		<include refid="Area_Column_List" /> 
+		from hd_area
+	</select>
+	
+	<insert id="insertAreastatistics" parameterType="com.hedong.hedongwx.entity.Areastatistics">
+		insert into hd_areastatistics (aid,online_earn,coin_earn,wallet_earn,equ_earn,card_earn,create_time)
+		values (#{aid},#{onlineEarn},#{coinEarn},#{walletEarn},#{equEarn},#{cardEarn},#{createTime,jdbcType=DATE})
+	</insert>
+	
+	<select id="selectAreastatisticsByAid" resultType="com.hedong.hedongwx.entity.Areastatistics">
+		select online_earn,coin_earn,wallet_earn,equ_earn,card_earn,create_time,wechatnum, refwechatnum, 
+			   alipaynum, refalipaynum, unionpaynum, refunionpaynum, usagerate
+		from hd_areastatistics where aid = #{aid}
+		order by id desc
+		<if test="beginnum != null and neednum != null">
+			limit #{beginnum},#{neednum}
+		</if>
+	</select>
+	
+	<select id="inquireAreastatistics" resultType="java.util.Map">
+		SELECT id, aid, coin_earn, wallet_earn, equ_earn, card_earn, create_time, wechatnum, refwechatnum, 
+		alipaynum, refalipaynum, unionpaynum, refunionpaynum, usagerate FROM hd_areastatistics 
+		WHERE aid = #{aid} AND create_time = #{time}
+	</select>
+	
+	<select id="selectAreastatisticsByParam"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT SUM(online_earn) AS onlineearn,SUM(coin_earn) AS coinearn,SUM(wallet_earn) AS walletearn, SUM(equ_earn) AS equearn,SUM(card_earn) AS cardearn 
+		FROM hd_areastatistics 
+		<where>
+			<if test=" state!=null and state!=''"> AND aid = #{state} </if>
+			<if test=" startTime!=null and startTime!=''"> AND create_time &gt;= #{startTime} </if>
+			<if test=" endTime!=null and endTime!=''"> AND create_time &lt;= #{endTime} </if>
+		</where>
+		ORDER BY create_time DESC
+	</select>
+	
+	
+	
+	<!--******* 小区信息 *************************************************************-->
+	<!-- origin 查询没小区与小区所属商户信息 -->
+	<select id="inquireAreaInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT a.*,u.username AS dealnick, u.realname AS dealname, u.phone_num AS dealphon, u.servephone AS dealcell
+		FROM hd_area a LEFT JOIN hd_user u ON a.merid = u.id
+		<where>
+			<if test=" order != null and order !='' "> AND a.id = #{order} </if>
+			<if test=" state != null and state !='' "> AND a.name = #{state} </if>
+			<if test=" dealer != null and dealer !='' "> AND a.merid = #{dealer} </if>
+			<if test=" number != null and number !='' "> AND a.address = #{number} </if>
+		</where>
+	</select>
+	
+	<!-- origin 查询没小区与小区所属商户信息 -->
+	<select id="inquireAreaOnlineCard" resultType="java.util.Map">
+		SELECT count(*) AS count, SUM(money) AS topupbalance, SUM(sendmoney) AS sendmoney FROM hd_onlinecard WHERE aid = #{aid}
+	</select>
+	
+	<!-- origin 查询没小区与小区所属商户信息 -->
+	<select id="inquireAreaDevicenum" resultType="java.lang.Integer">
+		SELECT count(*) FROM hd_equipment WHERE aid = #{aid}
+	</select>
+	
+	<!-- origin 查询没小区与小区所属商户信息 -->
+	<select id="inquireAreaUser" resultType="java.util.Map">
+		SELECT count(*) AS count, SUM(balance) AS topupbalance, SUM(sendmoney) AS sendmoney FROM hd_user WHERE aid = #{aid}
+	</select>
+	
+	<!--******* 小区与合伙人分成、小区下管理 *************************************************************-->
+	<!-- id,aid,partid,percent,sort,type,`status`,remark -->
+	<insert id="insertAreaReleInfo" parameterType="com.hedong.hedongwx.entity.AreaRelevance">
+		INSERT INTO hd_arearelevance ( aid, partid, percent, sort, type, `status`, remark, createtime, operatetime) 
+		VALUES (#{aid},#{partid},#{percent},#{sort},#{type},#{status},#{remark},now(),now());
+	</insert>
+	
+	<delete id="deleteAreaReleById">
+		DELETE FROM hd_arearelevance  WHERE id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<delete id="deleteArReleByPara" parameterType="com.hedong.hedongwx.entity.AreaRelevance">
+		DELETE FROM hd_arearelevance 
+		<where>
+			<if test="id != null "> AND id = #{id} </if>
+			<if test="aid != null "> AND aid = #{aid} </if>
+			<if test="partid != null "> AND partid = #{aid} </if>
+		</where>
+	</delete>
+	
+	<update id="updateArReleById" parameterType="com.hedong.hedongwx.entity.AreaRelevance">
+        UPDATE hd_arearelevance
+        <set>
+			<if test="partid != null "> partid = #{partid}, </if>
+			<if test="percent != null "> percent = #{percent}, </if>
+			<if test="sort != null "> sort = #{sort}, </if>
+			<if test="type != null "> type = #{type}, </if>
+			<if test="status != null "> `status` = #{status}, </if>
+			<if test="remark != null and remark != ''"> remark = #{remark}, </if>
+			<if test="operatetime != null"> operatetime = #{operatetime}, </if>
+        </set>
+        WHERE id = #{id}
+	</update>
+
+	<select id="areaRelPartidInfo"  resultType="java.util.Map">
+		SELECT DISTINCT(partid) FROM hd_arearelevance WHERE  type = 2
+	</select>
+	
+	<select id="selectAreaRelevance" parameterType="com.hedong.hedongwx.entity.AreaRelevance" resultType="com.hedong.hedongwx.entity.AreaRelevance">
+		SELECT COUNT(*) FROM hd_arearelevance 
+		<where>
+			<if test="state != null and state != ''"> AND aid = #{state} </if>
+			<if test="source != null and source != ''"> AND partid = #{source} </if>
+			<if test="status != null and status != ''"> AND `status` = #{status} </if>
+			<if test="type != null and type != ''"> AND type = #{type} </if>
+			<if test="sort != null and sort != ''"> AND sort = #{sort} </if>
+			<!-- <if test=" != null and  != ''"> AND  LIKE '%${}%' </if> -->
+		</where>
+	</select>
+	
+	<select id="selectAreaRelSole" parameterType="com.hedong.hedongwx.entity.AreaRelevance" resultType="com.hedong.hedongwx.entity.AreaRelevance">
+		SELECT * FROM hd_arearelevance 
+		<where>
+			<if test="id != null "> AND id = #{id} </if>
+			<if test="aid != null "> AND aid = #{aid} </if>
+			<if test="partid != null "> AND partid = #{partid} </if>
+			<if test="percent != null "> AND percent = #{percent} </if>
+			<if test="sort != null "> AND sort = #{sort} </if>
+			<if test="type != null "> AND type = #{type} </if>
+			<if test="status != null "> AND `status` = #{status} </if>
+			<if test="remark != null and remark != ''"> AND remark = #{remark} </if>
+			<if test="createtime != null and createtime != ''"> AND createtime = #{createtime} </if>
+			<if test="operatetime != null and operatetime != ''"> AND operatetime = #{operatetime} </if>
+		</where>
+	</select>	
+	
+	<select id="selectaRearelInfo" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT av.*, u.id AS uid, u.username AS nickname, u.realname AS realname, u.phone_num AS phone, u.servephone AS 
+		servephone, a.`name` AS areaname, a.address AS address 
+		FROM hd_arearelevance av LEFT JOIN hd_user u ON av.partid = u.id LEFT JOIN hd_area a ON av.aid = a.id 
+		<where>
+			<if test="number != null and number != ''"> AND av.id = #{number} </if>
+			<if test="phone != null and phone != ''"> AND u.phone_num = #{phone} </if>
+			<if test="state != null and state != ''"> AND av.aid = #{state} </if>
+			<if test="source != null and source != ''"> AND av.partid = #{source} </if>
+			<if test="status != null and status != ''"> AND av.`status` = #{status} </if>
+			<if test="type != null and type != ''"> AND av.type = #{type} </if>
+			<if test="sort != null and sort != ''"> ${sort} </if>
+		</where>
+ 	</select>
+	
+	<select id="inquireDealAreaData" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
+		SELECT a.*,u.id AS uid,u.username AS nickname,u.realname AS realname,u.phone_num AS phone 
+		FROM hd_area a LEFT JOIN hd_user u ON a.merid = u.id 
+		<where>
+			<if test="uid != null and uid != ''"> AND a.merid = #{uid} </if>
+		    <if test="dealer != null and  dealer !=''"> AND u.username LIKE '%${dealer}%' </if>
+		    <if test="realname !=null and  realname !=''"> AND u.realname LIKE '%${realname}%' </if>
+			<if test="phone != null and phone != ''"> AND u.phone_num = #{phone} </if>
+		    <if test="paramete !=null and  paramete !=''"> AND a.name LIKE '%${paramete}%' </if>
+		    <if test="remark !=null and  remark !=''"> AND a.address LIKE '%${remark}%' </if>
+		</where>
+ 	</select>
+	
+	<!-- origin 查询没有绑定设备合伙人信息 -->
+	<select id="inquireAllPartidInfo"  resultType="java.util.Map">
+		SELECT DISTINCT(partid) AS user_id FROM hd_arearelevance WHERE type = 2 AND partid NOT IN (
+			SELECT DISTINCT user_id FROM hd_user_equipment
+		)
+	</select>
+	<!--按小区缴费首页 根据小区号查询(小区下设备数,快到期设备数,到期设备数)-->
+	<select id="selectEquDataByaid" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN `code` THEN 1 ELSE 0 END)AS equcount,
+			SUM(CASE WHEN DATEDIFF(expiration_time,NOW())&lt;0 THEN 1 ELSE 0 END) AS expirednum,
+			SUM(CASE WHEN DATEDIFF(expiration_time,NOW()) BETWEEN 0 AND 15 THEN 1 ELSE 0 END)AS almoexnum
+			FROM hd_equipment
+		WHERE aid=#{aid}
+	</select>
+	
+	<!--查询小区某日的统计数据-->
+	<select id="selectAreastatisticsByTime" resultType="com.hedong.hedongwx.entity.Areastatistics">
+		SELECT * from hd_areastatistics where aid = #{aid} and create_time = #{createTime}
+	</select>
+	
+	<select id="updateAreastatisticsById">
+		update hd_areastatistics set online_earn = #{onlineEarn} where id = #{id}
+	</select>
+	
+	<!-- origin 根据商户id查询商户所拥有的小区 与商户所属的合伙小区 -->
+	<select id="inquireMerchArea" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT * FROM (
+			SELECT * FROM hd_area WHERE merid = #{merid}
+			UNION
+			SELECT a.* FROM hd_arearelevance av LEFT JOIN hd_area a ON av.aid = a.id WHERE av.partid = #{merid} AND av.type = 2
+		) t 
+		<if test="offset != null and numPerPage != null">  LIMIT #{offset},#{numPerPage} </if>
+		
+	</select>
+</mapper>
+
+
