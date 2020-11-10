@@ -356,9 +356,7 @@
 		select
 	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{lat}*PI()/180-lat*PI()/180)/2),2)+
 	    COS(#{lat}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{lon}*PI()/180- 
-	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,IFNULL(s.DCAllnum,0) as DCAllnum,a.id,a.`name`,a.lat,a.lon,a.address,a.area_img,
-	    IFNULL(ct.chargefee,0) as DCchargeMoney,IFNULL(ct.serverfee,0) as DCserverMoney,
-	    IFNULL(ct.chargefee,0) as exchargeMoney,IFNULL(ct.serverfee,0) as exserverMoney
+	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,IFNULL(s.DCAllnum,0) as DCAllnum,a.id,a.`name`,a.lat,a.lon,a.address,a.area_img
 		FROM hd_area a
 		LEFT JOIN 
 		(SELECT ap.aid,
@@ -367,7 +365,7 @@
 		on s.aid = a.id
 		LEFT JOIN
 		hd_charging_template ct on ct.parent_id = a.tempid
-		where a.id = #{id} and (ct.`hour` &lt; #{hour} or (ct.`hour` = #{hour} and ct.`minute` &lt;= #{minute})) ORDER BY ct.id DESC LIMIT 1
+		where a.id = #{id}
 	</select>
 	
 	<select id="queryAreaRecently2" resultType="java.util.Map">
