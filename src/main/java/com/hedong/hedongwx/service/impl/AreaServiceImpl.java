@@ -965,6 +965,20 @@ public class AreaServiceImpl implements AreaService {
 //					area.setExserverMoney(serverfee.doubleValue());
 //				}
 //			}
+			Integer tempid = area.getTempid();
+			double dCchargeMoney = 0.0;
+			double dCserverMoney = 0.0;
+			if (tempid != null && tempid != 0) {
+				ChargingTemplate chargingTemplate = areaDao.queryAreaChargeTemp(tempid, nowhour, nowminute);
+				if (chargingTemplate != null) {
+					dCchargeMoney = chargingTemplate.getChargefee().doubleValue();
+					dCserverMoney = chargingTemplate.getServerfee().doubleValue();
+				}
+			}
+			area.setDCchargeMoney(dCchargeMoney);
+			area.setDCserverMoney(dCserverMoney);
+			area.setExchargeMoney(dCchargeMoney);
+			area.setExserverMoney(dCserverMoney);
 			map.put("areainfo", area);
 			return CommUtil.responseBuildInfo(1000, "获取成功", map);
 		} catch (Exception e) {
