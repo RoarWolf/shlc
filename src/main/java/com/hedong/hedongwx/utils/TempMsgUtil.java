@@ -285,7 +285,7 @@ public class TempMsgUtil {
 	}
 	
 	
-	private static final Logger logger = LoggerFactory.getLogger(SendMsgUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(TempMsgUtil.class);
 	//==========================================================================================================================
 
 	/**

@@ -5,13 +5,12 @@
 	<sql id="Area_Column_List">
 		id, name, tempid, tempid2, merid, manid, divideinto, address, create_time, update_time,
 		total_online_earn,now_online_earn,total_coins_earn,now_coins_earn,wallet_earn,
-		equ_earn,card_earn,lon,lat
+		equ_earn,card_earn
 	</sql>
 	
-	<insert id="insertArea" parameterType="com.hedong.hedongwx.entity.Area" useGeneratedKeys="true"
-			keyProperty="id">
-		insert into hd_area (name,address, create_time,area_only_code,lon,lat,area_img,tempid)
-		values (#{name}, #{address}, #{createTime},#{areaOnlyCode},#{lon},#{lat},#{areaImg},#{tempid})
+	<insert id="insertArea" parameterType="com.hedong.hedongwx.entity.Area">
+		insert into hd_area (name, tempid, merid, manid, divideinto, address, create_time)
+		values (#{name}, #{tempid}, #{merid}, #{manid}, #{divideinto}, #{address}, #{createTime})
 	</insert>
 	 
 	 <select id="selectByIdArea" parameterType="java.lang.Integer" resultType="com.hedong.hedongwx.entity.Area">
@@ -19,30 +18,27 @@
 		FROM hd_area a LEFT JOIN hd_user u ON a.merid = u.id LEFT JOIN hd_user mu ON a.manid = mu.id LEFT JOIN hd_templateparent t ON a.tempid = t.id
 		WHERE a.id = #{id,jdbcType=INTEGER}
 	 </select>
-
+	 
  	<select id="selectByParame" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
-		SELECT id,name,address,create_time,area_only_code,lon,lat,area_img,tempid
-		FROM hd_area
+		SELECT a.*,u.username AS mername,u.realname AS dealer,u.phone_num AS uphonenum,mu.username AS mananame,mu.realname AS manarealname,mu.phone_num AS manaphonenum,t.`name` AS temname
+		FROM hd_area a LEFT JOIN hd_user u ON a.merid = u.id LEFT JOIN hd_user mu ON a.manid = mu.id LEFT JOIN hd_templateparent t ON a.tempid = t.id
 		<where>
-			<if test="remark!=null and remark!=''"> AND name LIKE '%${remark}%' </if>
-			<if test="source!=null and source!=''"> AND address LIKE '%${source}%' </if>
-			<if test="areaOnlyCode!=null and areaOnlyCode!=''"> AND name LIKE '%${areaOnlyCode}%' </if>
+			<if test="uid!=null and uid!=''"> AND a.merid = #{uid} </if>
+			<if test="remark!=null and remark!=''"> AND a.name LIKE '%${remark}%' </if>
+			<if test="source!=null and source!=''"> AND a.address LIKE '%${source}%' </if>
+			<if test="dealer!=null and dealer!=''"> AND u.username LIKE '%${dealer}%' </if>
+			<if test="realname!=null and realname!=''"> AND u.realname LIKE '%${realname}%' </if>
+			<if test="mobile!=null and mobile!=''"> AND u.phone_num LIKE '%${mobile}%' </if>
+			
+			<if test="username!=null and username!=''"> AND mu.realname LIKE '%${username}%' </if>
+			<if test="phone!=null and phone!=''"> AND mu.phone_num LIKE '%${phone}%' </if>
+			
+			<if test="startTime!=null and startTime!=''"> AND a.create_time &gt;= #{startTime}</if>
+			<if test="endTime!=null and endTime!=''"> AND a.create_time &lt;= #{endTime}</if>
 		</where>
-			 ORDER BY create_time DESC
+			 ORDER BY a.create_time DESC
 	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
 	</select>
-
-	<select id="getTotalAreaByparam" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="int">
-		SELECT count(*)
-		FROM hd_area
-		<where>
-			<if test="remark!=null and remark!=''"> name LIKE '%${remark}%' </if>
-			<if test="source!=null and source!=''"> AND address LIKE '%${source}%' </if>
-			<if test="areaOnlyCode!=null and areaOnlyCode!=''"> AND name LIKE '%${areaOnlyCode}%' </if>
-		</where>
-	</select>
-
-
 	
 	<select id="selectByArea" parameterType="com.hedong.hedongwx.entity.Area" resultType="com.hedong.hedongwx.entity.Area">
 		SELECT 
@@ -72,14 +68,10 @@
 		<if test="name!=null "> name = #{name}, </if>
 		<if test="address!=null "> address = #{address}, </if>
 		<if test="merid!=null "> merid = #{merid}, </if>
-		<if test="lon!=null "> lon = #{lon}, </if>
-		<if test="lat!=null "> lat = #{lat}, </if>
 		<if test="manid!=null "> manid = #{manid}, </if>
 		<if test="tempid!=null "> tempid = #{tempid}, </if>
 		<if test="tempid2!=null "> tempid2 = #{tempid2}, </if>
 		<if test="divideinto != null "> divideinto = #{divideinto}, </if>
-		<if test="areaImg != null "> area_img = #{areaImg}, </if>
-		<if test="areaOnlyCode != null "> area_only_code = #{areaOnlyCode}, </if>
 		 update_time = now()
 		where id = #{id}
 	</update>
@@ -88,7 +80,8 @@
 		DELETE FROM hd_area 
 		<where>
 			<if test="id!=null and id!=''"> AND id = #{id} </if>
-
+			<if test="merid!=null and merid!=''"> AND merid = #{merid} </if>
+			<if test="tempid!=null and tempid!=''"> AND tempid = #{tempid} </if>
 		</where>
 	</delete>
 	
@@ -140,7 +133,7 @@
 		update hd_area set now_online_earn = 0,now_coins_earn = 0
 	</update>
 	
-	<select id="selectAllArea" resultType="map">
+	<select id="selectAllArea" resultType="com.hedong.hedongwx.entity.Area">
 		select
 		<include refid="Area_Column_List" /> 
 		from hd_area
@@ -152,11 +145,19 @@
 	</insert>
 	
 	<select id="selectAreastatisticsByAid" resultType="com.hedong.hedongwx.entity.Areastatistics">
-		select online_earn,coin_earn,wallet_earn,equ_earn,card_earn,create_time from hd_areastatistics where aid = #{aid}
+		select online_earn,coin_earn,wallet_earn,equ_earn,card_earn,create_time,wechatnum, refwechatnum, 
+			   alipaynum, refalipaynum, unionpaynum, refunionpaynum, usagerate
+		from hd_areastatistics where aid = #{aid}
 		order by id desc
 		<if test="beginnum != null and neednum != null">
 			limit #{beginnum},#{neednum}
 		</if>
+	</select>
+	
+	<select id="inquireAreastatistics" resultType="java.util.Map">
+		SELECT id, aid, coin_earn, wallet_earn, equ_earn, card_earn, create_time, wechatnum, refwechatnum, 
+		alipaynum, refalipaynum, unionpaynum, refunionpaynum, usagerate FROM hd_areastatistics 
+		WHERE aid = #{aid} AND create_time = #{time}
 	</select>
 	
 	<select id="selectAreastatisticsByParam"  parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
@@ -192,7 +193,7 @@
 	
 	<!-- origin 查询没小区与小区所属商户信息 -->
 	<select id="inquireAreaDevicenum" resultType="java.lang.Integer">
-		SELECT count(*) FROM hd_equipment_new WHERE aid = #{aid}
+		SELECT count(*) FROM hd_equipment WHERE aid = #{aid}
 	</select>
 	
 	<!-- origin 查询没小区与小区所属商户信息 -->
@@ -310,82 +311,25 @@
 		WHERE aid=#{aid}
 	</select>
 	
-	<!-- 查询距离最近的站点 -->
-	<select id="queryAreaRecently" resultType="com.hedong.hedongwx.entity.Area">
-		select a.id,a.tempid,
-	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{lat}*PI()/180-lat*PI()/180)/2),2)+
-	    COS(#{lat}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{lon}*PI()/180- 
-	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,
-	    IFNULL(s.DCAllnum,0) as DCAllnum,a.`name`,a.lat,a.lon,a.address,a.tempid,
-	    IFNULL(ct.chargefee,0) as DCchargeMoney,IFNULL(ct.serverfee,0) as DCserverMoney,
-	    IFNULL(ct.chargefee,0) as exchargeMoney,IFNULL(ct.serverfee,0) as exserverMoney
-		FROM hd_area a
-		LEFT JOIN 
-		(SELECT ap.aid,
-		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as DCfreenum, COUNT(ap.port_status) as DCAllnum 
-		FROM hd_allportstatus ap GROUP BY ap.aid) s 
-		on s.aid = a.id
-		LEFT JOIN
-		(SELECT chargefee,serverfee,`hour`,`minute`,parent_id 
-		from hd_charging_template WHERE `hour` &lt; #{hour} or (`hour` = #{hour} and `minute` &lt;= #{minute}) ORDER BY id DESC LIMIT 1) ct on ct.parent_id = a.tempid
-		<where>
-			<if test="areaname != null and areaname != ''">
-				and name like '%${areaname}%' 
-			</if>
-			
-		</where>
-		HAVING distance &lt;= #{distance} 
-		<if test="distanceSort == 1">
-			order by distance 
-		</if>
-		<if test="startnum != null and startnum != -10">
-		 	LIMIT #{startnum}, 10
-		</if>
+	<!--查询小区某日的统计数据-->
+	<select id="selectAreastatisticsByTime" resultType="com.hedong.hedongwx.entity.Areastatistics">
+		SELECT * from hd_areastatistics where aid = #{aid} and create_time = #{createTime}
 	</select>
 	
-	<!-- 查询距离最近的站点 -->
-	<select id="queryAreaChargeTemp" resultType="com.hedong.hedongwx.entity.ChargingTemplate">
-		SELECT chargefee,serverfee,`hour`,`minute`,parent_id 
-		from hd_charging_template
-		WHERE parent_id = #{tempid} and (`hour` &lt; #{hour} or (`hour` = #{hour} and `minute` &lt;= #{minute})) 
-		ORDER BY id DESC LIMIT 1
+	<select id="updateAreastatisticsById">
+		update hd_areastatistics set online_earn = #{onlineEarn} where id = #{id}
 	</select>
 	
-	<!-- 查询站点详情 -->
-	<select id="queryAreaInfo" resultType="com.hedong.hedongwx.entity.Area">
-		select
-	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{lat}*PI()/180-lat*PI()/180)/2),2)+
-	    COS(#{lat}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{lon}*PI()/180- 
-	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.DCfreenum,0) as DCfreenum,IFNULL(s.DCAllnum,0) as DCAllnum,a.id,a.`name`,a.lat,a.lon,a.address,a.area_img,a.tempid
-		FROM hd_area a
-		LEFT JOIN 
-		(SELECT ap.aid,
-		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as DCfreenum,COUNT(ap.port_status) as DCAllnum 
-		FROM hd_allportstatus ap GROUP BY ap.aid) s 
-		on s.aid = a.id
-		where a.id = #{id}
+	<!-- origin 根据商户id查询商户所拥有的小区 与商户所属的合伙小区 -->
+	<select id="inquireMerchArea" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT * FROM (
+			SELECT * FROM hd_area WHERE merid = #{merid}
+			UNION
+			SELECT a.* FROM hd_arearelevance av LEFT JOIN hd_area a ON av.aid = a.id WHERE av.partid = #{merid} AND av.type = 2
+		) t 
+		<if test="offset != null and numPerPage != null">  LIMIT #{offset},#{numPerPage} </if>
+		
 	</select>
-	
-	<select id="queryAreaRecently2" resultType="java.util.Map">
-		select
-	    ROUND(6378.138*2*ASIN(SQRT(POW(SIN((34.8149006*PI()/180-lat*PI()/180)/2),2)+
-	    COS(34.8149006*PI()/180)*COS(lat*PI()/180)*POW(SIN((113.568114*PI()/180- 
-	    lon*PI()/180)/2),2)))*1000) AS distance , IFNULL(s.freenum,0) as freenum,a.id,a.`name`
-		FROM hd_area a
-		LEFT JOIN 
-		(SELECT ap.aid,
-		COUNT(CASE WHEN ap.port_status = 1 THEN 1 END) as freenum 
-		FROM hd_allportstatus ap GROUP BY ap.aid) s 
-		on s.aid = a.id
-		HAVING distance &lt;= #{distance} 
-		<if test="distanceSort == 1">
-			order by distance 
-		</if>
-		<if test="startnum != null">
-		 	LIMIT #{startnum}, 10
-		</if>
-	</select>
-	
 </mapper>
 
 

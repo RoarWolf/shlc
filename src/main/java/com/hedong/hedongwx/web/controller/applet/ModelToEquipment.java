@@ -1,8 +1,5 @@
 package com.hedong.hedongwx.web.controller.applet;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -14,7 +11,6 @@ import com.hedong.hedongwx.entity.AllPortStatus;
 import com.hedong.hedongwx.service.AllPortStatusService;
 import com.hedong.hedongwx.service.EquipmentService;
 import com.hedong.hedongwx.utils.CommUtil;
-import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.WolfHttpRequest;
 
 /**
@@ -90,7 +86,7 @@ public class ModelToEquipment {
 	@PostMapping("/cancelyuyue")
 	public Object cancelyuyue(String devicenum, Integer port) {
 		
-		SendMsgUtil.send_0x1D(devicenum, port.byteValue());
+//		SendMsgUtil.send_0x1D(devicenum, port.byteValue());
 		return CommUtil.responseBuildInfo(1000, "取消成功", null);
 	}
 	
@@ -127,7 +123,7 @@ public class ModelToEquipment {
 	 */
 	@PostMapping("/serIpaddr")
 	public Object stopCharge(String devicenum, String serverIP, Integer serverPort) {
-		SendMsgUtil.send_0x35(devicenum, serverIP, serverPort.shortValue());
+//		SendMsgUtil.send_0x35(devicenum, serverIP, serverPort.shortValue());
 		return null;
 	}
 	

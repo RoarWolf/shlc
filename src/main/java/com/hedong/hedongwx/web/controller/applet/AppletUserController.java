@@ -4,13 +4,9 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,23 +21,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
-import com.hedong.hedongwx.entity.ChargeRecord;
-import com.hedong.hedongwx.entity.Equipment;
-import com.hedong.hedongwx.entity.MerchantDetail;
-import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.service.AreaService;
 import com.hedong.hedongwx.service.ChargeRecordService;
+import com.hedong.hedongwx.service.DistrictService;
 import com.hedong.hedongwx.service.GeneralDetailService;
 import com.hedong.hedongwx.service.UserService;
-import com.hedong.hedongwx.thread.Server;
 import com.hedong.hedongwx.utils.CommUtil;
-import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.JedisUtils;
 import com.hedong.hedongwx.utils.SMSMobileSendUtil;
-import com.hedong.hedongwx.utils.SendMsgUtil;
-import com.hedong.hedongwx.utils.StringUtil;
-import com.hedong.hedongwx.utils.WolfHttpRequest;
 import com.hedong.hedongwx.utils.XMLUtil;
 
 /**
@@ -67,6 +55,8 @@ public class AppletUserController {
 	@Autowired
 	private HttpServletResponse response;
 	public static Map<String, Long> orderMap = new HashMap<>();
+	@Autowired
+	public DistrictService districtService;
 
 	/**
 	 * 获取用户openid
@@ -283,6 +273,15 @@ public class AppletUserController {
 		map.remove("timeInfo");
 		map.put("timeInfo", timeInfoList);
 		return CommUtil.responseBuildInfo(1000, "获取成功", map);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/queryDistrictinfo")
+	public Object queryDistrictinfo() {
+		return districtService.selectDistrict();
 	}
 	
 }

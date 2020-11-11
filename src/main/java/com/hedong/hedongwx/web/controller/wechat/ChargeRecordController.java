@@ -58,7 +58,6 @@ import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.DisposeUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.JedisUtils;
-import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.StringUtil;
 import com.hedong.hedongwx.utils.TempMsgUtil;
 import com.hedong.hedongwx.utils.WXPayConfigImpl;

@@ -23,7 +23,6 @@ import com.hedong.hedongwx.service.TemplateService;
 import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.utils.AppletUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
-import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.WeiXinConfigParam;
 import com.hedong.hedongwx.utils.WeixinUtil;
 import com.hedong.hedongwx.utils.XMLUtil;

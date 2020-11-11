@@ -450,4 +450,24 @@ public class OrderDataController {
 		}
 		return JSON.toJSONString(result);
 	}
+	
+	/**
+	 * 结束订单
+	 */
+	@RequestMapping("/stopCharging")
+	@ResponseBody
+    public Object stopCharging(HttpServletRequest request, HttpServletResponse response) {
+		Object result = null;
+		if(JedisUtils.get("admin")==null){
+			result = CommUtil.responseBuild(901, "session缓存失效", "");
+		}else{
+			String ordernum = request.getParameter("ordernum");
+			if (ordernum != null && !"".equals(ordernum)) {
+				result =  chargeRecordService.stopChargeRecord(ordernum, 0.0, 0.0, 0, 0);
+			} else {
+				result = CommUtil.responseBuild(203, "参数传递异常", "");
+			}
+		}
+		return JSON.toJSON(result);
+	}
 }

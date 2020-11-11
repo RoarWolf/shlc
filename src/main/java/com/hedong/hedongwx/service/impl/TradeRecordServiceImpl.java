@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.hedong.hedongwx.config.CommonConfig;
 import com.hedong.hedongwx.dao.AreaDao;
@@ -48,7 +49,6 @@ import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.utils.CommUtil;
 import com.hedong.hedongwx.utils.HttpRequest;
 import com.hedong.hedongwx.utils.PageUtils;
-import com.hedong.hedongwx.utils.SendMsgUtil;
 import com.hedong.hedongwx.utils.StringUtil;
 import com.hedong.hedongwx.utils.WeiXinConfigParam;
 import com.hedong.hedongwx.utils.yinlian.SignUtils;
