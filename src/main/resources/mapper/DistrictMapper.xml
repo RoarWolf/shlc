@@ -3,7 +3,7 @@
 <mapper namespace="com.hedong.hedongwx.dao.DistrictDao">
 	
 	<select id="selectDistrict" resultType="java.util.Map">
-		SELECT fristPinyin(district_name) as nameindex, district_name  FROM hd_district WHERE type = 2  ORDER BY nameindex asc
+		SELECT fristPinyin(name) as nameindex, name  FROM hd_district WHERE level_type = 2  ORDER BY nameindex asc
 	</select>
 	
 </mapper>

@@ -1,53 +1,153 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hedong.mapper.HdMeruserMapper" >
-  <insert id="insertMeruser" parameterType="com.hedong.hedongwx.entity.Meruser" >
-    insert into hd_meruser
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="uid != null" >
-        uid,
-      </if>
-      <if test="phonenum != null" >
-        phonenum,
-      </if>
-      <if test="enable != null" >
-        enable,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="uid != null" >
-        #{uid,jdbcType=INTEGER},
-      </if>
-      <if test="phonenum != null" >
-        #{phonenum,jdbcType=VARCHAR},
-      </if>
-      <if test="enable != null" >
-        #{enable,jdbcType=TINYINT},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateMeruser" parameterType="com.hedong.hedongwx.entity.Meruser" >
-    update hd_meruser
-    <set >
-      <if test="uid != null" >
-        uid = #{uid,jdbcType=INTEGER},
-      </if>
-      <if test="phonenum != null" >
-        phonenum = #{phonenum,jdbcType=VARCHAR},
-      </if>
-      <if test="enable != null" >
-        enable = #{enable,jdbcType=TINYINT},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+<mapper namespace="com.hedong.hedongwx.dao.MeruserDao">
+	<insert id="insertMeruser" parameterType="com.hedong.hedongwx.entity.Meruser">
+		insert into hd_meruser
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uid != null">
+				uid,
+			</if>
+			<if test="phonenum != null">
+				phonenum,
+			</if>
+			<if test="enabled != null">
+				enabled,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="province != null">
+				province,
+			</if>
+			<if test="city != null">
+				city,
+			</if>
+			<if test="country != null">
+				country,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uid != null">
+				#{uid,jdbcType=INTEGER},
+			</if>
+			<if test="phonenum != null">
+				#{phonenum,jdbcType=VARCHAR},
+			</if>
+			<if test="enabled != null">
+				#{enabled},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="province != null">
+				#{province},
+			</if>
+			<if test="city != null">
+				#{city},
+			</if>
+			<if test="country != null">
+				#{country},
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="updateMeruser" parameterType="com.hedong.hedongwx.entity.Meruser">
+		update hd_meruser
+		<set>
+			<if test="uid != null">
+				uid = #{uid,jdbcType=INTEGER},
+			</if>
+			<if test="phonenum != null">
+				phonenum = #{phonenum,jdbcType=VARCHAR},
+			</if>
+			<if test="enabled != null">
+				enabled = #{enabled,jdbcType=TINYINT},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="province != null">
+				province = #{province},
+			</if>
+			<if test="city != null">
+				city = #{city},
+			</if>
+			<if test="country != null">
+				country = #{country},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="selectTotalnum" parameterType="com.hedong.hedongwx.entity.Meruser" resultType="java.lang.Integer">
+		select count(1)
+		from hd_meruser mu
+		LEFT JOIN hd_user u on u.id = mu.uid
+		LEFT JOIN hd_district da on da.id = mu.province
+		LEFT JOIN hd_district db on db.id = mu.city
+		LEFT JOIN hd_district dc on dc.id = mu.country
+		<where>
+			<if test="phonenum != null and phonenum != ''">
+				and mu.phonenum like '%${phonenum}%'
+			</if>
+			<if test="username != null and username != ''">
+				and u.username like '%${username}%'
+			</if>
+			<if test="enabled != null">
+				and mu.enabled = #{enabled}
+			</if>
+			<if test="realname != null and realname != ''">
+				and u.realname like '%${realname}%'
+			</if>
+			<if test="province != null">
+				and da.id = #{province}
+			</if>
+			<if test="city != null">
+				and db.id = #{city}
+			</if>
+			<if test="country != null">
+				and dc.id = #{country}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectMeruserList" resultType="com.hedong.hedongwx.entity.Meruser" parameterType="com.hedong.hedongwx.entity.Meruser">
+		select 
+		mu.id,mu.phonenum,mu.`enabled`,mu.uid,mu.create_time,u.username,u.realname,
+		da.`name` as provincename, db.`name` as cityname, dc.`name` as countryname,
+		mu.total_earn,mu.now_earn
+		from hd_meruser mu
+		LEFT JOIN hd_user u on u.id = mu.uid
+		LEFT JOIN hd_district da on da.id = mu.province
+		LEFT JOIN hd_district db on db.id = mu.city
+		LEFT JOIN hd_district dc on dc.id = mu.country
+		<where>
+			<if test="phonenum != null and phonenum != ''">
+				and mu.phonenum like '%${phonenum}%'
+			</if>
+			<if test="username != null and username != ''">
+				and u.username like '%${username}%'
+			</if>
+			<if test="enabled != null">
+				and mu.enabled = #{enabled}
+			</if>
+			<if test="realname != null and realname != ''">
+				and u.realname like '%${realname}%'
+			</if>
+			<if test="province != null">
+				and da.id = #{province}
+			</if>
+			<if test="city != null">
+				and db.id = #{city}
+			</if>
+			<if test="country != null">
+				and dc.id = #{country}
+			</if>
+		</where>
+		limit #{startindex},10
+	</select>
+	
+	<select id="selectMeruserByPhonenum" resultType="java.lang.Integer">
+		select id from hd_meruser where phonenum = #{phonenum}
+	</select>
 </mapper>

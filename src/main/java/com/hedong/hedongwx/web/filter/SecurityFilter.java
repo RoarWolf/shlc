@@ -62,7 +62,7 @@ public class SecurityFilter implements Filter {
 					(url.indexOf("/dist") != -1) || (url.indexOf("/login") != -1)) {//url包含“/allow”
 				chain.doFilter(request, response);
 				return;
-			}else if ((url.indexOf("/pc") != -1)) {//url包含“/pc”
+			}else if ((url.indexOf("/pc") != -1) || (url.indexOf("/web") != -1)) {//url包含“/pc”
 				User admin = (User) req.getSession().getAttribute("admin");
 				if ( admin !=null ) {//直接运行
 					chain.doFilter(request, response);
@@ -252,6 +252,8 @@ public class SecurityFilter implements Filter {
 			return true;
 		}else if(url.indexOf("/upload")!=-1){
 			return true;
+		}else if(url.indexOf("/web")!=-1){
+			return true;
 		}
 		else {
 			return false;
@@ -276,6 +278,8 @@ public class SecurityFilter implements Filter {
 		} else if ((url.indexOf("/pcadminlogin") != -1)) {
 			return true;
 		} else if ((url.indexOf("/captcha") != -1)) {
+			return true;
+		}  else if ((url.indexOf("/web") != -1)) {
 			return true;
 		}  else {
 			return false;
