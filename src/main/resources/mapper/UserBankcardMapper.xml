@@ -120,5 +120,9 @@
 	   		 ORDER BY u.create_time 
 	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
 	</select>
+	
+	<select id="checkBankcardExist" resultType="java.lang.Integer">
+		select id from hd_user_bankcard where bankcardnum = #{bankcardnum}
+	</select>
 
 </mapper>

@@ -40,4 +40,6 @@ public interface UserBankcardService {
 	 * @return
 	 */
 	int deleteUserBankcardByid(Integer id);
+	
+	boolean checkBankcardExist(String bankcardnum);
 }

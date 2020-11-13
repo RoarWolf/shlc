@@ -52,4 +52,6 @@ public interface UserBankcardDao {
 	 * 创建时间：   2019年7月6日 下午4:54:01 
 	 */
 	List<Map<String, Object>> selectUserBankinfo(Parameters parame);
+	
+	Integer checkBankcardExist(@Param("bankcardnum")String bankcardnum);
 }

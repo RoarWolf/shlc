@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hedong.hedongwx.dao.UserBankcardDao;
+import com.hedong.hedongwx.dao.UserDao;
 import com.hedong.hedongwx.entity.UserBankcard;
 import com.hedong.hedongwx.service.UserBankcardService;
 
@@ -38,6 +39,16 @@ public class UserBankcardServiceImpl implements UserBankcardService {
 	@Override
 	public int deleteUserBankcardByid(Integer id) {
 		return userBankcardDao.deleteUserBankcardByid(id);
+	}
+
+	@Override
+	public boolean checkBankcardExist(String bankcardnum) {
+		Integer exist = userBankcardDao.checkBankcardExist(bankcardnum);
+		if (exist == null) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 }

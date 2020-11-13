@@ -2,10 +2,14 @@ package com.hedong.hedongwx.entity;
 
 import java.util.Date;
 
+import lombok.Data;
+
 /**
  * @author  origin
  * 创建时间：   2019年5月25日 上午9:56:02  
  */
+
+@Data
 public class Operaterecord {
 	
 	/** 操作表自增id */
@@ -20,96 +24,16 @@ public class Operaterecord {
 	/** 操作对象id */
 	private Integer objid;
 	
-	/** 类型 */
+	/** 类型 0预约中、1成功、2失败*/
 	private Integer type;
 	
-	/**  */
+	/** 来源 1、申请桩主、2、佣金充值 */
 	private Integer source;
 	
 	/** 备注 */
 	private String remark;
 	
-	/** 备用字段 */
-	private String common;
-	
 	/** 操作时间 */
-	private Date operateTime;
+	private Date createTime;
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Integer getOpeid() {
-		return opeid;
-	}
-
-	public void setOpeid(Integer opeid) {
-		this.opeid = opeid;
-	}
-
-	public Integer getObjid() {
-		return objid;
-	}
-
-	public void setObjid(Integer objid) {
-		this.objid = objid;
-	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public Integer getSource() {
-		return source;
-	}
-
-	public void setSource(Integer source) {
-		this.source = source;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-
-	public String getCommon() {
-		return common;
-	}
-
-	public void setCommon(String common) {
-		this.common = common;
-	}
-
-	public Date getOperateTime() {
-		return operateTime;
-	}
-
-	public void setOperateTime(Date operateTime) {
-		this.operateTime = operateTime;
-	}
-	
-	
-	
-	
-	
-	
 }

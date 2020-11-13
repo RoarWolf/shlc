@@ -25,6 +25,9 @@
 			<if test="country != null">
 				country,
 			</if>
+			<if test="areaname != null">
+				areaname,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -47,6 +50,9 @@
 			</if>
 			<if test="country != null">
 				#{country},
+			</if>
+			<if test="areaname != null">
+				#{areaname},
 			</if>
 		</trim>
 	</insert>
@@ -75,17 +81,24 @@
 			<if test="country != null">
 				country = #{country},
 			</if>
+			<if test="areaname != null">
+				areaname = #{areaname},
+			</if>
 		</set>
-		where id = #{id,jdbcType=INTEGER}
+		<where>
+			<if test="id != null">
+				and id = #{id,jdbcType=INTEGER},
+			</if>
+			<if test="uid != null">
+				and uid = #{uid,jdbcType=INTEGER},
+			</if>
+		</where>
 	</update>
 	
 	<select id="selectTotalnum" parameterType="com.hedong.hedongwx.entity.Meruser" resultType="java.lang.Integer">
 		select count(1)
 		from hd_meruser mu
 		LEFT JOIN hd_user u on u.id = mu.uid
-		LEFT JOIN hd_district da on da.id = mu.province
-		LEFT JOIN hd_district db on db.id = mu.city
-		LEFT JOIN hd_district dc on dc.id = mu.country
 		<where>
 			<if test="phonenum != null and phonenum != ''">
 				and mu.phonenum like '%${phonenum}%'
@@ -100,13 +113,13 @@
 				and u.realname like '%${realname}%'
 			</if>
 			<if test="province != null">
-				and da.id = #{province}
+				and mu.province = #{province}
 			</if>
 			<if test="city != null">
-				and db.id = #{city}
+				and mu.city = #{city}
 			</if>
 			<if test="country != null">
-				and dc.id = #{country}
+				and mu.country = #{country}
 			</if>
 		</where>
 	</select>
@@ -149,5 +162,11 @@
 	
 	<select id="selectMeruserByPhonenum" resultType="java.lang.Integer">
 		select id from hd_meruser where phonenum = #{phonenum}
+	</select>
+	
+	<select id="selectMeruserByUid" resultType="com.hedong.hedongwx.entity.Meruser">
+		select 
+		id,phonenum,`enabled`,uid,total_earn,now_earn from hd_meruser
+		where uid = #{uid}
 	</select>
 </mapper>

@@ -23,7 +23,7 @@ public class Meruser {
     private Double nowEarn;
 
     //是否可用
-    private Boolean enabled;
+    private Byte enabled;
     
     //省id
     private Integer province;
@@ -55,5 +55,7 @@ public class Meruser {
     private String realname;
     
     private Integer startindex;
+    
+    private String areaname;
 
 }

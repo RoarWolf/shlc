@@ -21,5 +21,7 @@ public interface MeruserDao {
 	
 	int selectTotalnum(Meruser meruser);
 	
-	int selectMeruserByPhonenum(@Param("phonenum") String phonenum);
+	Integer selectMeruserByPhonenum(@Param("phonenum") String phonenum);
+	
+	Meruser selectMeruserByUid(Integer uid);
 }
