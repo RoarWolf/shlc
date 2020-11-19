@@ -2,9 +2,12 @@ package com.hedong.hedongwx.entity;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Meruser {
 	
 	//表自增id
@@ -56,6 +59,10 @@ public class Meruser {
     
     private Integer startindex;
     
+    //省市区合名
     private String areaname;
+    
+    //详细地址
+    private String address;
 
 }

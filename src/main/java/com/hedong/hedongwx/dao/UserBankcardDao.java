@@ -54,4 +54,6 @@ public interface UserBankcardDao {
 	List<Map<String, Object>> selectUserBankinfo(Parameters parame);
 	
 	Integer checkBankcardExist(@Param("bankcardnum")String bankcardnum);
+	
+	Integer selectBankcardnumUid(@Param("bankcardnum")String bankcardnum);
 }

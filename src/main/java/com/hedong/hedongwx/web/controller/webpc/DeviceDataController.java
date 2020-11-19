@@ -796,5 +796,69 @@ public class DeviceDataController {
         }
 
     }
-
+    
+    /**
+     * @Author
+     * @Description添加设备关联
+     * @Date 2020/10/13 14:34
+     * @Param [id]
+     **/
+    @RequestMapping(value = "/addMeruserDevice")
+    @ResponseBody
+    public Object addMeruserDevice(UserEquipment userEquipment) {
+    	Object result = null;
+    	Map<String, Object> map = new HashMap<>();
+    	try {
+    		result = userEquipmentService.insertUserEquipment(userEquipment);
+    		return JSON.toJSON(result);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return CommUtil.responseBuildInfo(201, "查询失败", map);
+    	}
+    	
+    }
+    /**
+     * @Author
+     * @Description修改设备关联
+     * @Date 2020/10/13 14:34
+     * @Param [id]
+     **/
+    @RequestMapping(value = "/editMeruserDevice")
+    @ResponseBody
+    public Object editMeruserDevice(UserEquipment userEquipment) {
+    	Object result = null;
+    	Map<String, Object> map = new HashMap<>();
+    	try {
+    		result = userEquipmentService.updateUserEquipmentDevide(userEquipment);
+    		return JSON.toJSON(result);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return CommUtil.responseBuildInfo(201, "系统异常", map);
+    	}
+    	
+    }
+    /**
+     * @Author
+     * @Description删除设备关联
+     * @Date 2020/10/13 14:34
+     * @Param [id]
+     **/
+    @RequestMapping(value = "/removeMeruserDevice")
+    @ResponseBody
+    public Object removeMeruserDevice(UserEquipment userEquipment) {
+		return userEquipmentService.deleteUserEquipment(userEquipment);
+    }
+    
+    /**
+     * @Author
+     * @Description查询设备关联
+     * @Date 2020/10/13 14:34
+     * @Param [id]
+     **/
+    @RequestMapping(value = "/queryMeruserDevice")
+    @ResponseBody
+    public Object queryMeruserDevice(String equipmentCode) {
+    	return userEquipmentService.selectUserEquipmentlist(equipmentCode);
+    }
+    
 }

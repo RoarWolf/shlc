@@ -89,7 +89,7 @@ public class AppletUserController {
 	}
 	
 	/**
-	 * 通过手机号获取验证码
+	 * 通过验证码绑定手机号
 	 * @param code
 	 * @return
 	 */

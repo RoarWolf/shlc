@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.hedong.hedongwx.entity.Operaterecord;
 import com.hedong.hedongwx.entity.Parameters;
 
 /**
@@ -26,7 +27,7 @@ public interface OperateRecordDao {
 	void insertoperate(@Param("name")String name, @Param("opeid")Integer opeid, @Param("objid")Integer objid,
 			@Param("type")Integer type, @Param("source")Integer source, @Param("remark")String remark, @Param("common")String common);
 	
-	List<Map<String,Object>> userOperateRecordlist(@Param("opename")String opename,
+	List<Operaterecord> userOperateRecordlist(@Param("opename")String opename,
 			@Param("objname")String objname,@Param("type")Integer type,@Param("source")Integer source,
 			@Param("startTime")String startTime,@Param("endTime")String endTime,
 			@Param("startindex")Integer startindex,@Param("pages")Integer pages);

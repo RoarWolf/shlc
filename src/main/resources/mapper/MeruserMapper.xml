@@ -28,6 +28,9 @@
 			<if test="areaname != null">
 				areaname,
 			</if>
+			<if test="address != null">
+				address,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -53,6 +56,9 @@
 			</if>
 			<if test="areaname != null">
 				#{areaname},
+			</if>
+			<if test="address != null">
+				#{address},
 			</if>
 		</trim>
 	</insert>
@@ -84,13 +90,16 @@
 			<if test="areaname != null">
 				areaname = #{areaname},
 			</if>
+			<if test="address != null">
+				address = #{areaname},
+			</if>
 		</set>
 		<where>
 			<if test="id != null">
-				and id = #{id,jdbcType=INTEGER},
+				and id = #{id,jdbcType=INTEGER}
 			</if>
 			<if test="uid != null">
-				and uid = #{uid,jdbcType=INTEGER},
+				and uid = #{uid,jdbcType=INTEGER}
 			</if>
 		</where>
 	</update>
@@ -127,13 +136,9 @@
 	<select id="selectMeruserList" resultType="com.hedong.hedongwx.entity.Meruser" parameterType="com.hedong.hedongwx.entity.Meruser">
 		select 
 		mu.id,mu.phonenum,mu.`enabled`,mu.uid,mu.create_time,u.username,u.realname,
-		da.`name` as provincename, db.`name` as cityname, dc.`name` as countryname,
-		mu.total_earn,mu.now_earn
+		mu.total_earn,mu.now_earn,mu.areaname,mu.province,mu.city,mu.country
 		from hd_meruser mu
 		LEFT JOIN hd_user u on u.id = mu.uid
-		LEFT JOIN hd_district da on da.id = mu.province
-		LEFT JOIN hd_district db on db.id = mu.city
-		LEFT JOIN hd_district dc on dc.id = mu.country
 		<where>
 			<if test="phonenum != null and phonenum != ''">
 				and mu.phonenum like '%${phonenum}%'
@@ -148,13 +153,13 @@
 				and u.realname like '%${realname}%'
 			</if>
 			<if test="province != null">
-				and da.id = #{province}
+				and mu.province = #{province}
 			</if>
 			<if test="city != null">
-				and db.id = #{city}
+				and mu.city = #{city}
 			</if>
 			<if test="country != null">
-				and dc.id = #{country}
+				and mu.country = #{country}
 			</if>
 		</where>
 		limit #{startindex},10
@@ -166,7 +171,64 @@
 	
 	<select id="selectMeruserByUid" resultType="com.hedong.hedongwx.entity.Meruser">
 		select 
-		id,phonenum,`enabled`,uid,total_earn,now_earn from hd_meruser
+		id,uid, phonenum,`enabled`,uid,total_earn,now_earn, areaname, address from hd_meruser
 		where uid = #{uid}
+	</select>
+	
+	<delete id="deleteMeruserByid">
+		delete from hd_meruser where id = #{id}
+	</delete>
+	
+	<update id="updateMerUserEarn">
+		update hd_meruser set 
+			<if test="type == 1">
+				now_earn = now_earn + #{money} 
+			</if>
+			<if test="type == 0">
+				now_earn = now_earn - #{money} 
+			</if>
+		where uid = #{uid}
+	</update>
+	
+	<select id="selectMerCollect" resultType="java.util.Map">
+		SELECT m.uid,m.total_earn,
+		IFNULL(mall.charge_earn,0.0) all_charge_earn,IFNULL(mall.advertise_earn,0.0) all_advertise_earn,
+		IFNULL(myest.charge_earn,0.0) yest_charge_earn,IFNULL(myest.advertise_earn,0.0) yest_advertise_earn,
+		IFNULL(mseven.charge_earn,0.0) seven_charge_earn,IFNULL(mseven.advertise_earn,0.0) seven_advertise_earn
+		from hd_meruser m
+		LEFT JOIN
+		(SELECT sum(charge_earn) as charge_earn, sum(advertise_earn) as advertise_earn, uid
+		from hd_mer_earncollect where uid = #{uid}) mall on mall.uid = m.uid
+		LEFT JOIN
+		(SELECT charge_earn, advertise_earn, uid
+		from hd_mer_earncollect where DATEDIFF(NOW(), create_time) = -1) myest on myest.uid = m.uid
+		LEFT JOIN
+		(SELECT charge_earn, advertise_earn, uid
+		from hd_mer_earncollect where YEARWEEK(date_format(create_time,'%Y-%m-%d')) = YEARWEEK(now())-1) mseven on mseven.uid = m.uid
+		where m.uid = #{uid}
+	</select>
+	
+	<select id="selectMerCollectList" resultType="java.util.Map">
+		SELECT charge_earn, advertise_earn,create_time
+		from hd_mer_earncollect where uid = #{uid} and create_time >= #{createTime}
+	</select>
+	
+	<select id="selectMerTotalEarn" resultType="java.util.Map">
+		SELECT 
+		IFNULL(SUM(CASE WHEN paysource = 1 THEN money END),0.0) as  allchargemoney,
+		IFNULL(SUM(CASE WHEN paysource = 1 THEN advertise_money END),0.0) as  alladvertisemoney,
+		IFNULL(count(CASE WHEN paysource = 1 THEN 1 END),0) as  totalnum,
+		IFNULL(SUM(CASE WHEN paysource = 4 and `status` = 1 THEN money END),0.0) as  allwithdrawmoney,
+		IFNULL(SUM(CASE WHEN paysource = 4 and `status` = 2 THEN money END),0.0) as  allrefundwithdrawmoney
+	 	from hd_mer_detail where merid = #{uid} and create_time BETWEEN #{startTime} AND #{endTime}
+	</select>
+	
+	<insert id="insertMerCollect">
+		INSERT into hd_mer_earncollect (uid,charge_earn,advertise_earn,ordertotal,withdraw_earn,create_time)
+		VALUES (#{uid},#{charge_earn},#{advertise_earn},#{ordertotal},#{withdraw_earn},NOW())
+	</insert>
+	
+	<select id="selectNormalMeruser" resultType="java.lang.Integer">
+		select uid from hd_meruser where enabled = 1 and uid != 0
 	</select>
 </mapper>

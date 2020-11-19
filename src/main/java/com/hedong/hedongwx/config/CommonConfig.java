@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hedong.hedongwx.entity.Admin;
 import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.utils.MD5Util;
 
@@ -55,6 +56,14 @@ public class CommonConfig {
 		User admin =  new User();
 		if (request != null) {  
 			admin = (User) request.getSession().getAttribute("admin");
+		}
+		return admin;
+	} 
+	
+	public static Admin getAdminRequest(HttpServletRequest request) {
+		Admin admin =  new Admin();
+		if (request != null) {  
+			admin = (Admin) request.getSession().getAttribute("admin");
 		}
 		return admin;
 	} 

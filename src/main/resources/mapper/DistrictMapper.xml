@@ -9,10 +9,10 @@
 	<select id="selectDistrictByParam" parameterType="com.hedong.hedongwx.entity.District" resultType="com.hedong.hedongwx.entity.District">
 		select id,`name` from hd_district
 		<where>
-			<if test="levelType">
+			<if test="levelType != null">
 				level_type = #{levelType}
 			</if>
-			<if test="parentId">
+			<if test="parentId != null">
 				parent_id = #{parentId}
 			</if>
 		</where>

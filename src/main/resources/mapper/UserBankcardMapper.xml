@@ -87,7 +87,14 @@
 				rate = #{rate,jdbcType=INTEGER},
 			</if>
 		</set>
-		where id = #{id,jdbcType=INTEGER}
+		<where>
+			<if test="id != null">
+				id = #{id},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId},
+			</if>
+		</where>
 	</update>
 	
 	<select id="selectUserBankcardByUserid" resultType="com.hedong.hedongwx.entity.UserBankcard">
@@ -123,6 +130,10 @@
 	
 	<select id="checkBankcardExist" resultType="java.lang.Integer">
 		select id from hd_user_bankcard where bankcardnum = #{bankcardnum}
+	</select>
+	
+	<select id="selectBankcardnumUid" resultType="java.lang.Integer">
+		select uid from hd_user_bankcard where bankcardnum = #{bankcardnum}
 	</select>
 
 </mapper>

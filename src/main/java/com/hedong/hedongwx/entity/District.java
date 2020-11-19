@@ -1,5 +1,7 @@
 package com.hedong.hedongwx.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 
 /**
@@ -9,6 +11,7 @@ import lombok.Data;
 */
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class District {
 	
 	//表自增id

@@ -3,6 +3,8 @@ package com.hedong.hedongwx.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.hedong.hedongwx.entity.MerchantDetail;
 import com.hedong.hedongwx.entity.Parameters;
 
@@ -11,6 +13,11 @@ public interface MerchantDetailDao {
 	int insertMerEarningDetail(MerchantDetail merchantDetail);
 	
 	List<MerchantDetail> selectMerDetailListByMerid(Integer merid);
+	
+	List<MerchantDetail> selectMerDetailListByMeridLimit(@Param("merid")Integer merid, @Param("startnum")Integer startnum, @Param("startTime")String startTime);
+	
+	List<MerchantDetail> selectEarnListByMeridLimit(@Param("merid")Integer merid, 
+			@Param("startnum")Integer startnum, @Param("startTime")String startTime, @Param("endTime")String endTime);
 
 	List<Map<String, Object>> selecearningsdetail(Parameters parameter);
 	

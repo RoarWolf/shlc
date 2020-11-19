@@ -2,6 +2,9 @@ package com.hedong.hedongwx.entity;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 
 /**
@@ -10,6 +13,7 @@ import lombok.Data;
  */
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Operaterecord {
 	
 	/** 操作表自增id */
@@ -34,6 +38,13 @@ public class Operaterecord {
 	private String remark;
 	
 	/** 操作时间 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date createTime;
+	
+	/** 操作人 */
+	private String opename;
+	
+	/** 操作对象 */
+	private String objname;
 
 }

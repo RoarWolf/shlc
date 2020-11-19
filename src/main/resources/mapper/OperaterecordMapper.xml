@@ -4,8 +4,8 @@
 	
 	<!-- sql插入 -->
 	<insert id="insertoperate" parameterType="com.hedong.hedongwx.entity.Operaterecord">
-		INSERT INTO hd_operaterecord (name,opeid,objid,type,source,remark,common,operate_time) VALUES 
-		(#{name},#{opeid},#{objid},#{type},#{source},#{remark},#{common},now())
+		INSERT INTO hd_operaterecord (name,opeid,objid,type,source,remark,create_time) VALUES 
+		(#{name},#{opeid},#{objid},#{type},#{source},#{remark},now())
 	</insert>
 	
 	<!-- 实体类插入 -->
@@ -18,8 +18,7 @@
 			<if test="type != null"> type, </if>
 			<if test="source != null"> source, </if>
 			<if test="remark != null"> remark, </if>
-			<if test="common != null"> common, </if>
-			<if test="operateTime != null"> operate_time, </if>
+			<if test="objid != null"> create_time, </if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="name != null"> #{name,jdbcType=VARCHAR}, </if>
@@ -29,32 +28,82 @@
 			<if test="source != null"> #{source,jdbcType=TINYINT}, </if>
 			<if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
 			<if test="common != null"> #{common,jdbcType=VARCHAR}, </if>
-			<if test="operateTime != null"> #{now()}, </if>
+			<if test="objid != null"> #{now()}, </if>
 		</trim>
 	</insert>
 	
 	<!-- 条件查询 -->
 	<select id="userOperateRecord" parameterType="com.hedong.hedongwx.entity.Parameters" resultType="java.util.Map">
-		SELECT o.*,u.username AS openick,u.realname AS opename,h.username AS objnick,h.realname AS objname 
+		SELECT 
+		o.*,u.username AS openick,u.realname AS opename,h.username AS objnick,
+		h.realname AS objname 
 		FROM hd_operaterecord o LEFT JOIN hd_user u ON o.opeid = u.id LEFT JOIN hd_user h ON o.objid = h.id
 		<where>
 			<if test="uid != null"> AND o.opeid = #{uid} </if>
-		<!-- 	<if test="uid != null"> AND o.objid = #{uid} </if> -->
 			<if test="dealer != null"> AND u.username LIKE '%${dealer}%' </if>
 			<if test="nickname != null"> AND h.username LIKE '%${nickname}%' </if>
 			<if test="realname != null"> AND o.name LIKE '%${realname}%' </if>
 			<if test="type != null"> AND o.type = #{type} </if>
 			<if test="source != null"> AND o.source = #{source} </if>
 			<if test="remark != null"> AND o.remark = #{remark} </if>
-			<if test="number != null"> AND o.common = #{number} </if>
 			<if test="startTime != null"> AND o.operate_time &gt;= #{startTime} </if>
 			<if test="endTime != null"> AND o.operate_time &lt;= #{endTime} </if>
 		</where> 
-		  ORDER BY o.operate_time DESC
+		  ORDER BY o.create_time DESC
 	    <if test="startnumber!=null">  LIMIT #{startnumber},#{pages} </if>
 	</select>
 	
+	<update id="updateOperaterecord">
+		update hd_operaterecord
+		<set>
+			<if test="opeid != null">
+				opeid = #{opeid},
+			</if>
+			<if test="type != null">
+				type = #{type},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
 	
+	<!-- 条件查询 -->
+	<select id="userOperateRecordlist" resultType="com.hedong.hedongwx.entity.Operaterecord">
+		SELECT o.*,a.`name` as opename, u.username as objname
+		FROM hd_operaterecord o
+		LEFT JOIN hd_admin a on a.id = o.opeid
+		LEFT JOIN hd_user u on u.id = o.objid
+		<where>
+			<if test="opename != null and opename != ''"> AND a.`name` LIKE '%${opename}%' </if>
+			<if test="objname != null and objname != ''"> AND u.username LIKE '%${objname}%' </if>
+			<if test="type != null"> AND o.type = #{type} </if>
+			<if test="source != null"> AND o.source = #{source} </if>
+			<if test="startTime != null and startTime != ''"> AND o.create_time &gt;= #{startTime} </if>
+			<if test="endTime != null and endTime != ''"> AND o.create_time &lt;= #{endTime} </if>
+		</where> 
+		  ORDER BY o.create_time DESC
+	    <if test="startindex != null">  LIMIT #{startindex},#{pages} </if>
+	</select>
+	
+	<!-- 条件查询 -->
+	<select id="operateRecordTotalnum" resultType="java.lang.Integer">
+		SELECT 
+		count(1)
+		FROM hd_operaterecord o
+		LEFT JOIN hd_admin a on a.id = o.opeid
+		LEFT JOIN hd_user u on u.id = o.objid
+		<where>
+			<if test="opename != null"> AND a.`name` LIKE '%${opename}%' </if>
+			<if test="objname != null"> AND u.username LIKE '%${objname}%' </if>
+			<if test="type != null"> AND o.type = #{type} </if>
+			<if test="source != null"> AND o.source = #{source} </if>
+			<if test="startTime != null"> AND o.create_time &gt;= #{startTime} </if>
+			<if test="endTime != null"> AND o.create_time &lt;= #{endTime} </if>
+		</where> 
+	</select>
+	
+	<select id="selectOperrecordById" resultType="java.lang.Integer">
+		select objid from hd_operaterecord where id = #{id}
+	</select>
 	
 	
 	

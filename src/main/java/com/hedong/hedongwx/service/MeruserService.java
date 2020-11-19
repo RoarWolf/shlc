@@ -35,7 +35,8 @@ public interface MeruserService {
 	 */
 	Map<String,Object> insertMeruserAndIdcard(Integer uid, Integer province, Integer city,
 			Integer country, String realname, String idcardnum, String cardimgFront, 
-			String cardimgBack, String areaname);
+			String cardimgBack, String areaname, String address, String bankcardnum,
+			String bankname);
 	
 	/**
 	 * 添加银行卡
@@ -78,5 +79,40 @@ public interface MeruserService {
 	 */
 	Map<String, Object> updateOperaterecord(Integer id,Integer opeid, Integer type);
 	
+	/**
+	 * 查询桩主所有银行卡
+	 * @param uid
+	 * @param type
+	 * @return
+	 */
 	Map<String, Object> selectUserBankcardlist(Integer uid,Integer type);
+	
+	/**
+	 * 查询桩主余额明细
+	 * @param merid
+	 * @return
+	 */
+	Map<String, Object> selectMerEarnDetaillist(Integer merid, Integer startnum, Integer datetype);
+	
+	/**
+	 * 提现
+	 * @param bankcardid
+	 * @param money
+	 * @param uid
+	 * @return
+	 */
+	public Map<String, Object> withdrawaccess(Integer bankcardid, Double money, Integer uid);
+	
+	public Map<String, Object> selectEarnWallet(Integer uid);
+	
+	/**
+	 * 查询桩主收益明细
+	 * @param uid
+	 * @param startnum
+	 * @return
+	 */
+	public Map<String, Object> selectMerEarnList(Integer uid,Integer startnum, String datetime);
+	
+	public void merCollect();
+	
 }

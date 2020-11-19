@@ -17,12 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hedong.hedongwx.config.CommonConfig;
+import com.hedong.hedongwx.dao.MeruserDao;
 import com.hedong.hedongwx.dao.WithdrawDao;
+import com.hedong.hedongwx.entity.Admin;
 import com.hedong.hedongwx.entity.MerchantDetail;
+import com.hedong.hedongwx.entity.Meruser;
 import com.hedong.hedongwx.entity.Parameters;
 import com.hedong.hedongwx.entity.User;
 import com.hedong.hedongwx.entity.Withdraw;
 import com.hedong.hedongwx.service.MerchantDetailService;
+import com.hedong.hedongwx.service.MeruserService;
 import com.hedong.hedongwx.service.UserService;
 import com.hedong.hedongwx.service.WithdrawService;
 import com.hedong.hedongwx.utils.CommUtil;
@@ -44,6 +48,8 @@ public class WithdrawServiceImpl implements WithdrawService {
 	private UserService userService;
 	@Autowired
 	private MerchantDetailService merchantDetailService;
+	@Autowired
+	private MeruserDao meruserDao;
 	@Autowired
 	private HttpServletRequest request;
 	private static Logger logger = LoggerFactory.getLogger(WithdrawServiceImpl.class);
@@ -258,10 +264,10 @@ public class WithdrawServiceImpl implements WithdrawService {
 			int numPerPage =  CommUtil.toInteger(maparam.get("numPerPage"));
 			int currentPage =  CommUtil.toInteger(maparam.get("currentPage"));
 			PageUtils<Parameters> page  = new PageUtils<>(numPerPage, currentPage);
-			User user = CommonConfig.getAdminReq(request);
+//			Admin user = CommonConfig.getAdminRequest(request);
 			Parameters parameters = new Parameters();
-			Integer rank = CommUtil.toInteger(user.getLevel());
-			if(!rank.equals(0)) parameters.setUid(user.getId());
+//			Integer rank = CommUtil.toInteger(user.getLevel());
+//			if(!rank.equals(0)) parameters.setUid(user.getId());
 			
 			String status = CommUtil.toString(maparam.get("status"));
 			parameters.setStatus(status);
@@ -329,37 +335,18 @@ public class WithdrawServiceImpl implements WithdrawService {
 			}else{
 //				money =  money == null ? CommUtil.toDouble(withdraw.getMoney()) : money;
 				Double money =  CommUtil.toDouble(withdraw.getMoney());
-				Double servicecharge = CommUtil.toDouble(withdraw.getServicecharge());
 				Date date = new Date();
 				withdraw.setStatus(status);
 				withdraw.setAccountTime(date);
 				withdrawDao.updateWithdraw(withdraw);
-				String bankcardnum = withdraw.getBankcardnum();
-				Double round = CommUtil.subBig(money, servicecharge)*100;
-//				double round = Math.round((money*100 - servicecharge*100)) + 0.0;					  
-				User user = userService.selectUserById(withdraw.getUserId());
-				String fistinfo = "";
-				String url = TempMsgUtil.TEMP_MSG_URL.replace("ACCESS_TOKEN", WeixinUtil.getBasicAccessToken());
-				if (status.equals(1)){
-					fistinfo = "提现已处理，将在近期到账，请注意查收";
-				}else if (status.equals(2)) {
-					fistinfo = "提现被拒绝，请联系管理员查询原因";
-					if (user != null) {
-						Double earnings = CommUtil.toDouble(user.getEarnings());
-						earnings =CommUtil.addBig(earnings, money);
-						user.setEarnings(earnings);
-						userService.updateUserById(user);
-						merchantDetailService.insertMerEarningDetail(user.getId(), money, earnings, withdraw.getWithdrawnum(), date, MerchantDetail.WITHDRAWSOURCE, 0, MerchantDetail.WITHDRAWFAIL);
+				Integer userId = withdraw.getUserId();
+				Meruser meruser = meruserDao.selectMeruserByUid(userId);
+				if (status.equals(2)) {
+					if (meruser != null) {
+						Double nowEarn = CommUtil.toDouble(meruser.getNowEarn());
+						meruserDao.updateMerUserEarn(1, money, userId);
+						merchantDetailService.insertMerEarningDetail(userId, money, nowEarn, withdraw.getWithdrawnum(), date, MerchantDetail.WITHDRAWSOURCE, 0, MerchantDetail.WITHDRAWFAIL);
 					}
-				}
-				try {
-					JSONObject jsonbj = TempMsgUtil.information2(user.getOpenid(), TempMsgUtil.TEMP_ID2, CommonConfig.ZIZHUCHARGE + "/checkOrderDetail?ordernum=" + withdraw.getWithdrawnum(), 
-							fistinfo, withdraw.getBankname() + "(" + bankcardnum.substring(bankcardnum.length()-4, bankcardnum.length()) + ")", round/100 + "", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date), "如有疑问，请尽快联系客服");
-					logger.info("输出jsonbj：   "+jsonbj);
-					TempMsgUtil.PostSendMsg(jsonbj, url);
-				} catch (Exception e) {
-					datamap.put("code", 406);
-					datamap.put("messgs", "推送消息失败");
 				}
 				return CommUtil.responseBuildInfo(200, "成功", datamap);
 			}

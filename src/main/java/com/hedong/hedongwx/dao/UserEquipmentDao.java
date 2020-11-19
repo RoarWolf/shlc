@@ -66,4 +66,33 @@ public interface UserEquipmentDao {
 	 */
 	List<Map<String, Object>> inquireAllmeridInfo();
 	
+	/**
+	 * 添加桩主和设备关联
+	 * @param userEquipment
+	 * @return
+	 */
+	int insertUserEquipment(UserEquipment userEquipment);
+	
+	/**
+	 * 修改分润占比
+	 * @param userEquipment
+	 * @return
+	 */
+	int updateUserEquipmentDevide(UserEquipment userEquipment);
+	
+	/**
+	 * 删除桩主和设备关联
+	 * @param userEquipment
+	 * @return
+	 */
+	int deleteUserEquipment(UserEquipment userEquipment);
+	
+	List<UserEquipment> getUserEquipmentDevideByCode(@Param("equipmentCode")String equipmentCode);
+	
+	UserEquipment getUserEquipmentDevideByCodeUserid(UserEquipment userEquipment);
+	
+	Double selectTotalDevideByCode(String equipmentCode);
+	
+	Double selectTotalDiviceByCodeDisuid(UserEquipment userEquipment);
+	
 }

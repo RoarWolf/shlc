@@ -44,4 +44,32 @@ public interface UserEquipmentService {
 	 * @return Object
 	 */
 	boolean subMerByCode(String code);
+	
+	/**
+	 * 添加桩主和设备关联
+	 * @param userEquipment
+	 * @return
+	 */
+	Map<String, Object> insertUserEquipment(UserEquipment userEquipment);
+	
+	/**
+	 * 修改分润占比
+	 * @param userEquipment
+	 * @return
+	 */
+	Map<String, Object> updateUserEquipmentDevide(UserEquipment userEquipment);
+	
+	/**
+	 * 删除桩主和设备关联
+	 * @param userEquipment
+	 * @return
+	 */
+	Map<String, Object> deleteUserEquipment(UserEquipment userEquipment);
+	
+	/**
+	 * 查询当前设备名下的所有桩主关联
+	 * @param devicenum
+	 * @return
+	 */
+	Map<String, Object> selectUserEquipmentlist(String devicenum);
 }

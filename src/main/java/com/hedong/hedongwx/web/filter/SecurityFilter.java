@@ -63,7 +63,7 @@ public class SecurityFilter implements Filter {
 				chain.doFilter(request, response);
 				return;
 			}else if ((url.indexOf("/pc") != -1) || (url.indexOf("/web") != -1)) {//url包含“/pc”
-				User admin = (User) req.getSession().getAttribute("admin");
+				Admin admin = (Admin) req.getSession().getAttribute("admin");
 				if ( admin !=null ) {//直接运行
 					chain.doFilter(request, response);
 					return;

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +23,7 @@ import com.hedong.hedongwx.utils.CommUtil;
 
 @RestController
 @RequestMapping("/applet/meruser")
+@EnableScheduling
 public class AppletMeruserController {
 	
 	@Autowired
@@ -29,14 +32,21 @@ public class AppletMeruserController {
 	private UserBankcardService userBankcardService;
 	@Autowired
 	private DistrictService districtService;
+	
+	@Scheduled(cron = "0 0 3 * * *")
+	public void merEverydayCollect() {
+		meruserService.merCollect();
+	}
 
 	@RequestMapping("/addMeruser")
 	public Object addMeruser(Integer userid, Integer province, Integer city,
 			Integer country, String realname, String idcardnum, String cardimgFront, 
-			String cardimgBack, String areaname) {
+			String cardimgBack, String areaname, String address, String bankcardnum,
+			String bankname) {
 		try {
-			return meruserService.insertMeruserAndIdcard(userid, province, city, country, realname, idcardnum, cardimgFront, cardimgBack, areaname);
+			return meruserService.insertMeruserAndIdcard(userid, province, city, country, realname, idcardnum, cardimgFront, cardimgBack, areaname,address,bankcardnum,bankname);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return CommUtil.responseBuildInfo(1001, "添加失败，系统异常", null);
 		}
 	}
@@ -82,4 +92,46 @@ public class AppletMeruserController {
 			return CommUtil.responseBuildInfo(1001, "添加失败，系统异常", null);
 		}
 	}
+	
+	@RequestMapping("/withdraw")
+	public Object withdraw(Integer bankcardid, Double money, Integer userid) {
+		try {
+			return meruserService.withdrawaccess(bankcardid, money, userid);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1001, "提现失败，系统异常", null);
+		}
+	}
+	
+	@RequestMapping("/queryMerCollect")
+	public Object queryMerCollect(Integer userid) {
+		try {
+			return meruserService.selectEarnWallet(userid);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1001, "查询失败，系统异常", null);
+		}
+	}
+	
+	@RequestMapping("/queryMerBalanceDetail")
+	public Object queryMerBalanceDetail(Integer userid, Integer startnum, Integer datetype) {
+		try {
+			return meruserService.selectMerEarnDetaillist(userid, startnum, datetype);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1001, "查询失败，系统异常", null);
+		}
+	}
+	
+	@RequestMapping("/queryMerEarnDetail")
+	public Object queryMerEarnDetail(Integer userid, Integer startnum, String datetime) {
+		try {
+			return meruserService.selectMerEarnList(userid, startnum, datetime);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CommUtil.responseBuildInfo(1001, "查询失败，系统异常", null);
+		}
+	}
+	
+	
 }

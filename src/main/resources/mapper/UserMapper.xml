@@ -176,9 +176,10 @@
 	<select id="selectUserById" resultType="com.hedong.hedongwx.entity.User"
 		parameterType="java.lang.Integer">
 		select
-		<include refid="User_Column_List" />
-		from hd_user
-		where id = #{id,jdbcType=INTEGER}
+		u.*,IFNULL(m.id,0) as ismeruser
+		from hd_user u
+		LEFT JOIN hd_meruser m  on m.uid = u.id
+		where u.id = #{id,jdbcType=INTEGER}
 	</select>
 
 	<select id="getUserByPhoneNumAndPassword" parameterType="java.lang.String"
