@@ -93,7 +93,10 @@ public class MeruserServiceImpl implements MeruserService {
 //			if (merid != null && !merid.equals(uid)) {
 //				return CommUtil.responseBuildInfo(1001, "已申请注册过桩主，请刷新页面查看是否申请成功", null);
 //			}
-			Integer bankcardnumUid = userBankcardDao.selectBankcardnumUid(bankcardnum);
+			Integer bankcardnumUid = null;
+			if (bankcardnum != null) {
+				bankcardnumUid = userBankcardDao.selectBankcardnumUid(bankcardnum);
+			}
 			if (bankcardnumUid != null && !bankcardnumUid.equals(uid)) {
 				return CommUtil.responseBuildInfo(1002, "银行卡已被注册", null);
 			}

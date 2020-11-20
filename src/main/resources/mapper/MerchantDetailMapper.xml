@@ -41,7 +41,7 @@
 		md.*,cc.equipmentnum as devicenum
 		from hd_mer_detail md
 		LEFT JOIN hd_chargerecord_copy cc on cc.ordernum = md.ordernum
-		where md.merid = 1 and md.paysource = 1 
+		where md.merid = #{merid} and md.paysource = 1 
 		and md.create_time BETWEEN #{startTime} AND #{endTime}
 		order by id desc limit #{startnum},10
 	</select>
