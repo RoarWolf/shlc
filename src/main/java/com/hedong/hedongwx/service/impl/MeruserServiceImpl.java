@@ -368,12 +368,12 @@ public class MeruserServiceImpl implements MeruserService {
 				Map<String, Object> merTotalEarn = meruserDao.selectMerTotalEarn(uid, startTime, endTime);
 				Double charge_earn = (Double) merTotalEarn.get("allchargemoney");
 				Double advertise_earn = (Double) merTotalEarn.get("alladvertisemoney");
-				Integer totalnum = (Integer) merTotalEarn.get("totalnum");
+				Integer totalnum = CommUtil.toInteger(merTotalEarn.get("totalnum"));
 				Double withmoney = (Double) merTotalEarn.get("allwithdrawmoney");
 				Double withrefundmoney = (Double) merTotalEarn.get("allrefundwithdrawmoney");
 				Double withdraw_earn = CommUtil.subBig(withmoney, withrefundmoney);
 				try {
-					meruserDao.insertMerCollect(uid, charge_earn, advertise_earn, totalnum, withdraw_earn);
+					meruserDao.insertMerCollect(uid, charge_earn, advertise_earn, totalnum, withdraw_earn, datetime);
 				} catch (Exception e) {
 				}
 			}

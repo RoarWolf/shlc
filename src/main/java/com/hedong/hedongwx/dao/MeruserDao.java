@@ -1,5 +1,6 @@
 package com.hedong.hedongwx.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public interface MeruserDao {
 	
 	int insertMerCollect(@Param("uid") Integer uid,@Param("charge_earn") Double charge_earn,
 			@Param("advertise_earn") Double advertise_earn,@Param("ordertotal") Integer ordertotal,
-			@Param("withdraw_earn") Double withdraw_earn);
+			@Param("withdraw_earn") Double withdraw_earn,@Param("create_time") String create_time);
 	
 	List<Integer> selectNormalMeruser();
 }

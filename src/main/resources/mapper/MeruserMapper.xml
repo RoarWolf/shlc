@@ -225,7 +225,7 @@
 	
 	<insert id="insertMerCollect">
 		INSERT into hd_mer_earncollect (uid,charge_earn,advertise_earn,ordertotal,withdraw_earn,create_time)
-		VALUES (#{uid},#{charge_earn},#{advertise_earn},#{ordertotal},#{withdraw_earn},NOW())
+		VALUES (#{uid},#{charge_earn},#{advertise_earn},#{ordertotal},#{withdraw_earn},#{create_time})
 	</insert>
 	
 	<select id="selectNormalMeruser" resultType="java.lang.Integer">
