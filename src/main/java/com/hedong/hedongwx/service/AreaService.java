@@ -33,6 +33,11 @@ public interface AreaService {
 	
 	//通过实体类 Area 传入条件 修改 设备地点（小区）的信息
 	int updateByArea(Area area);
+
+	//场站地图统计
+    Object getAreaTotal();
+
+
 	
 	/**
 	 * 修改小区收益

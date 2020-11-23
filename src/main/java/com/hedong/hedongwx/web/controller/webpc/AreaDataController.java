@@ -65,6 +65,24 @@ public class AreaDataController {
     }
 
     /**
+     * separate
+     *
+     * @Description：小区管理信息
+     * @author： origin
+     */
+    @RequestMapping(value = "/getMapAreaTotal")
+    @ResponseBody
+    public Object getAreaTotal() {
+        Object result = null;
+        if(JedisUtils.get("admin")==null){
+            result = CommUtil.responseBuild(901, "session缓存失效", "");
+        }else{
+            result = areaService.getAreaTotal();
+        }
+        return JSON.toJSON(result);
+    }
+
+    /**
      * @param request
      * @param response
      * @Description：
@@ -373,7 +391,7 @@ public class AreaDataController {
     /**
      * 通过小区id 删除小区信息、并同步删除小区名下合伙人信息
      *
-     * @param request, response, model
+     * @param  response, model
      * @return
      */
     @RequestMapping(value = {"/deleteByArea"})
@@ -408,7 +426,10 @@ public class AreaDataController {
             area.setLon(new BigDecimal(request.getParameter("lon")));
             area.setCreateTime(new Date());
             area.setTempid(Integer.parseInt(request.getParameter("tempid")));
-            area.setAreaImg(request.getParameter("areaImg"));
+            area.setAreaImg(request.getParameter("areaImg")==null?"":request.getParameter("areaImg"));
+            area.setBuildStatus(Integer.parseInt(request.getParameter("buildStatus")));
+            area.setAreaAddress(request.getParameter("areaAddress"));
+            area.setAreaPlace(Integer.parseInt(request.getParameter("areaPlace")));
             areaService.insertArea(area);
             map.put("code", 200);
         } catch (Exception e) {
@@ -439,6 +460,9 @@ public class AreaDataController {
             area.setAreaImg(request.getParameter("areaImg"));
             area.setTempid(Integer.parseInt(request.getParameter("tempid")));
             area.setUpdateTime(new Date());
+            area.setBuildStatus(Integer.parseInt(request.getParameter("buildStatus")));
+            area.setAreaAddress(request.getParameter("areaAddress"));
+            area.setAreaPlace(Integer.parseInt(request.getParameter("areaPlace")));
             areaService.updateByArea(area);
             map.put("code", 200);
         } catch (Exception e) {

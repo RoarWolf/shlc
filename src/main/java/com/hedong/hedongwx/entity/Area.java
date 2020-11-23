@@ -76,6 +76,16 @@ public class Area {
 	/**站点唯一编号**/
 	private String  areaOnlyCode;
 
+    /**建设状态1待建设,2待验收,3已运营,4建设中**/
+    private Integer  buildStatus;
+
+    /**区地址**/
+    private String  areaAddress;
+
+    /**建设位置1地面,2地下**/
+    private Integer  areaPlace;
+
+
 	//直流空闲端口数
 	private Integer DCfreenum;
 	//直流端口总数
@@ -396,7 +406,39 @@ public class Area {
 		this.areaImg = areaImg;
 	}
 
-	@Override
+    public Integer getFreenum() {
+        return freenum;
+    }
+
+    public void setFreenum(Integer freenum) {
+        this.freenum = freenum;
+    }
+
+    public Integer getBuildStatus() {
+        return buildStatus;
+    }
+
+    public void setBuildStatus(Integer buildStatus) {
+        this.buildStatus = buildStatus;
+    }
+
+    public String getAreaAddress() {
+        return areaAddress;
+    }
+
+    public void setAreaAddress(String areaAddress) {
+        this.areaAddress = areaAddress;
+    }
+
+    public Integer getAreaPlace() {
+        return areaPlace;
+    }
+
+    public void setAreaPlace(Integer areaPlace) {
+        this.areaPlace = areaPlace;
+    }
+
+    @Override
 	public String toString() {
 		return "Area [id=" + id + ", name=" + name + ",areaImg=" + areaImg + ", tempid=" + tempid + ", tempid2=" + tempid2 + ", merid=" + merid
 				+ ", manid=" + manid + ", divideinto=" + divideinto + ", address=" + address + ", lon=" + lon + ", lat="
