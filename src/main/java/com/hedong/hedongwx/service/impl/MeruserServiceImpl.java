@@ -135,15 +135,17 @@ public class MeruserServiceImpl implements MeruserService {
 				user2.setRealname(realname);
 				userService.updateUserById(user2);
 			}
-			UserBankcard userBankcard = new UserBankcard();
-			userBankcard.setBankcardnum(bankcardnum);
-			userBankcard.setBankname(bankname);
-			userBankcard.setUserId(uid);
-			userBankcard.setRealname(realname);
-			if (bankcardnumUid == null) {
-				userBankcardService.addUserBankcard(userBankcard);
-			} else {
-				userBankcardService.updateUserBankcard(userBankcard);
+			if (bankcardnum != null && !"".equals(bankcardnum)) {
+				UserBankcard userBankcard = new UserBankcard();
+				userBankcard.setBankcardnum(bankcardnum);
+				userBankcard.setBankname(bankname);
+				userBankcard.setUserId(uid);
+				userBankcard.setRealname(realname);
+				if (bankcardnumUid == null) {
+					userBankcardService.addUserBankcard(userBankcard);
+				} else {
+					userBankcardService.updateUserBankcard(userBankcard);
+				}
 			}
 			operateRecordDao.insertoperate("用户申请桩主", 0, uid, 0, 1, null, null);
 			return CommUtil.responseBuildInfo(1000, "申请成功", null);

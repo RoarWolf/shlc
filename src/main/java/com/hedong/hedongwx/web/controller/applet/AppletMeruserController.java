@@ -14,6 +14,7 @@ import com.hedong.hedongwx.entity.District;
 import com.hedong.hedongwx.service.DistrictService;
 import com.hedong.hedongwx.service.MeruserService;
 import com.hedong.hedongwx.service.UserBankcardService;
+import com.hedong.hedongwx.utils.BankcardUtil;
 import com.hedong.hedongwx.utils.CommUtil;
 
 /**
@@ -133,5 +134,8 @@ public class AppletMeruserController {
 		}
 	}
 	
-	
+	@RequestMapping("/checkBankcard")
+	public Object checkBankcard(String bankcardnum) {
+		return BankcardUtil.checkBankcardInfo(bankcardnum);
+	}
 }
