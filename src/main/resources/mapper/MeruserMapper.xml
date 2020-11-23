@@ -200,11 +200,11 @@
 		(SELECT sum(charge_earn) as charge_earn, sum(advertise_earn) as advertise_earn, uid
 		from hd_mer_earncollect where uid = #{uid}) mall on mall.uid = m.uid
 		LEFT JOIN
-		(SELECT charge_earn, advertise_earn, uid
-		from hd_mer_earncollect where DATEDIFF(NOW(), create_time) = -1) myest on myest.uid = m.uid
+		(SELECT sum(charge_earn) as charge_earn, sum(advertise_earn) as advertise_earn, uid
+		from hd_mer_earncollect where uid = #{uid} and TO_DAYS(NOW()) - TO_DAYS(create_time) &lt;= 1) myest on myest.uid = m.uid
 		LEFT JOIN
-		(SELECT charge_earn, advertise_earn, uid
-		from hd_mer_earncollect where YEARWEEK(date_format(create_time,'%Y-%m-%d')) = YEARWEEK(now())-1) mseven on mseven.uid = m.uid
+		(SELECT sum(charge_earn) as charge_earn, sum(advertise_earn) as advertise_earn, uid
+		from hd_mer_earncollect where uid = #{uid} and YEARWEEK(date_format(create_time,'%Y-%m-%d')) = YEARWEEK(now())-1) mseven on mseven.uid = m.uid
 		where m.uid = #{uid}
 	</select>
 	
