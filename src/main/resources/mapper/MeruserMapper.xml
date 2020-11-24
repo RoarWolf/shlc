@@ -210,7 +210,7 @@
 	
 	<select id="selectMerCollectList" resultType="java.util.Map">
 		SELECT charge_earn, advertise_earn,create_time
-		from hd_mer_earncollect where uid = #{uid} and create_time >= #{createTime}
+		from hd_mer_earncollect where uid = #{uid} and create_time >= #{createTime} order by id desc
 	</select>
 	
 	<select id="selectMerTotalEarn" resultType="java.util.Map">

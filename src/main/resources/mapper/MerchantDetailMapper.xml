@@ -3,7 +3,7 @@
 <mapper namespace="com.hedong.hedongwx.dao.MerchantDetailDao">
 
 	<sql id="MerchantDetail_Column_List">
-		id, merid, ordernum, money, advertise_money, balance, paysource, paytype, status, create_time
+		id, merid, ordernum, money, advertise_money, balance, paysource, paytype, status, create_time, devicenum
 	</sql>
 	
 	<!-- origin 根据表（商户收益明细表）查询不同商户数量 -->
@@ -38,10 +38,9 @@
 	
 	<select id="selectEarnListByMeridLimit" resultType="com.hedong.hedongwx.entity.MerchantDetail">
 		select
-		md.*,cc.equipmentnum as devicenum
-		from hd_mer_detail md
-		LEFT JOIN hd_chargerecord_copy cc on cc.ordernum = md.ordernum
-		where md.merid = #{merid} and md.paysource = 1 
+		<include refid="MerchantDetail_Column_List"/>
+		from hd_mer_detail
+		where merid = #{merid} and paysource = 1 
 		and md.create_time BETWEEN #{startTime} AND #{endTime}
 		order by id desc limit #{startnum},10
 	</select>
