@@ -89,10 +89,10 @@
 		</set>
 		<where>
 			<if test="id != null">
-				id = #{id},
+				and id = #{id}
 			</if>
 			<if test="userId != null">
-				user_id = #{userId},
+				and user_id = #{userId}
 			</if>
 		</where>
 	</update>
@@ -133,7 +133,7 @@
 	</select>
 	
 	<select id="selectBankcardnumUid" resultType="java.lang.Integer">
-		select uid from hd_user_bankcard where bankcardnum = #{bankcardnum}
+		select user_id from hd_user_bankcard where bankcardnum = #{bankcardnum}
 	</select>
 
 </mapper>
