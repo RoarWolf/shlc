@@ -91,7 +91,7 @@
 				areaname = #{areaname},
 			</if>
 			<if test="address != null">
-				address = #{areaname},
+				address = #{address},
 			</if>
 		</set>
 		<where>

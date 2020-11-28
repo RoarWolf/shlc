@@ -41,7 +41,7 @@
 		<include refid="MerchantDetail_Column_List"/>
 		from hd_mer_detail
 		where merid = #{merid} and paysource = 1 
-		and md.create_time BETWEEN #{startTime} AND #{endTime}
+		and create_time BETWEEN #{startTime} AND #{endTime}
 		order by id desc limit #{startnum},10
 	</select>
 	
